@@ -1,5 +1,4 @@
 ﻿global using Limilabs.FTP.Client;
-global using sunamo;
 global using SunamoFtp.Other;
 global using SunamoFtp;
 global using System.Collections.Generic;
