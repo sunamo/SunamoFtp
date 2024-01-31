@@ -3,24 +3,16 @@
     <TargetFramework>net8.0</TargetFramework>
     <OutputType>Library</OutputType>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <Version>24.1.11.1</Version>
+    <Version>24.1.24.1</Version>
     <Description>Base classes and infrastructure for FTP clients</Description>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0">
     </PackageReference>
-    <PackageReference Include="SunamoExceptions" Version="24.1.11.1" />
-    <PackageReference Include="SunamoShared" Version="24.1.12.1" />
-    <PackageReference Include="SunamoStringJoin" Version="24.1.10.1" />
-    <PackageReference Include="SunamoStringSplit" Version="24.1.11.1" />
-    <PackageReference Include="SunamoUri" Version="24.1.10.1" />
-    <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0">
-    </PackageReference>
+    <PackageReference Include="SunamoShared" Version="24.1.14.2" />
+    <PackageReference Include="SunamoStringJoin" Version="24.1.14.1" />
+    <PackageReference Include="SunamoUri" Version="24.1.14.1" />
     <PackageReference Include="Ftp.dll" Version="2.0.23268.1746">
-    </PackageReference>
-    <PackageReference Include="System.IO.FileSystem" Version="4.3.0">
-    </PackageReference>
-    <PackageReference Include="System.IO.FileSystem.Primitives" Version="4.3.0">
     </PackageReference>
   </ItemGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
