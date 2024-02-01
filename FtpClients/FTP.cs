@@ -1,4 +1,13 @@
+
 namespace SunamoFtp.FtpClients;
+using SunamoData.Data;
+using SunamoExceptions.OnlyInSE;
+using SunamoInterfaces.Interfaces;
+using SunamoStringJoin;
+using SunamoStringSplit;
+using SunamoUri;
+using SunamoValues;
+
 
 public class FTP : FtpBase
 {
@@ -153,7 +162,7 @@ public class FTP : FtpBase
 
         if (!(retValue == 150 || retValue == 125))
         {
-            ThrowEx.Custom(reply.Substring(4));
+            throw new Exception(reply.Substring(4));
         }
 
         mes = "";
@@ -182,7 +191,7 @@ public class FTP : FtpBase
 
         if (retValue != 226)
         {
-            ThrowEx.Custom(reply.Substring(4));
+            throw new Exception(reply.Substring(4));
         }
         return mess;
     }
@@ -268,7 +277,7 @@ public class FTP : FtpBase
             }
             else
             {
-                ThrowEx.Custom("Nepodporovaný typ objektu");
+                throw new Exception("Nepodporovaný typ objektu");
             }
         }
         if (ps.indexZero > 0)
@@ -305,7 +314,7 @@ public class FTP : FtpBase
                     }
                     else
                     {
-                        ThrowEx.Custom("Nepodporovaný typ objektu");
+                        throw new Exception("Nepodporovaný typ objektu");
                     }
                 }
             }
@@ -394,7 +403,7 @@ public class FTP : FtpBase
         }
         else
         {
-            ThrowEx.Custom(reply.Substring(4));
+            throw new Exception(reply.Substring(4));
         }
 
         return size;
@@ -422,7 +431,7 @@ public class FTP : FtpBase
         {
             OnNewStatus("Couldn't connect to remote server" + ": " + ex.Message);
             return;
-            //ThrowEx.Custom("Couldn't connect to remote server" + ": " + ex.Message);
+            //throw new Exception("Couldn't connect to remote server" + ": " + ex.Message);
         }
         #endregion
 
@@ -435,7 +444,7 @@ public class FTP : FtpBase
         if (!(retValue == 331 || retValue == 230))
         {
             cleanup();
-            ThrowEx.Custom(reply.Substring(4));
+            throw new Exception(reply.Substring(4));
         }
         #endregion
 
@@ -451,7 +460,7 @@ public class FTP : FtpBase
             {
                 cleanup();
                 bad = true;
-                //ThrowEx.Custom(reply.Substring(4));
+                //throw new Exception(reply.Substring(4));
             }
         }
         #endregion
@@ -501,14 +510,14 @@ public class FTP : FtpBase
         catch (Exception ex)
         {
             // During first attemp to connect to sunamo.cz Message = "A connection attempt failed because the connected party did not properly respond after a period of time, or established connection failed because connected host has failed to respond 185.8.239.101:21"
-            ThrowEx.Custom("Couldn't connect to remote server");
+            throw new Exception("Couldn't connect to remote server");
         }
 
         readReply();
         if (retValue != 220)
         {
             close();
-            ThrowEx.Custom(reply.Substring(4));
+            throw new Exception(reply.Substring(4));
         }
     }
 
@@ -634,7 +643,7 @@ public class FTP : FtpBase
         }
         catch (Exception ex)
         {
-            ThrowEx.Custom(ex.Message);
+            throw new Exception(ex.Message);
         }
 
         showSslInfo(remoteHost, _sslStream, true);
@@ -661,7 +670,7 @@ public class FTP : FtpBase
         }
         if (retValue != 200)
         {
-            ThrowEx.Custom(reply.Substring(4));
+            throw new Exception(reply.Substring(4));
         }
     }
 
@@ -680,7 +689,7 @@ public class FTP : FtpBase
     {
         OnNewStatus("Stahuji" + " " + UH.Combine(false, ps.ActualPath, remFileName));
 
-        if (FSSE.ExistsFile(locFileName))
+        if (File.Exists(locFileName))
         {
             if (deleteLocalIfExists)
             {
@@ -705,7 +714,7 @@ public class FTP : FtpBase
         #region Pokud nejsem přihlášený, přihlásím se na nastavím binární mód
         if (string.IsNullOrEmpty(locFileName))
         {
-            ThrowEx.Custom("Musíte zadat jméno souboru do kterého chcete stáhnout");
+            throw new Exception("Musíte zadat jméno souboru do kterého chcete stáhnout");
         }
 
         if (!logined)
@@ -719,7 +728,7 @@ public class FTP : FtpBase
         #region Pokud neexistuje, vytvořím jej a hned zavřu. Načtu jej do FS s FileMode Open
         OnNewStatus("Downloading file" + " " + remFileName + " " + "from" + " " + remoteHost + AllStringsSE.slash + remotePath);
 
-        if (!FSSE.ExistsFile(locFileName))
+        if (!File.Exists(locFileName))
         {
             Stream st = File.Create(locFileName);
             st.Close();
@@ -766,7 +775,7 @@ public class FTP : FtpBase
 
         if (!(retValue == 150 || retValue == 125))
         {
-            ThrowEx.Custom(reply.Substring(4));
+            throw new Exception(reply.Substring(4));
         }
 
         while (true)
@@ -793,7 +802,7 @@ public class FTP : FtpBase
 
         if (!(retValue == 226 || retValue == 250))
         {
-            ThrowEx.Custom(reply.Substring(4));
+            throw new Exception(reply.Substring(4));
         }
         #endregion
         return true;
@@ -818,7 +827,7 @@ public class FTP : FtpBase
 
         if (retValue != 227)
         {
-            ThrowEx.Custom(reply.Substring(4));
+            throw new Exception(reply.Substring(4));
         }
 
         if (!logined)
@@ -863,11 +872,11 @@ public class FTP : FtpBase
         #endregion
 
         #region Pošlu příkaz STOR s jménem souboru a zapíšu všechny bajty z souboru do bufferu byte[]
-        sendCommand("STOR" + " " + FS.GetFileName(fileName));
+        sendCommand("STOR" + " " + Path.GetFileName(fileName));
 
         if (!(retValue == 125 || retValue == 150))
         {
-            ThrowEx.Custom(reply.Substring(4));
+            throw new Exception(reply.Substring(4));
         }
 
 
@@ -907,7 +916,7 @@ public class FTP : FtpBase
         readReply();
         if (!(retValue == 226 || retValue == 250))
         {
-            ThrowEx.Custom(reply.Substring(4));
+            throw new Exception(reply.Substring(4));
         }
         #endregion
     }
@@ -987,11 +996,11 @@ public class FTP : FtpBase
             }
         }
 
-        sendCommand("STOR" + " " + FS.GetFileName(fileName));
+        sendCommand("STOR" + " " + Path.GetFileName(fileName));
 
         if (!(retValue == 125 || retValue == 150))
         {
-            ThrowEx.Custom(reply.Substring(4));
+            throw new Exception(reply.Substring(4));
         }
         #endregion
 
@@ -1026,7 +1035,7 @@ public class FTP : FtpBase
         readReply();
         if (!(retValue == 226 || retValue == 250))
         {
-            ThrowEx.Custom(reply.Substring(4));
+            throw new Exception(reply.Substring(4));
         }
         #endregion
         #endregion
@@ -1073,13 +1082,13 @@ public class FTP : FtpBase
 
         if (retValue != 350)
         {
-            ThrowEx.Custom(reply.Substring(4));
+            throw new Exception(reply.Substring(4));
         }
 
         sendCommand("RNTO" + " " + newFileName);
         if (retValue != 250)
         {
-            ThrowEx.Custom(reply.Substring(4));
+            throw new Exception(reply.Substring(4));
         }
 
     }
@@ -1103,7 +1112,7 @@ public class FTP : FtpBase
 
         if (retValue != 250 && retValue != 257)
         {
-            ThrowEx.Custom(reply.Substring(4));
+            throw new Exception(reply.Substring(4));
         }
         chdirLite(dirName);
         return true;
@@ -1131,7 +1140,7 @@ public class FTP : FtpBase
             }
             else
             {
-                ThrowEx.Custom(reply.Substring(4));
+                throw new Exception(reply.Substring(4));
             }
 
         }
@@ -1224,7 +1233,7 @@ public class FTP : FtpBase
 
             if (retValue != 250)
             {
-                ThrowEx.Custom(reply.Substring(4));
+                throw new Exception(reply.Substring(4));
             }
             if (dirName == AllStringsSE.dd)
             {
@@ -1453,7 +1462,7 @@ public class FTP : FtpBase
 
         if (retValue != 227)
         {
-            ThrowEx.Custom(reply.Substring(4));
+            throw new Exception(reply.Substring(4));
         }
         #endregion
 
@@ -1477,7 +1486,7 @@ public class FTP : FtpBase
                 buf += ch;
             else if (ch != AllCharsSE.comma)
             {
-                ThrowEx.Custom("Malformed PASV reply" + ": " + reply);
+                throw new Exception("Malformed PASV reply" + ": " + reply);
             }
 
             #region Pokud je poslední znak čárka,
@@ -1491,7 +1500,7 @@ public class FTP : FtpBase
                 }
                 catch (Exception ex)
                 {
-                    ThrowEx.Custom("Malformed PASV reply" + ": " + reply);
+                    throw new Exception("Malformed PASV reply" + ": " + reply);
                 }
             }
             #endregion
@@ -1513,7 +1522,7 @@ public class FTP : FtpBase
         }
         catch (Exception ex)
         {
-            ThrowEx.Custom("Can't connect to remoteserver");
+            throw new Exception("Can't connect to remoteserver");
         }
 
         return s;

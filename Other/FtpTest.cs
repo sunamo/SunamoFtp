@@ -1,4 +1,7 @@
+
 namespace SunamoFtp.Other;
+using SunamoValues;
+
 
 public class FtpTest
 {

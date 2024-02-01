@@ -1,4 +1,12 @@
+
 namespace SunamoFtp.FtpClients;
+using SunamoData.Data;
+using SunamoExceptions.OnlyInSE;
+using SunamoStringJoin;
+using SunamoStringSplit;
+using SunamoUri;
+using SunamoValues;
+
 
 public class FtpNet : FtpBase
 {
@@ -183,6 +191,7 @@ public class FtpNet : FtpBase
         }
     }
 
+
     /// <summary>
     /// OK
     /// DELE + RMD
@@ -299,7 +308,7 @@ public class FtpNet : FtpBase
                                 }
                             }
                             goToUpFolderForce();
-                            rmdir(new List<string>(), FS.GetFileName(item2.Key.TrimEnd(AllCharsSE.slash)));
+                            rmdir(new List<string>(), Path.GetFileName(item2.Key.TrimEnd(AllCharsSE.slash)));
                         }
                     }
                 }
@@ -403,7 +412,7 @@ public class FtpNet : FtpBase
 
         if (dirName != "")
         {
-            dirName = FS.GetFileName(dirName.TrimEnd(AllCharsSE.slash));
+            dirName = Path.GetFileName(dirName.TrimEnd(AllCharsSE.slash));
             if (dirName[dirName.Length - 1] == AllStringsSE.slash[0])
             {
                 dirName = dirName.Substring(0, dirName.Length - 1);
@@ -828,7 +837,7 @@ public class FtpNet : FtpBase
 
         OnNewStatus("Stahuji" + " " + remFileName);
 
-        if (FSSE.ExistsFile(locFileName))
+        if (File.Exists(locFileName))
         {
             if (deleteLocalIfExists)
             {
@@ -976,7 +985,7 @@ public class FtpNet : FtpBase
             }
             else
             {
-                ThrowEx.Custom("Nepodporovaný typ objektu");
+                throw new Exception("Nepodporovaný typ objektu");
             }
         }
         return vr;
@@ -1026,5 +1035,7 @@ public class FtpNet : FtpBase
     {
         throw new NotImplementedException();
     }
+
+
     #endregion
 }

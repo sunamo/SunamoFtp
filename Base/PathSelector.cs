@@ -1,4 +1,7 @@
+
 namespace SunamoFtp.Base;
+using SunamoValues;
+
 
 public class PathSelector
 {
@@ -25,7 +28,7 @@ public class PathSelector
 
     public List<string> DivideToTokens(string r)
     {
-        return SHSplit.Split(r, delimiter);
+        return r.Split(new string[] { delimiter }, StringSplitOptions.RemoveEmptyEntries).ToList();
     }
 
     /// <summary>
@@ -51,7 +54,7 @@ public class PathSelector
             {
                 if (initialDirectory.StartsWith(AllStringsSE.slash))
                 {
-                    ThrowEx.Custom("Počáteční složka nemůže začínat s lomítkem na začátku");
+                    throw new Exception("Počáteční složka nemůže začínat s lomítkem na začátku");
                     int druhy = initialDirectory.IndexOf(AllCharsSE.slash, 1);
                     firstToken = initialDirectory.Substring(0, druhy);
                 }
@@ -94,7 +97,7 @@ public class PathSelector
         }
         else
         {
-            ThrowEx.Custom("Is not possible go to up folder");
+            throw new Exception("Is not possible go to up folder");
         }
     }
 
@@ -123,7 +126,7 @@ public class PathSelector
         {
             if (tokens.Count != 0)
             {
-                return SHJoin.JoinWithoutEndTrimDelimiter(delimiter, tokens.ToArray());
+                return string.Join(delimiter, tokens.ToArray()) + delimiter;
             }
             else
             {
@@ -133,7 +136,7 @@ public class PathSelector
         set
         {
             tokens.Clear();
-            tokens.AddRange(SHSplit.Split(value, delimiter));
+            tokens.AddRange(value.Split(new string[] { delimiter }, StringSplitOptions.RemoveEmptyEntries)); //SHSplit.Split(value, delimiter));
         }
     }
 

@@ -1,4 +1,9 @@
+
 namespace SunamoFtp.Base;
+using SunamoStringJoin;
+using SunamoStringSplit;
+using SunamoValues;
+
 
 public static class FtpHelper
 {
@@ -19,7 +24,7 @@ public static class FtpHelper
     /// <param name="fileLenght"></param>
     public static bool IsFileOnHosting(string item2, List<string> fse, long fileLenght)
     {
-        item2 = FS.GetFileName(item2);
+        item2 = Path.GetFileName(item2);
         foreach (string item in fse)
         {
             long fl = 0;
@@ -87,7 +92,7 @@ public static class FtpHelper
         }
         else
         {
-            ThrowEx.Custom("Nový druh entry (change msdos directory listing to unix)");
+            throw new Exception("Nový druh entry (change msdos directory listing to unix)");
         }
         return isFile;
     }

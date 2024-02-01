@@ -1,4 +1,9 @@
+
 namespace SunamoFtp.FtpClients;
+using SunamoData.Data;
+using SunamoExceptions.OnlyInSE;
+using SunamoLogger;
+
 
 public class FtpDllWrapper : FtpBaseNew
 {

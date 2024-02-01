@@ -1,4 +1,13 @@
+
 namespace SunamoFtp.Base;
+using SunamoData.Data;
+using SunamoFileSystemShared;
+using SunamoInterfaces.Interfaces;
+using SunamoStringJoin;
+using SunamoStringSplit;
+using SunamoUri;
+using SunamoValues;
+
 
 public abstract class FtpBase : FtpAbstract
 {
@@ -23,7 +32,7 @@ public abstract class FtpBase : FtpAbstract
 
 
 
-
+    //public abstract void DeleteRecursively(List<string> slozkyNeuploadovatAVS, string dirName, int i, List<DirectoriesToDelete> td);
 
 
     public void OnNewStatusNewFolder()
@@ -104,13 +113,17 @@ public abstract class FtpBase : FtpAbstract
             catch (Exception ex)
             {
                 pocetExc++;
-                CleanUp.Streams(_Stream, _FileStream);
+                //CleanUp.Streams(_Stream, _FileStream);
+                _Stream.Dispose();
+                _FileStream.Dispose();
                 OnNewStatus("Upload file error" + ": " + ex.Message);
                 return UploadFileMain(local, _UploadPath);
             }
             finally
             {
-                CleanUp.Streams(_Stream, _FileStream);
+                //CleanUp.Streams(_Stream, _FileStream);
+                _Stream.Dispose();
+                _FileStream.Dispose();
             }
             pocetExc = 0;
             return true;
@@ -159,8 +172,8 @@ public abstract class FtpBase : FtpAbstract
         List<string> fse = ListDirectoryDetails();
         foreach (string item in files)
         {
-
-            long fileSize = FS.GetFileSize(item);
+            var fi = new FileInfo(item);
+            long fileSize = fi.Length;
             if (!FtpHelper.IsFileOnHosting(item, fse, fileSize))
             {
 
@@ -182,7 +195,7 @@ public abstract class FtpBase : FtpAbstract
     /// <param name="dirName"></param>
     public string GetActualPath(string dirName)
     {
-        string s = UH.Combine(true, remoteHost + AllStringsSE.colon + remotePort, UH.Combine(true, ps.ActualPath, dirName));
+        string s = /*UH.Combine(true,*/  remoteHost + AllStringsSE.colon + remotePort + ps.ActualPath + dirName;
         return s.TrimEnd(AllCharsSE.slash);
     }
 
@@ -205,8 +218,8 @@ public abstract class FtpBase : FtpAbstract
 
 
 
-        var directories = FS.GetFolders(slozkaNaLocalu);
-        List<string> files = FS.GetFiles(slozkaNaLocalu);
+        var directories = Directory.GetDirectories(slozkaNaLocalu);
+        List<string> files = Directory.GetFiles(slozkaNaLocalu).ToList();
         OnNewStatus("Uploaduji všechny soubory" + " " + "" + files.Count() + " " + " " + "do složky ftp serveru" + " " + ps.ActualPath);
 
         if (!UploadFiles(files))
@@ -216,7 +229,7 @@ public abstract class FtpBase : FtpAbstract
 
         foreach (string item in directories)
         {
-            if (!uploadFolderRek(item, UH.Combine(false, slozkaNaHostingu, FS.GetFileName(item))))
+            if (!uploadFolderRek(item, UH.Combine(false, slozkaNaHostingu, Path.GetFileName(item))))
             {
                 return false;
             }
@@ -305,7 +318,7 @@ public abstract class FtpBase : FtpAbstract
                 else
                 {
 
-                    ThrowEx.Custom("Nepodporovaný typ objektu");
+                    throw new Exception("Nepodporovaný typ objektu");
                 }
             }
             if (ps.CanGoToUpFolder)
@@ -348,7 +361,7 @@ public abstract class FtpBase : FtpAbstract
     /// <param name="_FTPPass">FTP login password</param>
     public void UploadFile(string _FileName)
     {
-        string _UploadPath = UH.Combine(false, remoteHost + AllStringsSE.colon + remotePort + AllStringsSE.slash, UH.Combine(true, ps.ActualPath, FS.GetFileName(_FileName)));
+        string _UploadPath = UH.Combine(false, remoteHost + AllStringsSE.colon + remotePort + AllStringsSE.slash, UH.Combine(true, ps.ActualPath, Path.GetFileName(_FileName)));
         if (reallyUpload)
         {
             UploadFileMain(_FileName, _UploadPath);
@@ -366,7 +379,7 @@ public abstract class FtpBase : FtpAbstract
     /// <param name="actualFtpPath"></param>
     public bool UploadFile(string fullFilePath, string actualFtpPath)
     {
-        string _UploadPath = UH.Combine(false, remoteHost + AllStringsSE.colon + remotePort + AllStringsSE.slash + AllStringsSE.slash, UH.Combine(false, actualFtpPath, FS.GetFileName(fullFilePath)));
+        string _UploadPath = UH.Combine(false, remoteHost + AllStringsSE.colon + remotePort + AllStringsSE.slash + AllStringsSE.slash, UH.Combine(false, actualFtpPath, Path.GetFileName(fullFilePath)));
         var vr = true;
         if (reallyUpload)
         {
@@ -385,11 +398,11 @@ public abstract class FtpBase : FtpAbstract
     /// <param name="iw"></param>
     public bool uploadFolderShared(string slozkaFrom, bool rek, IWorking working)
     {
-        string nazevSlozky = FS.GetFileName(slozkaFrom);
+        string nazevSlozky = Path.GetFileName(slozkaFrom);
         string pathFolder = UH.Combine(true, ps.ActualPath, nazevSlozky);
         slozkaFrom = slozkaFrom.TrimEnd(AllCharsSE.bs);
-        List<string> soubory = FS.GetFiles(slozkaFrom);
-        var slozky = FS.GetFolders(slozkaFrom);
+        List<string> soubory = Directory.GetFiles(slozkaFrom).ToList();
+        var slozky = Directory.GetDirectories(slozkaFrom);
 
         NewStatus("Uploaduji všechny soubory" + " " + "" + soubory.Count() + " " + " " + "do složky ftp serveru" + " " + pathFolder, EmptyArrays.Objects);
 
