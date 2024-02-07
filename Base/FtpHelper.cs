@@ -1,7 +1,7 @@
 
 namespace SunamoFtp.Base;
-using SunamoStringJoin;
-using SunamoStringSplit;
+
+using SunamoFtp._sunamo;
 using SunamoValues;
 
 
@@ -47,14 +47,14 @@ public static class FtpHelper
     public static FileSystemType IsFile(string entry)
     {
         string fileName = null;
-        var tokeny = SHSplit.Split(entry, AllStringsSE.space);
+        var tokeny = entry.Split(AllChars.space).ToList(); //SHSplit.Split(entry, AllStringsSE.space);
         FileSystemType isFile = IsFileShared(entry, tokeny, out fileName);
         return isFile;
     }
 
     public static FileSystemType IsFile(string entry, out string fileName)
     {
-        var tokeny = SHSplit.Split(entry, AllStringsSE.space);
+        var tokeny = entry.Split(AllChars.space).ToList(); //SHSplit.Split(entry, AllStringsSE.space);
         FileSystemType isFile = IsFileShared(entry, tokeny, out fileName);
         return isFile;
     }
@@ -62,7 +62,7 @@ public static class FtpHelper
     public static FileSystemType IsFile(string entry, out string fileName, out long length)
     {
         //drw-rw-rw-   1 user     group           0 Nov 21 18:03 App_Data
-        var tokeny = SHSplit.Split(entry, AllStringsSE.space);
+        var tokeny = entry.Split(AllChars.space).ToList(); //SHSplit.Split(entry, AllStringsSE.space);
         FileSystemType isFile = IsFileShared(entry, tokeny, out fileName);
         length = long.Parse(tokeny[4]);
 

@@ -1,11 +1,7 @@
 
 namespace SunamoFtp.Base;
-using SunamoData.Data;
-using SunamoFileSystemShared;
+using SunamoFtp._sunamo;
 using SunamoInterfaces.Interfaces;
-using SunamoStringJoin;
-using SunamoStringSplit;
-using SunamoUri;
 using SunamoValues;
 
 
@@ -272,7 +268,7 @@ public abstract class FtpBase : FtpAbstract
             string actualPath = ps.ActualPath;
             foreach (string item in fse)
             {
-                string size = SHJoin.JoinFromIndex(4, AllCharsSE.space, SHSplit.Split(item, AllStringsSE.space));
+                string size = SHJoin.JoinFromIndex(4, AllCharsSE.space, item.Split(AllChars.space).ToList());
                 char fz = item[0];
                 if (fz == AllCharsSE.dash)
                 {
@@ -294,7 +290,7 @@ public abstract class FtpBase : FtpAbstract
                 }
                 else if (fz == 'd')
                 {
-                    string folderName2 = SHJoin.JoinFromIndex(8, AllCharsSE.space, SHSplit.Split(item, AllStringsSE.space));
+                    string folderName2 = SHJoin.JoinFromIndex(8, AllCharsSE.space, item.Split(AllChars.space));
                     if (!FtpHelper.IsThisOrUp(folderName2))
                     {
                         if (slozkyNeuploadovatAVS.Contains(folderName2) && ps.ActualPath == MainWindow.WwwSlash)

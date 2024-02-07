@@ -2,9 +2,7 @@
 namespace SunamoFtp.FtpClients;
 using SunamoData.Data;
 using SunamoExceptions.OnlyInSE;
-using SunamoStringJoin;
-using SunamoStringSplit;
-using SunamoUri;
+using SunamoFtp._sunamo;
 using SunamoValues;
 
 
@@ -434,7 +432,7 @@ public class FtpNet : FtpBase
 
             foreach (string item in fse)
             {
-                int tokens = SHSplit.Split(item, AllStringsSE.space).Count;
+                int tokens = item.Split(AllChars.space).Length; //SHSplit.Split(item, AllStringsSE.space).Count;
                 if (tokens < 8)
                 {
                     vseMa8 = false;

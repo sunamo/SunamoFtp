@@ -1,14 +1,10 @@
-
-namespace SunamoFtp.FtpClients;
 using SunamoData.Data;
 using SunamoExceptions.OnlyInSE;
+using SunamoFtp._sunamo;
 using SunamoInterfaces.Interfaces;
-using SunamoStringJoin;
-using SunamoStringSplit;
-using SunamoUri;
 using SunamoValues;
 
-
+namespace SunamoFtp.FtpClients;
 public class FTP : FtpBase
 {
     static Type type = typeof(FTP);
@@ -181,7 +177,7 @@ public class FTP : FtpBase
         }
 
         string[] seperator = ["\r\n"];
-        List<string> mess = SHSplit.Split(mes, seperator);
+        List<string> mess = mes.Split(seperator, StringSplitOptions.RemoveEmptyEntries).ToList();
 
         cSocket.Close();
         #endregion
@@ -258,7 +254,7 @@ public class FTP : FtpBase
             }
             else if (fz == 'd')
             {
-                string folderName = SHJoin.JoinFromIndex(8, AllCharsSE.space, SHSplit.Split(item, AllStringsSE.space));
+                string folderName = SHJoin.JoinFromIndex(8, AllCharsSE.space, item.Split(new String[] { AllStrings.space }, StringSplitOptions.RemoveEmptyEntries).ToList());
                 ////DebugLogger.Instance.WriteLine("Název alba22: " + folderName);
                 if (!FtpHelper.IsThisOrUp(folderName))
                 {
@@ -297,7 +293,7 @@ public class FTP : FtpBase
                     }
                     else if (fz == 'd')
                     {
-                        string folderName = SHJoin.JoinFromIndex(8, AllCharsSE.space, SHSplit.Split(item, AllStringsSE.space));
+                        string folderName = SHJoin.JoinFromIndex(8, AllCharsSE.space, item.Split(AllChars.space));
                         if (!FtpHelper.IsThisOrUp(folderName))
                         {
                             if (vr.ContainsKey(actualPath))
@@ -357,7 +353,7 @@ public class FTP : FtpBase
             if (remoteFolder.StartsWith(actualPath))
             {
                 remoteFolder = remoteFolder.Substring(actualPath.Length);
-                var tokens = SHSplit.Split(remoteFolder, ps.Delimiter);
+                var tokens = remoteFolder.Split(new String[] { ps.Delimiter }, StringSplitOptions.RemoveEmptyEntries).ToList();
                 foreach (string item in tokens)
                 {
                     CreateDirectoryIfNotExists(item);
@@ -367,7 +363,7 @@ public class FTP : FtpBase
             else
             {
                 setRemotePath(ftpClient.WwwSlash);
-                var tokens = SHSplit.Split(remoteFolder, ps.Delimiter);
+                var tokens = remoteFolder.Split(new String[] { ps.Delimiter }, StringSplitOptions.RemoveEmptyEntries).ToList();
                 for (int i = ps.indexZero; i < tokens.Count; i++)
                 {
                     CreateDirectoryIfNotExists(tokens[i]);
@@ -1201,7 +1197,7 @@ public class FTP : FtpBase
 
             foreach (string item in fse)
             {
-                int tokens = SHSplit.Split(item, AllStringsSE.space).Count;
+                int tokens = item.Split(AllChars.space).Length; //SHSplit.Split(item, AllStringsSE.space).Count;
                 if (tokens < 8)
                 {
                     vseMa8 = false;

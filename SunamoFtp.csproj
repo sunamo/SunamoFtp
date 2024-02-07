@@ -3,18 +3,14 @@
     <TargetFramework>net8.0</TargetFramework>
     <OutputType>Library</OutputType>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <Version>24.2.1.3</Version>
+    <Version>24.2.6.2</Version>
     <Description>Base classes and infrastructure for FTP clients</Description>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Ftp.dll" Version="2.0.23268.1746">
     </PackageReference>
-    <PackageReference Include="SunamoData" Version="24.2.1.1" />
-    <PackageReference Include="SunamoFileSystemShared" Version="24.2.1.1" />
-    <PackageReference Include="SunamoInterfaces" Version="24.2.1.2" />
-    <PackageReference Include="SunamoStringJoin" Version="24.2.1.1" />
-    <PackageReference Include="SunamoStringSplit" Version="24.2.1.1" />
-    <PackageReference Include="SunamoUri" Version="24.2.1.1" />
+    <PackageReference Include="SunamoData" Version="24.2.6.2" />
+    <PackageReference Include="SunamoInterfaces" Version="24.2.6.3" />
   </ItemGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DefineConstants>$(DefineConstants);ASYNC</DefineConstants>

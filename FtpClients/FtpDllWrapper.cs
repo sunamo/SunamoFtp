@@ -2,7 +2,6 @@
 namespace SunamoFtp.FtpClients;
 using SunamoData.Data;
 using SunamoExceptions.OnlyInSE;
-using SunamoLogger;
 
 
 public class FtpDllWrapper : FtpBaseNew
@@ -31,13 +30,13 @@ public class FtpDllWrapper : FtpBaseNew
 
     public override void DebugActualFolder()
     {
-        InitApp.Logger.WriteLine("Actual dir" + ":", Client.GetCurrentFolder());
+        //InitApp.Logger.WriteLine("Actual dir" + ":", Client.GetCurrentFolder());
     }
 
     public override void DebugAllEntries()
     {
-        InitApp.Logger.WriteLine("All file entries" + ":");
-        Client.GetList().ForEach(d => InitApp.Logger.WriteLine(d.Name));
+        //InitApp.Logger.WriteLine("All file entries" + ":");
+        //Client.GetList().ForEach(d => InitApp.Logger.WriteLine(d.Name));
 
     }
 
