@@ -260,12 +260,12 @@ public class FTP : FtpBase
                 {
                     if (vr.ContainsKey(actualPath))
                     {
-                        vr[actualPath].Add(item + AllStringsSE.slash);
+                        vr[actualPath].Add(item + AllStrings.slash);
                     }
                     else
                     {
                         List<string> ppk = new List<string>();
-                        ppk.Add(item + AllStringsSE.slash);
+                        ppk.Add(item + AllStrings.slash);
                         vr.Add(actualPath, ppk);
                     }
                     getFSEntriesListRecursively(slozkyNeuploadovatAVS, projeteSlozky, vr, ps.ActualPath, folderName);
@@ -722,7 +722,7 @@ public class FTP : FtpBase
         #endregion
 
         #region Pokud neexistuje, vytvořím jej a hned zavřu. Načtu jej do FS s FileMode Open
-        OnNewStatus("Downloading file" + " " + remFileName + " " + "from" + " " + remoteHost + AllStringsSE.slash + remotePath);
+        OnNewStatus("Downloading file" + " " + remFileName + " " + "from" + " " + remoteHost + AllStrings.slash + remotePath);
 
         if (!File.Exists(locFileName))
         {
@@ -1151,7 +1151,7 @@ public class FTP : FtpBase
     /// <param name="dirName"></param>
     public override void CreateDirectoryIfNotExists(string dirName)
     {
-        if (dirName == AllStringsSE.dot || dirName == AllStringsSE.dd)
+        if (dirName == AllStrings.dot || dirName == AllStrings.dd)
         {
             return;
         }
@@ -1176,7 +1176,7 @@ public class FTP : FtpBase
         }
         if (dirName != "")
         {
-            if (dirName[dirName.Length - 1] == AllStringsSE.slash[0])
+            if (dirName[dirName.Length - 1] == AllStrings.slash[0])
             {
                 dirName = dirName.Substring(0, dirName.Length - 1);
             }
@@ -1197,7 +1197,7 @@ public class FTP : FtpBase
 
             foreach (string item in fse)
             {
-                int tokens = item.Split(AllChars.space).Length; //SHSplit.Split(item, AllStringsSE.space).Count;
+                int tokens = item.Split(AllChars.space).Length; //SHSplit.Split(item, AllStrings.space).Count;
                 if (tokens < 8)
                 {
                     vseMa8 = false;
@@ -1231,7 +1231,7 @@ public class FTP : FtpBase
             {
                 throw new Exception(reply.Substring(4));
             }
-            if (dirName == AllStringsSE.dd)
+            if (dirName == AllStrings.dd)
             {
                 ps.RemoveLastToken();
             }
@@ -1341,7 +1341,7 @@ public class FTP : FtpBase
         }
 
         //Když na 3. straně není mezera, zavolám tuto M znovu
-        if (!mes.Substring(3, 1).Equals(AllStringsSE.space))
+        if (!mes.Substring(3, 1).Equals(AllStrings.space))
         {
             return readLine();
         }
@@ -1502,8 +1502,8 @@ public class FTP : FtpBase
             #endregion
         }
 
-        string ipAddress = parts[0] + AllStringsSE.dot + parts[1] + AllStringsSE.dot +
-          parts[2] + AllStringsSE.dot + parts[3];
+        string ipAddress = parts[0] + AllStrings.dot + parts[1] + AllStrings.dot +
+          parts[2] + AllStrings.dot + parts[3];
         #endregion
 
         #region Port získám tak čtvrtou část ip adresy bitově posunu o 8 a sečtu s pátou částí. Získám Socket, O IPEndPoint a pokusím se připojit na tento objekt.

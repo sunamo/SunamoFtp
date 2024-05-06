@@ -411,7 +411,7 @@ public class FtpNet : FtpBase
         if (dirName != "")
         {
             dirName = Path.GetFileName(dirName.TrimEnd(AllCharsSE.slash));
-            if (dirName[dirName.Length - 1] == AllStringsSE.slash[0])
+            if (dirName[dirName.Length - 1] == AllStrings.slash[0])
             {
                 dirName = dirName.Substring(0, dirName.Length - 1);
             }
@@ -432,7 +432,7 @@ public class FtpNet : FtpBase
 
             foreach (string item in fse)
             {
-                int tokens = item.Split(AllChars.space).Length; //SHSplit.Split(item, AllStringsSE.space).Count;
+                int tokens = item.Split(AllChars.space).Length; //SHSplit.Split(item, AllStrings.space).Count;
                 if (tokens < 8)
                 {
                     vseMa8 = false;
@@ -468,7 +468,7 @@ public class FtpNet : FtpBase
         // Trim slash from end in dirName variable
         if (dirName != "")
         {
-            if (dirName[dirName.Length - 1] == AllStringsSE.slash[0])
+            if (dirName[dirName.Length - 1] == AllStrings.slash[0])
             {
                 dirName = dirName.Substring(0, dirName.Length - 1);
             }
@@ -489,7 +489,7 @@ public class FtpNet : FtpBase
 
             foreach (string item in fse)
             {
-                int tokens = SHSplit.Split(item, AllStringsSE.space).Count;
+                int tokens = SHSplit.Split(item, AllStrings.space).Count;
                 if (tokens < 8)
                 {
                     vseMa8 = false;
@@ -520,7 +520,7 @@ public class FtpNet : FtpBase
         else
         {
 
-            if (dirName == AllStringsSE.dd)
+            if (dirName == AllStrings.dd)
             {
                 ps.RemoveLastToken();
             }
@@ -614,7 +614,7 @@ public class FtpNet : FtpBase
             StreamReader reader = null;
             FtpWebResponse response = null;
 
-            string _Path = UH.Combine(true, remoteHost + AllStringsSE.colon + remotePort, ps.ActualPath);
+            string _Path = UH.Combine(true, remoteHost + AllStrings.colon + remotePort, ps.ActualPath);
             try
             {
                 // Get the object used to communicate with the server.
@@ -964,18 +964,18 @@ public class FtpNet : FtpBase
             }
             else if (fz == 'd')
             {
-                string folderName = SHJoin.JoinFromIndex(8, AllCharsSE.space, SHSplit.Split(item, AllStringsSE.space));
+                string folderName = SHJoin.JoinFromIndex(8, AllCharsSE.space, SHSplit.Split(item, AllStrings.space));
 
                 if (!FtpHelper.IsThisOrUp(folderName))
                 {
                     if (vr.ContainsKey(actualPath))
                     {
-                        vr[actualPath].Add(item + AllStringsSE.slash);
+                        vr[actualPath].Add(item + AllStrings.slash);
                     }
                     else
                     {
                         List<string> ppk = new List<string>();
-                        ppk.Add(item + AllStringsSE.slash);
+                        ppk.Add(item + AllStrings.slash);
                         vr.Add(actualPath, ppk);
                     }
                     getFSEntriesListRecursively(slozkyNeuploadovatAVS, projeteSlozky, vr, ps.ActualPath, folderName);

@@ -33,7 +33,7 @@ public class FtpTest
         ftpDll.DebugActualFolder();
         ftpDll.DebugAllEntries();
 
-        ftp.CreateFolder(AllStringsSE.slash + folder);
+        ftp.CreateFolder(AllStrings.slash + folder);
         ftp.ChangeFolder(folder);
         ftpDll.DebugActualFolder();
         ftp.UploadFiles("D:\a.txt");

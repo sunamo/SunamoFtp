@@ -182,7 +182,7 @@ public abstract class FtpBase : FtpAbstract
 
     public string GetActualPath()
     {
-        return UH.Combine(true, remoteHost + AllStringsSE.colon + remotePort, ps.ActualPath);
+        return UH.Combine(true, remoteHost + AllStrings.colon + remotePort, ps.ActualPath);
     }
 
     /// <summary>
@@ -191,7 +191,7 @@ public abstract class FtpBase : FtpAbstract
     /// <param name="dirName"></param>
     public string GetActualPath(string dirName)
     {
-        string s = /*UH.Combine(true,*/  remoteHost + AllStringsSE.colon + remotePort + ps.ActualPath + dirName;
+        string s = /*UH.Combine(true,*/  remoteHost + AllStrings.colon + remotePort + ps.ActualPath + dirName;
         return s.TrimEnd(AllCharsSE.slash);
     }
 
@@ -357,7 +357,7 @@ public abstract class FtpBase : FtpAbstract
     /// <param name="_FTPPass">FTP login password</param>
     public void UploadFile(string _FileName)
     {
-        string _UploadPath = UH.Combine(false, remoteHost + AllStringsSE.colon + remotePort + AllStringsSE.slash, UH.Combine(true, ps.ActualPath, Path.GetFileName(_FileName)));
+        string _UploadPath = UH.Combine(false, remoteHost + AllStrings.colon + remotePort + AllStrings.slash, UH.Combine(true, ps.ActualPath, Path.GetFileName(_FileName)));
         if (reallyUpload)
         {
             UploadFileMain(_FileName, _UploadPath);
@@ -375,7 +375,7 @@ public abstract class FtpBase : FtpAbstract
     /// <param name="actualFtpPath"></param>
     public bool UploadFile(string fullFilePath, string actualFtpPath)
     {
-        string _UploadPath = UH.Combine(false, remoteHost + AllStringsSE.colon + remotePort + AllStringsSE.slash + AllStringsSE.slash, UH.Combine(false, actualFtpPath, Path.GetFileName(fullFilePath)));
+        string _UploadPath = UH.Combine(false, remoteHost + AllStrings.colon + remotePort + AllStrings.slash + AllStrings.slash, UH.Combine(false, actualFtpPath, Path.GetFileName(fullFilePath)));
         var vr = true;
         if (reallyUpload)
         {

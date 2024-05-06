@@ -43,16 +43,16 @@ public class PathSelector
             firstTokenMustExists = true;
 
         }
-        if (initialDirectory.Contains(AllStringsSE.bs))
+        if (initialDirectory.Contains(AllStrings.bs))
         {
-            delimiter = AllStringsSE.bs;
+            delimiter = AllStrings.bs;
         }
         else
         {
-            delimiter = AllStringsSE.slash;
+            delimiter = AllStrings.slash;
             if (initialDirectory.Contains(delimiter))
             {
-                if (initialDirectory.StartsWith(AllStringsSE.slash))
+                if (initialDirectory.StartsWith(AllStrings.slash))
                 {
                     throw new Exception("Počáteční složka nemůže začínat s lomítkem na začátku");
                     int druhy = initialDirectory.IndexOf(AllCharsSE.slash, 1);
@@ -130,7 +130,7 @@ public class PathSelector
             }
             else
             {
-                return AllStringsSE.slash;
+                return AllStrings.slash;
             }
         }
         set

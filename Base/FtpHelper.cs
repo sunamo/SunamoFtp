@@ -13,7 +13,7 @@ public static class FtpHelper
     /// <param name="folderName2"></param>
     public static bool IsThisOrUp(string folderName2)
     {
-        return folderName2 == AllStringsSE.dot || folderName2 == AllStringsSE.dd;
+        return folderName2 == AllStrings.dot || folderName2 == AllStrings.dd;
     }
 
     /// <summary>
@@ -47,14 +47,14 @@ public static class FtpHelper
     public static FileSystemType IsFile(string entry)
     {
         string fileName = null;
-        var tokeny = entry.Split(AllChars.space).ToList(); //SHSplit.Split(entry, AllStringsSE.space);
+        var tokeny = entry.Split(AllChars.space).ToList(); //SHSplit.Split(entry, AllStrings.space);
         FileSystemType isFile = IsFileShared(entry, tokeny, out fileName);
         return isFile;
     }
 
     public static FileSystemType IsFile(string entry, out string fileName)
     {
-        var tokeny = entry.Split(AllChars.space).ToList(); //SHSplit.Split(entry, AllStringsSE.space);
+        var tokeny = entry.Split(AllChars.space).ToList(); //SHSplit.Split(entry, AllStrings.space);
         FileSystemType isFile = IsFileShared(entry, tokeny, out fileName);
         return isFile;
     }
@@ -62,7 +62,7 @@ public static class FtpHelper
     public static FileSystemType IsFile(string entry, out string fileName, out long length)
     {
         //drw-rw-rw-   1 user     group           0 Nov 21 18:03 App_Data
-        var tokeny = entry.Split(AllChars.space).ToList(); //SHSplit.Split(entry, AllStringsSE.space);
+        var tokeny = entry.Split(AllChars.space).ToList(); //SHSplit.Split(entry, AllStrings.space);
         FileSystemType isFile = IsFileShared(entry, tokeny, out fileName);
         length = long.Parse(tokeny[4]);
 
