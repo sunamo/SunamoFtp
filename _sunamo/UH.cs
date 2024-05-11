@@ -1,6 +1,6 @@
 
 
-namespace SunamoFtp._sunamo;
+namespace SunamoFtp;
 internal class UH
 {
     internal static string GetFileName(string rp, bool wholeUrl = false)

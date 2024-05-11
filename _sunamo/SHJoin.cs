@@ -1,6 +1,6 @@
-﻿using System.Collections;
+using System.Collections;
 
-namespace SunamoFtp._sunamo;
+namespace SunamoFtp;
 internal class SHJoin
 {
     internal static string JoinFromIndex(int dex, object delimiter2, IList parts)

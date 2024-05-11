@@ -1,5 +1,5 @@
 
-namespace SunamoFtp.Other;
+namespace SunamoFtp;
 using SunamoValues;
 
 

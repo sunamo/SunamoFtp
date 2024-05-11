@@ -4,7 +4,7 @@ using SunamoFtp._sunamo;
 
 
 
-namespace SunamoFtp.FtpClients;
+namespace SunamoFtp;
 public class FTP : FtpBase
 {
     static Type type = typeof(FTP);

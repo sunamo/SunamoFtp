@@ -1,1 +1,1 @@
-namespace SunamoFtp.Properties;
+namespace SunamoFtp;

@@ -1,5 +1,5 @@
 
-namespace SunamoFtp.FtpClients;
+namespace SunamoFtp;
 using SunamoData.Data;
 using SunamoExceptions.OnlyInSE;
 using SunamoFtp._sunamo;

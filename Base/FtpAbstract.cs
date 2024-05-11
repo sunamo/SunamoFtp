@@ -1,5 +1,5 @@
 
-namespace SunamoFtp.Base;
+namespace SunamoFtp;
 using SunamoData.Data;
 using SunamoInterfaces.Interfaces;
 

@@ -1,4 +1,4 @@
-namespace SunamoFtp.Other;
+namespace SunamoFtp;
 
 public static class CustomFtpCommands
 {

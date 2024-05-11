@@ -1,5 +1,5 @@
 
-namespace SunamoFtp.Base;
+namespace SunamoFtp;
 
 using SunamoFtp._sunamo;
 using SunamoValues;
