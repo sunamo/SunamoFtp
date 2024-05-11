@@ -55,12 +55,12 @@ public class PathSelector
                 if (initialDirectory.StartsWith(AllStrings.slash))
                 {
                     throw new Exception("Počáteční složka nemůže začínat s lomítkem na začátku");
-                    int druhy = initialDirectory.IndexOf(AllCharsSE.slash, 1);
+                    int druhy = initialDirectory.IndexOf(AllChars.slash, 1);
                     firstToken = initialDirectory.Substring(0, druhy);
                 }
                 else
                 {
-                    int prvni = initialDirectory.IndexOf(AllCharsSE.slash);
+                    int prvni = initialDirectory.IndexOf(AllChars.slash);
                     firstToken = initialDirectory.Substring(0, prvni);
                 }
             }

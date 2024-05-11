@@ -239,7 +239,7 @@ public class FTP : FtpBase
         foreach (string item in fse)
         {
             char fz = item[0];
-            if (fz == AllCharsSE.dash)
+            if (fz == AllChars.dash)
             {
                 if (vr.ContainsKey(actualPath))
                 {
@@ -254,7 +254,7 @@ public class FTP : FtpBase
             }
             else if (fz == 'd')
             {
-                string folderName = SHJoin.JoinFromIndex(8, AllCharsSE.space, item.Split(new String[] { AllStrings.space }, StringSplitOptions.RemoveEmptyEntries).ToList());
+                string folderName = SHJoin.JoinFromIndex(8, AllChars.space, item.Split(new String[] { AllStrings.space }, StringSplitOptions.RemoveEmptyEntries).ToList());
                 ////DebugLogger.Instance.WriteLine("Název alba22: " + folderName);
                 if (!FtpHelper.IsThisOrUp(folderName))
                 {
@@ -288,12 +288,12 @@ public class FTP : FtpBase
                 foreach (string item in fse)
                 {
                     char fz = item[0];
-                    if (fz == AllCharsSE.dash)
+                    if (fz == AllChars.dash)
                     {
                     }
                     else if (fz == 'd')
                     {
-                        string folderName = SHJoin.JoinFromIndex(8, AllCharsSE.space, item.Split(AllChars.space));
+                        string folderName = SHJoin.JoinFromIndex(8, AllChars.space, item.Split(AllChars.space));
                         if (!FtpHelper.IsThisOrUp(folderName))
                         {
                             if (vr.ContainsKey(actualPath))
@@ -1463,8 +1463,8 @@ public class FTP : FtpBase
         #endregion
 
         #region Získám IP adresu v řetězci z reply
-        int index1 = reply.IndexOf(AllCharsSE.lb);
-        int index2 = reply.IndexOf(AllCharsSE.rb);
+        int index1 = reply.IndexOf(AllChars.lb);
+        int index2 = reply.IndexOf(AllChars.rb);
         string ipData = reply.Substring(index1 + 1, index2 - index1 - 1);
         int[] parts = new int[6];
 
@@ -1480,13 +1480,13 @@ public class FTP : FtpBase
             char ch = char.Parse(ipData.Substring(i, 1));
             if (char.IsDigit(ch))
                 buf += ch;
-            else if (ch != AllCharsSE.comma)
+            else if (ch != AllChars.comma)
             {
                 throw new Exception("Malformed PASV reply" + ": " + reply);
             }
 
             #region Pokud je poslední znak čárka,
-            if (ch == AllCharsSE.comma || i + 1 == len)
+            if (ch == AllChars.comma || i + 1 == len)
             {
 
                 try

@@ -192,7 +192,7 @@ public abstract class FtpBase : FtpAbstract
     public string GetActualPath(string dirName)
     {
         string s = /*UH.Combine(true,*/  remoteHost + AllStrings.colon + remotePort + ps.ActualPath + dirName;
-        return s.TrimEnd(AllCharsSE.slash);
+        return s.TrimEnd(AllChars.slash);
     }
 
 
@@ -268,13 +268,13 @@ public abstract class FtpBase : FtpAbstract
             string actualPath = ps.ActualPath;
             foreach (string item in fse)
             {
-                string size = SHJoin.JoinFromIndex(4, AllCharsSE.space, item.Split(AllChars.space).ToList());
+                string size = SHJoin.JoinFromIndex(4, AllChars.space, item.Split(AllChars.space).ToList());
                 char fz = item[0];
-                if (fz == AllCharsSE.dash)
+                if (fz == AllChars.dash)
                 {
                     if (size != "0")
                     {
-                        folderSizeRec += ulong.Parse(size.Substring(0, size.IndexOf(AllCharsSE.space) + 1));
+                        folderSizeRec += ulong.Parse(size.Substring(0, size.IndexOf(AllChars.space) + 1));
                     }
 
                     if (vr.ContainsKey(actualPath))
@@ -290,7 +290,7 @@ public abstract class FtpBase : FtpAbstract
                 }
                 else if (fz == 'd')
                 {
-                    string folderName2 = SHJoin.JoinFromIndex(8, AllCharsSE.space, item.Split(AllChars.space));
+                    string folderName2 = SHJoin.JoinFromIndex(8, AllChars.space, item.Split(AllChars.space));
                     if (!FtpHelper.IsThisOrUp(folderName2))
                     {
                         if (slozkyNeuploadovatAVS.Contains(folderName2) && ps.ActualPath == MainWindow.WwwSlash)
@@ -396,7 +396,7 @@ public abstract class FtpBase : FtpAbstract
     {
         string nazevSlozky = Path.GetFileName(slozkaFrom);
         string pathFolder = UH.Combine(true, ps.ActualPath, nazevSlozky);
-        slozkaFrom = slozkaFrom.TrimEnd(AllCharsSE.bs);
+        slozkaFrom = slozkaFrom.TrimEnd(AllChars.bs);
         List<string> soubory = Directory.GetFiles(slozkaFrom).ToList();
         var slozky = Directory.GetDirectories(slozkaFrom);
 

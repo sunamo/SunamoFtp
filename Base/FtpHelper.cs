@@ -71,10 +71,10 @@ public static class FtpHelper
 
     private static FileSystemType IsFileShared(string entry, List<string> tokeny, out string fileName)
     {
-        fileName = SHJoin.JoinFromIndex(8, AllCharsSE.space, tokeny);
+        fileName = SHJoin.JoinFromIndex(8, AllChars.space, tokeny);
         FileSystemType isFile = FileSystemType.File;
         char f = entry[0];
-        if (f == AllCharsSE.dash)
+        if (f == AllChars.dash)
         {
 
         }

@@ -123,7 +123,7 @@ public class FtpNet : FtpBase
     {
         if (pocetExc < maxPocetExc)
         {
-            string ma = GetActualPath(dirName).TrimEnd(AllCharsSE.slash);
+            string ma = GetActualPath(dirName).TrimEnd(AllChars.slash);
             OnNewStatus("Mažu adresář" + " " + ma);
 
             FtpWebRequest clsRequest = null;
@@ -306,7 +306,7 @@ public class FtpNet : FtpBase
                                 }
                             }
                             goToUpFolderForce();
-                            rmdir(new List<string>(), Path.GetFileName(item2.Key.TrimEnd(AllCharsSE.slash)));
+                            rmdir(new List<string>(), Path.GetFileName(item2.Key.TrimEnd(AllChars.slash)));
                         }
                     }
                 }
@@ -410,7 +410,7 @@ public class FtpNet : FtpBase
 
         if (dirName != "")
         {
-            dirName = Path.GetFileName(dirName.TrimEnd(AllCharsSE.slash));
+            dirName = Path.GetFileName(dirName.TrimEnd(AllChars.slash));
             if (dirName[dirName.Length - 1] == AllStrings.slash[0])
             {
                 dirName = dirName.Substring(0, dirName.Length - 1);
@@ -949,7 +949,7 @@ public class FtpNet : FtpBase
         foreach (string item in fse)
         {
             char fz = item[0];
-            if (fz == AllCharsSE.dash)
+            if (fz == AllChars.dash)
             {
                 if (vr.ContainsKey(actualPath))
                 {
@@ -964,7 +964,7 @@ public class FtpNet : FtpBase
             }
             else if (fz == 'd')
             {
-                string folderName = SHJoin.JoinFromIndex(8, AllCharsSE.space, SHSplit.Split(item, AllStrings.space));
+                string folderName = SHJoin.JoinFromIndex(8, AllChars.space, SHSplit.Split(item, AllStrings.space));
 
                 if (!FtpHelper.IsThisOrUp(folderName))
                 {
