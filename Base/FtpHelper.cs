@@ -1,8 +1,8 @@
 
 namespace SunamoFtp;
 
-using SunamoFtp._sunamo;
-using SunamoValues;
+
+
 
 
 public static class FtpHelper

@@ -1,7 +1,7 @@
 
 namespace SunamoFtp;
-using SunamoData.Data;
-using SunamoInterfaces.Interfaces;
+
+
 
 
 public abstract class FtpAbstract
