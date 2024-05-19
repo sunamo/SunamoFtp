@@ -1,8 +1,10 @@
-
-namespace SunamoFtp;
-
-
-
+namespace
+#if SunamoFluentFtp
+SunamoFluentFtp
+#else
+SunamoFtp
+#endif
+;
 public class PathSelector
 {
     string firstToken = "";
@@ -17,7 +19,6 @@ public class PathSelector
         }
     }
     public int indexZero = 0;
-
     public string FirstToken
     {
         get
@@ -25,12 +26,10 @@ public class PathSelector
             return firstToken;
         }
     }
-
     public List<string> DivideToTokens(string r)
     {
         return r.Split(new string[] { delimiter }, StringSplitOptions.RemoveEmptyEntries).ToList();
     }
-
     /// <summary>
     /// A1 je složka, která je nejvyšší. Může být nastavena na C:\, www, SE nebo cokoliv jiného
     /// Pracuje buď s \ nebo s / - podle toho co najde v A1. Libovolně lze přidat další oddělovače
@@ -41,7 +40,6 @@ public class PathSelector
         if (initialDirectory.Contains(":\\") || initialDirectory != "")
         {
             firstTokenMustExists = true;
-
         }
         if (initialDirectory.Contains(AllStrings.bs))
         {
@@ -65,14 +63,12 @@ public class PathSelector
                 }
             }
         }
-
         if (firstTokenMustExists)
         {
             indexZero = 1;
         }
         ActualPath = initialDirectory;
     }
-
     int Count
     {
         get
@@ -84,13 +80,9 @@ public class PathSelector
     {
         tokens.RemoveAt(Count - 1);
     }
-
     static Type type = typeof(PathSelector);
-
     public void RemoveLastToken()
     {
-
-
         if (CanGoToUpFolder)
         {
             tokens.RemoveAt(Count - 1);
@@ -100,17 +92,14 @@ public class PathSelector
             throw new Exception("Is not possible go to up folder");
         }
     }
-
     public string GetLastToken()
     {
         return tokens[Count - 1];
     }
-
     public void AddToken(string token)
     {
         tokens.Add(token);
     }
-
     public bool CanGoToUpFolder
     {
         get
@@ -118,7 +107,6 @@ public class PathSelector
             return Count > indexZero;
         }
     }
-
     public string
         ActualPath
     {
@@ -139,6 +127,4 @@ public class PathSelector
             tokens.AddRange(value.Split(new string[] { delimiter }, StringSplitOptions.RemoveEmptyEntries)); //SHSplit.Split(value, delimiter));
         }
     }
-
-
 }

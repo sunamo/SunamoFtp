@@ -1,9 +1,10 @@
-
-namespace SunamoFtp;
-
-
-
-
+namespace
+#if SunamoFluentFtp
+SunamoFluentFtp
+#else
+SunamoFtp
+#endif
+;
 public abstract class FtpAbstract
 {
     #region Variables
@@ -41,7 +42,6 @@ public abstract class FtpAbstract
     protected bool startup = true;
     public ulong folderSizeRec = 0;
     #endregion
-
     #region Set variables methods
     /// <summary>
     /// S PP remoteHost A1
@@ -51,7 +51,6 @@ public abstract class FtpAbstract
     {
         this.remoteHost = remoteHost;
     }
-
     /// <summary>
     /// G adresu vzdáleného hostitele
     /// </summary>
@@ -59,7 +58,6 @@ public abstract class FtpAbstract
     {
         return remoteHost;
     }
-
     /// <summary>
     /// S PP remotePort A1
     /// </summary>
@@ -68,7 +66,6 @@ public abstract class FtpAbstract
     {
         this.remotePort = remotePort;
     }
-
     /// <summary>
     /// G port který se používá pro vzdálený přenos
     /// </summary>
@@ -76,7 +73,6 @@ public abstract class FtpAbstract
     {
         return remotePort;
     }
-
     /// <summary>
     /// S PP remoteUser A1
     /// </summary>
@@ -85,7 +81,6 @@ public abstract class FtpAbstract
     {
         this.remoteUser = remoteUser;
     }
-
     /// <summary>
     /// S PP remotePass A1
     /// </summary>
@@ -96,7 +91,6 @@ public abstract class FtpAbstract
     }
     #endregion
     public abstract void Connect();
-
     public abstract void D(string what, string text, params object[] args);
     public abstract void DebugActualFolder();
     #region Abstract methods
@@ -110,13 +104,10 @@ public abstract class FtpAbstract
     public abstract List<string> ListDirectoryDetails();
     public abstract Dictionary<string, List<string>> getFSEntriesListRecursively(List<string> slozkyNeuploadovatAVS);
     public abstract void chdirLite(string dirName);
-
     public abstract void goToUpFolderForce();
     public abstract void goToUpFolder();
     public abstract void LoginIfIsNot(bool startup);
-
     public abstract long getFileSize(string filename);
     public abstract void goToPath(string slozkaNaHostingu);
-
     #endregion
 }
