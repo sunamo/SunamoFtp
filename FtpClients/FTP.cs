@@ -1578,7 +1578,7 @@ public class FTP : FtpBase
 
     public override void Connect()
     {
-        throw new NotImplementedException();
+        ThrowEx.NotImplementedMethod();
     }
 
 

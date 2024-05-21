@@ -1031,7 +1031,7 @@ public class FtpNet : FtpBase
 
     public override void Connect()
     {
-        throw new NotImplementedException();
+        ThrowEx.NotImplementedMethod();
     }
 
 

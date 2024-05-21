@@ -125,16 +125,16 @@ void
 #endif
 UploadFile(string path)
     {
-        throw new NotImplementedException();
+        ThrowEx.NotImplementedMethod();
     }
 
     public override void Dispose()
     {
-        throw new NotImplementedException();
+        ThrowEx.NotImplementedMethod();
     }
 
     public override void Connect()
     {
-        throw new NotImplementedException();
+        ThrowEx.NotImplementedMethod();
     }
 }
