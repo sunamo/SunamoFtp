@@ -1,8 +1,8 @@
 namespace SunamoFtp;
 
 
-public class DirectoriesToDelete
+internal class DirectoriesToDelete
 {
-    public int hloubka = 0;
-    public List<Dictionary<string, List<string>>> adresare = new List<Dictionary<string, List<string>>>();
+    internal int hloubka = 0;
+    internal List<Dictionary<string, List<string>>> adresare = new List<Dictionary<string, List<string>>>();
 }
