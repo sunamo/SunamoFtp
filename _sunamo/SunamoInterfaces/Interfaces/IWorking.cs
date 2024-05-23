@@ -1,7 +1,7 @@
 namespace SunamoFtp;
 
 
-internal interface IWorking
+public interface IWorking
 {
     bool IsWorking { get; }
 }

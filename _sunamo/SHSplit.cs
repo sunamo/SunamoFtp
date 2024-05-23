@@ -1,12 +1,12 @@
 namespace SunamoFtp;
-internal class SHSplit
+public class SHSplit
 {
-    internal static List<string> Split(string item, params string[] space)
+    public static List<string> Split(string item, params string[] space)
     {
         return item.Split(space, StringSplitOptions.RemoveEmptyEntries).ToList();
     }
 
-    internal static List<string> SplitChar(string v1, params char[] v2)
+    public static List<string> SplitChar(string v1, params char[] v2)
     {
         return v1.Split(v2).ToList();
     }
