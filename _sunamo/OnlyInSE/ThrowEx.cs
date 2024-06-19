@@ -1,9 +1,238 @@
-namespace SunamoFtp;
-
-using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
-using System.Reflection;
-
+namespace
+#if SunamoArgs
+SunamoArgs
+#elif SunamoAsync
+SunamoAsync
+#elif SunamoAttributes
+SunamoAttributes
+#elif SunamoBts
+SunamoBts
+#elif SunamoChar
+SunamoChar
+#elif SunamoCl
+SunamoCl
+#elif SunamoClearScript
+SunamoClearScript
+#elif SunamoClipboard
+SunamoClipboard
+#elif SunamoCollectionOnDrive
+SunamoCollectionOnDrive
+#elif SunamoCollections
+SunamoCollections
+#elif SunamoCollectionsChangeContent
+SunamoCollectionsChangeContent
+#elif SunamoCollectionsGeneric
+SunamoCollectionsGeneric
+#elif SunamoCollectionsGenericShared
+SunamoCollectionsGenericShared
+#elif SunamoCollectionsIndexesWithNull
+SunamoCollectionsIndexesWithNull
+#elif SunamoCollectionsNonGeneric
+SunamoCollectionsNonGeneric
+#elif SunamoCollectionsShared
+SunamoCollectionsShared
+#elif SunamoCollectionsValuesTableGrid
+SunamoCollectionsValuesTableGrid
+#elif SunamoCollectionWithoutDuplicates
+SunamoCollectionWithoutDuplicates
+#elif SunamoColors
+SunamoColors
+#elif SunamoCompare
+SunamoCompare
+#elif SunamoConverters
+SunamoConverters
+#elif SunamoCrypt
+SunamoCrypt
+#elif SunamoDevCode
+SunamoDevCode
+#elif SunamoCsv
+SunamoCsv
+#elif SunamoData
+SunamoData
+#elif SunamoDateTime
+SunamoDateTime
+#elif SunamoDebugCollection
+SunamoDebugCollection
+#elif SunamoDebugging
+SunamoDebugging
+#elif SunamoDebugIO
+SunamoDebugIO
+#elif SunamoDelegates
+SunamoDelegates
+#elif SunamoDevCode
+SunamoDevCode
+#elif SunamoDictionary
+SunamoDictionary
+#elif SunamoEmbeddedResources
+SunamoEmbeddedResources
+#elif SunamoEnums
+SunamoEnums
+#elif SunamoEnumsHelper
+SunamoEnumsHelper
+#elif SunamoExceptions
+SunamoExceptions
+#elif SunamoExtensions
+SunamoExtensions
+#elif SunamoFileExtensions
+SunamoFileExtensions
+#elif SunamoFileIO
+SunamoFileIO
+#elif SunamoFileSystem
+SunamoFileSystem
+#elif SunamoFluentFtp
+SunamoFluentFtp
+#elif SunamoFtp
+SunamoFtp
+#elif SunamoFubuCore
+SunamoFubuCore
+#elif SunamoFubuCsProjFile
+SunamoFubuCsProjFile
+#elif SunamoGitBashBuilder
+SunamoGitBashBuilder
+#elif SunamoGoogleSheets
+SunamoGoogleSheets
+#elif SunamoHtml
+SunamoHtml
+#elif SunamoHttp
+SunamoHttp
+#elif SunamoIni
+SunamoIni
+#elif SunamoInterfaces
+SunamoInterfaces
+#elif SunamoJson
+SunamoJson
+#elif SunamoLang
+SunamoLang
+#elif SunamoLogging
+SunamoLogging
+#elif SunamoLogMessage
+SunamoLogMessage
+#elif SunamoMail
+SunamoMail
+#elif SunamoMarkdown
+SunamoMarkdown
+#elif SunamoMime
+SunamoMime
+#elif SunamoMsgReader
+SunamoMsgReader
+#elif SunamoNuGetProtocol
+SunamoNuGetProtocol
+#elif SunamoNumbers
+SunamoNumbers
+#elif SunamoNumbersShared
+SunamoNumbersShared
+#elif SunamoOctokit
+SunamoOctokit
+#elif SunamoPackageJson
+SunamoPackageJson
+#elif SunamoParsing
+SunamoParsing
+#elif SunamoPercentCalculator
+SunamoPercentCalculator
+#elif SunamoPInvoke
+SunamoPInvoke
+#elif SunamoPlatformUwpInterop
+SunamoPlatformUwpInterop
+#elif SunamoPS
+SunamoPS
+#elif SunamoRandom
+SunamoRandom
+#elif SunamoReflection
+SunamoReflection
+#elif SunamoRegex
+SunamoRegex
+#elif SunamoRoslyn
+SunamoRoslyn
+#elif SunamoRss
+SunamoRss
+#elif SunamoSerializer
+SunamoSerializer
+#elif SunamoShared
+SunamoShared
+#elif SunamoSolutionsIndexer
+SunamoSolutionsIndexer
+#elif SunamoStopwatch
+SunamoStopwatch
+#elif SunamoString
+SunamoString
+#elif SunamoStringData
+SunamoStringData
+#elif SunamoStringFormat
+SunamoStringFormat
+#elif SunamoStringGetLines
+SunamoStringGetLines
+#elif SunamoStringGetString
+SunamoStringGetString
+#elif SunamoStringJoin
+SunamoStringJoin
+#elif SunamoStringJoinPairs
+SunamoStringJoinPairs
+#elif SunamoStringParts
+SunamoStringParts
+#elif SunamoStringReplace
+SunamoStringReplace
+#elif SunamoStringShared
+SunamoStringShared
+#elif SunamoStringSplit
+SunamoStringSplit
+#elif SunamoStringSubstring
+SunamoStringSubstring
+#elif SunamoStringTrim
+SunamoStringTrim
+#elif SunamoText
+SunamoText
+#elif SunamoTextOutputGenerator
+SunamoTextOutputGenerator
+#elif SunamoThisApp
+SunamoThisApp
+#elif SunamoThread
+SunamoThread
+#elif SunamoTidy
+SunamoTidy
+#elif SunamoTwoWayDictionary
+SunamoTwoWayDictionary
+#elif SunamoTypeOfMessage
+SunamoTypeOfMessage
+#elif SunamoUnderscore
+SunamoUnderscore
+#elif SunamoUri
+SunamoUri
+#elif SunamoUriWebServices
+SunamoUriWebServices
+#elif SunamoValues
+SunamoValues
+#elif SunamoVcf
+SunamoVcf
+#elif SunamoWikipedia
+SunamoWikipedia
+#elif SunamoWinStd
+SunamoWinStd
+#elif SunamoXlfKeys
+SunamoXlfKeys
+#elif SunamoXliffParser
+SunamoXliffParser
+#elif SunamoXml
+SunamoXml
+#elif SunamoYaml
+SunamoYaml
+#elif SunamoYouTube
+SunamoYouTube
+#elif SunamoGetFiles
+SunamoGetFiles
+#elif SunamoGetFolders
+SunamoGetFolders
+#elif SunamoCollectionsTo
+SunamoCollectionsTo
+#elif SunamoXlfEngine
+SunamoXlfEngine
+#elif SunamoDictionaryToDelete
+SunamoDictionaryToDelete
+#elif SunamoDotnetCmdBuilder
+SunamoDotnetCmdBuilder
+#else
+SunamoExceptions
+#endif
+;
 public class ThrowEx
 {
     #region from ThrowExShared.cs - all ok 17-10-21
@@ -11,15 +240,15 @@ public class ThrowEx
     public static void DummyNotThrow(Exception ex)
     {
     }
-    /// <summary>
-    ///     Verify whether A3 contains A4
-    ///     true if everything is OK
-    ///     false if some error occured
-    /// </summary>
-    /// <param name="type"></param>
-    /// <param name="v"></param>
-    /// <param name="p"></param>
-    /// <param name="after"></param>
+    
+    
+    
+    
+    
+    
+    
+    
+    
     public static bool NotContains(string p, params string[] after)
     {
         return ThrowIsNotNull(Exceptions.NotContains(FullNameOfExecutedCode(), p, after));
@@ -43,13 +272,13 @@ public class ThrowEx
         ThrowIsNotNull(Exceptions.WrongNumberOfElements(FullNameOfExecutedCode(T.Item1, T.Item2), requireElements,
         nameCount, ele));
     }
-    /// <summary>
-    ///     Return & throw exception whether
-    ///     directory NOT exists
-    /// </summary>
-    /// <param name="type"></param>
-    /// <param name="methodName"></param>
-    /// <param name="folder1"></param>
+    
+    
+    
+    
+    
+    
+    
     public static void DirectoryWasntFound(string folder1)
     {
         ThrowIsNotNull(Exceptions.DirectoryWasntFound(FullNameOfExecutedCode(), folder1));
@@ -85,10 +314,10 @@ public class ThrowEx
         Exceptions.IsNotPositiveNumber(FullNameOfExecutedCode(), nameOfVariable, n)
         );
     }
-    /// <summary>
-    ///     no additional check
-    /// </summary>
-    /// <param name="item"></param>
+    
+    
+    
+    
     public static void NotExists(string item)
     {
         ThrowIsNotNull(
@@ -102,14 +331,14 @@ public class ThrowEx
         );
     }
     #endregion
-    /// <summary>
-    ///     Default use here method with one argument
-    ///     Return false in case of exception, otherwise true
-    ///     In console app is needed put in into try-catch error due to there is no globally handler of errors
-    /// </summary>
-    /// <param name="type"></param>
-    /// <param name="methodName"></param>
-    /// <param name="exception"></param>
+    
+    
+    
+    
+    
+    
+    
+    
     public static bool ThrowIsNotNull(Exception exception)
     {
         if (exception != null)
@@ -141,7 +370,7 @@ public class ThrowEx
     public static Func<char, bool> IsLockedByBitLocker;
     public static bool LockedByBitLocker(string path)
     {
-        // pokračovat na tohle
+        
         if (IsLockedByBitLocker != null)
         {
             var p = path[0];
@@ -193,7 +422,7 @@ public class ThrowEx
     {
         ThrowIsNotNull(Exceptions.FtpAuthentication, s);
     }
-    //FtpAuthentication
+    
     public static void InvalidCast(string v)
     {
         ThrowIsNotNull(Exceptions.InvalidCast, v);
@@ -210,7 +439,7 @@ public class ThrowEx
     {
         ThrowIsNotNull(Exceptions.FtpSecurityNotAvailable, v);
     }
-    //FtpSecurityNotAvailable
+    
     public static void FtpMissingSocket(Exception ex)
     {
         ThrowIsNotNull(Exceptions.FtpMissingSocket, ex);
@@ -232,12 +461,18 @@ public class ThrowEx
     #region DifferentCountInLists
     #endregion
     #endregion
-    /// <summary>
-    ///     Je lichý
-    /// </summary>
-    /// <param name="colName"></param>
-    /// <param name="e"></param>SunamoCl
-    /// <returns></returns>
+
+    public static void UncommentAfterNugetsFinished()
+    {
+        ThrowIsNotNull(FullNameOfExecutedCode(T.Item1, T.Item2));
+    }
+
+    
+    
+    
+    
+    
+    
     public static bool IsOdd(string colName, ICollection e)
     {
         var f = Exceptions.IsOdd;
@@ -287,49 +522,49 @@ PD.ShowMb(s);
         var exc = f(FullNameOfExecutedCode(T.Item1, T.Item2));
         return ThrowIsNotNull(exc);
     }
-    //public static void ThrowIsNotNull(Func<string, string, string> f, string a1)
-    //{
-    //    var exc = f(FullNameOfExecutedCode(T.Item1, T.Item2), a1);
-    //    ThrowIsNotNull(exc);
-    //}
+    
+    
+    
+    
+    
     private static string lastMethod;
-    /// <summary>
-    /// Pokud tu chci mít Sl, musím zdůvodnit proč ho tu chci mít
-    /// V SunamoExceptions bude jen to co vyvolává výjimky, nic jiného
-    /// </summary>
-    //private static Action<string> Sl => PD.WriteToStartupLogRelease;
+    
+    
+    
+    
+    
     public static bool debuggerBreakOnEveryExc = false;
-    /// <summary>
-    ///     true if everything is OK
-    ///     false if some error occured
-    ///     In console app is needed put in into try-catch error due to there is no globally handler of errors
-    /// </summary>
-    /// <param name="exception"></param>
+    
+    
+    
+    
+    
+    
     public static bool ThrowIsNotNull(string exception, bool reallyThrow = true)
     {
         if (debuggerBreakOnEveryExc)
-{
+        {
             System.Diagnostics.Debugger.Break();
         }
-        // Výjimky se tak často nevyhazují. Tohle je daň za to že jsem tu měl arch
-        // jež nebyla dobře navržená. V ThrowEx se to již podruhé volat nebude.
+        
+        
         var cm = T.Item2;
         if (exception != null)
         {
             if (lastMethod == cm)
-                //                string lastMethodIsCm = "lastMethod == cm";
-                //#if MB
-                //                ShowMb(lastMethodIsCm);
-                //#endif
-                //                Sl(lastMethodIsCm);
+                
+                
+                
+                
+                
                 return false;
             if (lastMethod == null)
             {
-                //                string lastMethodIsConstsNulled = "lastMethod = " + ConstsSE.nulled;
-                //#if MB
-                //                    ShowMb(lastMethodIsConstsNulled);
-                //#endif
-                //                Sl(lastMethodIsConstsNulled);
+                
+                
+                
+                
+                
             }
             else
             {
@@ -337,20 +572,20 @@ PD.ShowMb(s);
 #if MB
 ShowMb();
 #endif
-                //Sl(lastMethodIs);
+                
             }
             lastMethod = cm;
             if (Exc.aspnet)
             {
-                //exception = exception.Replace("Violation of PRIMARY KEY constraint", ShortenedExceptions.ViolationOfPK);
-                // Will be written in globalasax error
+                
+                
                 writeServerError(T.Item3, exception);
                 if (reallyThrow && reallyThrow2) throw new Exception(exception);
             }
             else
             {
 #if MB
-//ShowMb($"reallyThrow = {reallyThrow} && reallyThrow2 = {reallyThrow2}");
+
 #endif
                 if (reallyThrow && reallyThrow2)
                 {
@@ -363,21 +598,21 @@ ShowMb("Throw exc");
         }
         return true;
     }
-    /// <summary>
-    ///     !Path.IsWindowsPathFormat
-    /// </summary>
-    /// <param name="stacktrace"></param>
-    /// <param name="type"></param>
-    /// <param name="methodName"></param>
-    /// <param name="argName"></param>
-    /// <param name="argValue"></param>
+    
+    
+    
+    
+    
+    
+    
+    
     public static void IsNotWindowsPathFormat(string argName, string argValue)
     {
         ThrowIsNotNull(Exceptions.IsNotWindowsPathFormat(null, argName, argValue));
     }
     public static string FullNameOfExecutedCode()
     {
-        // t,Item1, t,Item2, true
+        
         var f = FullNameOfExecutedCode(T.Item1, T.Item2, true);
         return f;
     }
@@ -398,18 +633,18 @@ ShowMb("Throw exc");
         ThrowIsNotNull(Exceptions.IsNull(FullNameOfExecutedCode(), variableName, variable));
     }
 #pragma warning disable
-    /// <summary>
-    ///     CA2211	Non-constant fields should not be visible
-    ///     IDE0044	Make field readonly
-    ///     Must be public due to GlobalAsaxHelper
-    /// </summary>
+    
+    
+    
+    
+    
     public static Action<string, string> writeServerError;
 #pragma warning enable
-    /// <summary>
-    ///     First can be Method base, then A2 can be anything
-    /// </summary>
-    /// <param name="type"></param>
-    /// <param name="methodName"></param>
+    
+    
+    
+    
+    
     public static string FullNameOfExecutedCode(object type, string methodName, bool fromThrowEx = false)
     {
         if (methodName == null)
@@ -461,16 +696,16 @@ ShowMb("Throw exc");
         ThrowIsNotNull(Exceptions.FolderCannotBeDeleted(FullNameOfExecutedCode(), repairedBlogPostsFolder, ex));
     }
     public static Action<object> showExceptionWindow = null;
-    /// <summary>
-    ///     A1 have to be Dictionary<T, U>, not IDictionary without generic
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <typeparam name="U"></typeparam>
-    /// <param name="type"></param>
-    /// <param name="v"></param>
-    /// <param name="en"></param>
-    /// <param name="dictName"></param>
-    /// <param name="key"></param>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     public static void KeyNotFound<T, U>(IDictionary<T, U> en, string dictName, T key)
     {
         ThrowIsNotNull(Exceptions.KeyNotFound(FullNameOfExecutedCode(ThrowEx.T.Item1, ThrowEx.T.Item2), en, dictName,
@@ -496,13 +731,13 @@ ShowMb("Throw exc");
         ThrowIsNotNull(Exceptions.CannotCreateDateTime(FullNameOfExecutedCode(), year, month, day, hour, minute,
         seconds, ex));
     }
-    /// <summary>
-    ///     TODO: replace FileDoesntExists ->FileOrFolderDoesntExists
-    /// </summary>
-    /// <param name="stacktrace"></param>
-    /// <param name="type"></param>
-    /// <param name="methodName"></param>
-    /// <param name="fulLPath"></param>
+    
+    
+    
+    
+    
+    
+    
     public static void FileDoesntExists(string fulLPath)
     {
         ThrowIsNotNull(Exceptions.FileExists(FullNameOfExecutedCode(), fulLPath));
@@ -520,12 +755,12 @@ ShowMb("Throw exc");
     {
         Custom(Exceptions.TextOfExceptions(ex));
     }
-    /// <summary>
-    ///     Return & throw exception whether directory exists
-    /// </summary>
-    /// <param name="type"></param>
-    /// <param name="v"></param>
-    /// <param name="photosPath"></param>
+    
+    
+    
+    
+    
+    
     public static bool DirectoryExists(string path)
     {
         return ThrowIsNotNull(Exceptions.DirectoryExists(FullNameOfExecutedCode(), path));
@@ -542,10 +777,10 @@ ShowMb("Throw exc");
     {
         return false;
     }
-    /// <summary>
-    ///     Must be string due to in sunamo is not NamespaceElement
-    /// </summary>
-    /// <param name="name"></param>
+    
+    
+    
+    
     public static void NameIsNotSetted(string nameControl, string nameFromProperty)
     {
         ThrowIsNotNull(Exceptions.NameIsNotSetted(FullNameOfExecutedCode(), nameControl, nameFromProperty));
@@ -570,16 +805,16 @@ ShowMb("Throw exc");
     {
         return ThrowIsNotNull(Exceptions.NotInt(FullNameOfExecutedCode(), what, value));
     }
-    /// <summary>
-    ///     Should always check for null before because otherwise stacktrace and methodName is computed uselesSly
-    ///     must be in code coz Invoke in ThrowIsNotNull should add more lines
-    ///     NOT checking whether variable is null, but whether is not null!
-    /// </summary>
-    /// <param name="stacktrace"></param>
-    /// <param name="type"></param>
-    /// <param name="methodName"></param>
-    /// <param name="variableName"></param>
-    /// <param name="variable"></param>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     public static void IsNotNull(string variableName, object variable)
     {
         ThrowIsNotNull(Exceptions.IsNotNull(FullNameOfExecutedCode(), variableName, variable));
@@ -599,14 +834,14 @@ ShowMb("Throw exc");
         ThrowIsNotNull(
         Exceptions.StringContainsUnallowedSubstrings(FullNameOfExecutedCode(), input, unallowedStrings));
     }
-    /// <summary>
-    ///     Is used when single (not list etc) bad arg is entered to method
-    /// </summary>
-    /// <param name="stacktrace"></param>
-    /// <param name="type"></param>
-    /// <param name="methodName"></param>
-    /// <param name="valueVar"></param>
-    /// <param name="nameVar"></param>
+    
+    
+    
+    
+    
+    
+    
+    
     public static void InvalidParameter(string valueVar, string nameVar)
     {
         ThrowIsNotNull(Exceptions.InvalidParameter(FullNameOfExecutedCode(), valueVar, nameVar));
@@ -615,7 +850,7 @@ ShowMb("Throw exc");
     {
         ThrowIsNotNull(Exceptions.ElementCantBeFound(FullNameOfExecutedCode(), nameCollection, element));
     }
-    //IsNotWindowsPathFormat
+    
     #endregion
     #region Without parameters
     public static void NotSupported()
@@ -648,14 +883,14 @@ ShowMb("Throw exc");
         ThrowIsNotNull(Exceptions.RepeatAfterTimeXTimesFailed(FullNameOfExecutedCode(T.Item1, T.Item2), times,
         timeoutInMs, address, sharedAlgorithmSlastError));
     }
-    /// <summary>
-    ///     Throw exc A4,5 is same count of elements
-    /// </summary>
-    /// <param name="type"></param>
-    /// <param name="methodName"></param>
-    /// <param name="detailLocation"></param>
-    /// <param name="before"></param>
-    /// <param name="after"></param>
+    
+    
+    
+    
+    
+    
+    
+    
     public static void ElementWasntRemoved(string detailLocation, int before, int after)
     {
         ThrowIsNotNull(Exceptions.ElementWasntRemoved(FullNameOfExecutedCode(), detailLocation, before, after));
@@ -719,22 +954,22 @@ ShowMb("Throw exc");
         return r;
     }
 
-    
 
-    //    private static void ThrowIsNotNull(Func<string, object, string> f, object o)
-    //{
-    //    ThrowIsNotNull(f, o);
-    //}
-    //private static void ThrowIsNotNull(Func<string, Exception, string> f, Exception o)
-    //{
-    //    ThrowIsNotNull(f, o);
-    //}
-    //private static void ThrowIsNotNull(Func<string, string> f)
-    //{
-    //    ThrowIsNotNull(f);
-    //}
-    //private static void ThrowIsNotNull(Func<string, string, string> f, string a1)
-    //{
-    //    ThrowIsNotNull(f, a1);
-    //}
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 }

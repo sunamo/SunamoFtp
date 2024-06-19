@@ -1,6 +1,246 @@
-namespace SunamoFtp;
-
-
+namespace
+#if SunamoBts
+SunamoBts
+#elif SunamoCl
+SunamoCl
+#elif SunamoChar
+SunamoChar
+#elif SunamoClipboard
+SunamoClipboard
+#elif SunamoCollections
+SunamoCollections
+#elif SunamoDevCode
+SunamoDevCode
+#elif SunamoCsv
+SunamoCsv
+#elif SunamoDateTime
+SunamoDateTime
+#elif SunamoDebugging
+SunamoDebugging
+#elif SunamoDevCode
+SunamoDevCode
+#elif SunamoDictionary
+SunamoDictionary
+#elif SunamoEmbeddedResources
+SunamoEmbeddedResources
+#elif SunamoFileSystem
+SunamoFileSystem
+#elif SunamoFtp
+SunamoFtp
+#elif SunamoGitBashBuilder
+SunamoGitBashBuilder
+#elif SunamoGoogleSheets
+SunamoGoogleSheets
+#elif SunamoHtml
+SunamoHtml
+#elif SunamoHttp
+SunamoHttp
+#elif SunamoLogger
+SunamoLogger
+#elif SunamoPlatformUwpInterop
+SunamoPlatformUwpInterop
+#elif SunamoRandom
+SunamoRandom
+#elif SunamoSerializer
+SunamoSerializer
+#elif SunamoShared
+SunamoShared
+#elif SunamoString
+SunamoString
+#elif SunamoStringData
+SunamoStringData
+#elif SunamoStringFormat
+SunamoStringFormat
+#elif SunamoStringReplace
+SunamoStringReplace
+#elif SunamoStringShared
+SunamoStringShared
+#elif SunamoStringTrim
+SunamoStringTrim
+#elif SunamoUri
+SunamoUri
+#elif SunamoXml
+SunamoXml
+#elif SunamoConverters
+SunamoConverters
+#elif SunamoConverters
+SunamoConverters
+#elif SunamoConverters
+SunamoConverters
+#elif SunamoConverters
+SunamoConverters
+#elif SunamoConverters
+SunamoConverters
+#elif SunamoRegex
+SunamoRegex
+#elif SunamoStringSplit
+SunamoStringSplit
+#elif SunamoArgs
+SunamoArgs
+#elif SunamoAsync
+SunamoAsync
+#elif SunamoAttributes
+SunamoAttributes
+#elif SunamoClearScript
+SunamoClearScript
+#elif SunamoCollectionOnDrive
+SunamoCollectionOnDrive
+#elif SunamoCollectionsChangeContent
+SunamoCollectionsChangeContent
+#elif SunamoCollectionsGeneric
+SunamoCollectionsGeneric
+#elif SunamoCollectionsGenericShared
+SunamoCollectionsGenericShared
+#elif SunamoCollectionsIndexesWithNull
+SunamoCollectionsIndexesWithNull
+#elif SunamoCollectionsNonGeneric
+SunamoCollectionsNonGeneric
+#elif SunamoCollectionsShared
+SunamoCollectionsShared
+#elif SunamoCollectionsValuesTableGrid
+SunamoCollectionsValuesTableGrid
+#elif SunamoCollectionWithoutDuplicates
+SunamoCollectionWithoutDuplicates
+#elif SunamoColors
+SunamoColors
+#elif SunamoCompare
+SunamoCompare
+#elif SunamoCrypt
+SunamoCrypt
+#elif SunamoData
+SunamoData
+#elif SunamoDebugCollection
+SunamoDebugCollection
+#elif SunamoDebugIO
+SunamoDebugIO
+#elif SunamoDelegates
+SunamoDelegates
+#elif SunamoEnums
+SunamoEnums
+#elif SunamoEnumsHelper
+SunamoEnumsHelper
+#elif SunamoExceptions
+SunamoExceptions
+#elif SunamoExtensions
+SunamoExtensions
+#elif SunamoFileExtensions
+SunamoFileExtensions
+#elif SunamoFileIO
+SunamoFileIO
+#elif SunamoFluentFtp
+SunamoFluentFtp
+#elif SunamoFubuCore
+SunamoFubuCore
+#elif SunamoFubuCsProjFile
+SunamoFubuCsProjFile
+#elif SunamoIni
+SunamoIni
+#elif SunamoInterfaces
+SunamoInterfaces
+#elif SunamoJson
+SunamoJson
+#elif SunamoLang
+SunamoLang
+#elif SunamoLogMessage
+SunamoLogMessage
+#elif SunamoMail
+SunamoMail
+#elif SunamoMarkdown
+SunamoMarkdown
+#elif SunamoMime
+SunamoMime
+#elif SunamoMsgReader
+SunamoMsgReader
+#elif SunamoNuGetProtocol
+SunamoNuGetProtocol
+#elif SunamoNumbers
+SunamoNumbers
+#elif SunamoNumbersShared
+SunamoNumbersShared
+#elif SunamoOctokit
+SunamoOctokit
+#elif SunamoPackageJson
+SunamoPackageJson
+#elif SunamoParsing
+SunamoParsing
+#elif SunamoPercentCalculator
+SunamoPercentCalculator
+#elif SunamoPInvoke
+SunamoPInvoke
+#elif SunamoPS
+SunamoPS
+#elif SunamoReflection
+SunamoReflection
+#elif SunamoRoslyn
+SunamoRoslyn
+#elif SunamoRss
+SunamoRss
+#elif SunamoSolutionsIndexer
+SunamoSolutionsIndexer
+#elif SunamoStopwatch
+SunamoStopwatch
+#elif SunamoStringGetLines
+SunamoStringGetLines
+#elif SunamoStringGetString
+SunamoStringGetString
+#elif SunamoStringJoin
+SunamoStringJoin
+#elif SunamoStringJoinPairs
+SunamoStringJoinPairs
+#elif SunamoStringParts
+SunamoStringParts
+#elif SunamoStringSubstring
+SunamoStringSubstring
+#elif SunamoText
+SunamoText
+#elif SunamoTextOutputGenerator
+SunamoTextOutputGenerator
+#elif SunamoThisApp
+SunamoThisApp
+#elif SunamoThread
+SunamoThread
+#elif SunamoTidy
+SunamoTidy
+#elif SunamoTwoWayDictionary
+SunamoTwoWayDictionary
+#elif SunamoTypeOfMessage
+SunamoTypeOfMessage
+#elif SunamoUnderscore
+SunamoUnderscore
+#elif SunamoUriWebServices
+SunamoUriWebServices
+#elif SunamoVcf
+SunamoVcf
+#elif SunamoWikipedia
+SunamoWikipedia
+#elif SunamoWinStd
+SunamoWinStd
+#elif SunamoXlfKeys
+SunamoXlfKeys
+#elif SunamoXliffParser
+SunamoXliffParser
+#elif SunamoYaml
+SunamoYaml
+#elif SunamoYouTube
+SunamoYouTube
+#elif SunamoGetFiles
+SunamoGetFiles
+#elif SunamoGetFolders
+SunamoGetFolders
+#elif SunamoXlfEngine
+SunamoXlfEngine
+#elif SunamoCollectionsTo
+SunamoCollectionsTo
+#elif SunamoDictionaryToDelete
+SunamoDictionaryToDelete
+#elif SunamoDotnetCmdBuilder
+SunamoDotnetCmdBuilder
+#elif SunamoLogging
+SunamoLogging
+#else
+SunamoValues
+#endif
+;
 public class AllChars
 {
     public static List<char> vsZnakyWithoutSpecial;
@@ -35,9 +275,9 @@ public class AllChars
     new(new[] { 33, 64, 35, 36, 37, 94, 38, 42, 63, 95, 126 });
     public static readonly List<char> specialCharsWhite = new(new[] { space });
     public static readonly List<char> specialCharsNotEnigma = new(new[] { nbsp, space160, copy });
-    /// <summary>
-    ///     Used in enigma
-    /// </summary>
+    
+    
+    
     public static readonly List<char> specialCharsAll;
     public static readonly List<int> numericKeyCodes = new(new[] { 49, 50, 51, 52, 53, 54, 55, 56, 57, 48 });
     public static readonly List<char> numericChars =
@@ -62,13 +302,13 @@ public class AllChars
     public static readonly List<char> specialChars = new(new[]
     { excl, commat, num, dollar, percnt, Hat, amp, ast, quest, lowbar, tilda });
     private static readonly Type type = typeof(AllChars);
-    // my extension
+    
     public static readonly List<char> generalChars;
-    // IsWhiteSpace
-    // , 55296 mi taky vrátila metoda IsWhiteSpace vrátila, ale při znovu vytvoření pomocí tohoto kódu to vyhazovalo výjimku
-    /// <summary>
-    ///     160 is space, is used for example in Uctenkovka
-    /// </summary>
+    
+    
+    
+    
+    
     public static readonly List<int> whiteSpacesCodes = new(new[]
     {
 9, 10, 11, 12, 13, 32, 133, 160, 5760, 6158, 8192, 8193, 8194, 8195, 8196, 8197, 8198, 8199, 8200, 8201, 8202,
@@ -77,9 +317,9 @@ public class AllChars
     public static List<char> whiteSpacesChars;
     public static char space160 = (char)160;
     public static readonly char notNumber;
-    /// <summary>
-    ///     2020-07-4 added slash
-    /// </summary>
+    
+    
+    
     public static readonly List<char> specialChars2 = new(new[]
     {
 lq, rq, dash, la, ra,
@@ -108,96 +348,76 @@ ndash, slash
         }
     }
     #region from AllCharsConsts.cs
-    ///// <summary>
-    ///// char code 32
-    ///// </summary>
-    //public const char space = ' ';
-    ///// <summary>
-    ///// Look similar as 32 space
-    ///// </summary>
-    //public const char nbsp = (char)160;
-    //#region Generated with SunamoFramework.HtmlEntitiesForNonDigitsOrLetterChars
-    //public const char dollar = '$';
-    //public const char Hat = '^';
-    //public const char ast = '*';
-    //public const char quest = '?';
-    //public const char tilda = '~';
-    //public const char comma = ',';
-    //public const char period = '.';
-    //public const char colon = ':';
-    //public const char excl = '!';
-    //public const char apos = '\'';
-    //public const char rpar = ')';
-    //public const char lpar = '(';
-    //public const char sol = '/';
-    //public const char lowbar = '_';
-    //public const char lt = '<';
-    ///// <summary>
-    ///// skip in specialChars2 - already as equal
-    ///// </summary>
-    //public const char equals = '=';
-    //public const char gt = '>';
-    //public const char amp = '&';
-    //public const char lcub = '{';
-    //public const char rcub = '}';
-    //public const char lsqb = '[';
-    //public const char verbar = '|';
-    //public const char semi = ';';
-    //public const char commat = '@';
-    //public const char plus = '+';
-    //public const char rsqb = ']';
-    //public const char num = '#';
-    //public const char percnt = '%';
-    //public const char ndash = '–';
-    //public const char copy = '©';
-    //#endregion
-    //public static readonly List<char> specialChars = new List<char>(new char[] { excl, commat, num, dollar, percnt, Hat, amp, ast, quest, lowbar, tilda });
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     #endregion
     #region For easy copy from AllChars.cs
-    // my extension
-    /*
-    equal->equals
-    *
-    * Ascii - 128 chars - 7B
-    * ASCII + code page (e.g. ISO 8859-1) - 256 chars - 8B
-    *
-    * Unicode 11.0:
-    * * Basic Multilingual Plane - 65536 letters - table 16*16, in every cell 256 letters, all others (SMP, SIP, TIP) are part of this
-    * Supplementary Multilingual Plane (SMP) - Doplňková multilinguální rovina - 14000 chars -
-    * Supplementary Ideographic Plane (SIP) - 53424 chars -
-    * Tertiary Ideographic Plane (TIP) - 16672 chars
-    * Supplementary Special-purpose Plane (SSP) - 368 chars
-    * 15 PUA-A 65536
-    * 16 PUA-B 65536
-    *
-    * =  overall 264256 letters
-    *
-    * Surrogates - replacement, by two surrogates is coded one letter above BMP (surrogate pair). Is in UTF16. Benefit is less space (some letters have two bytes, others 4B). In UTF32 is every char 4bytes.
-    * char.IsSurrogatePair(low, right) - pair is formed by low and high
-    * *
-    */
-    // IsControl
-    //public const List<int> controlKeyCodes =
-    // IsDigit - IsNumber + superset atd.
-    // IsHighSurrogate -
-    // IsLower
-    // IsLowSurrogate
-    // IsNumber - 0..9
-    // IsPunctuation
-    // IsSeparatorw
-    // IsSurrogate
-    // IsSurrogatePair
-    // IsSymbol
-    // IsUpper
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     #endregion
     #region For easy copy from AllCharsConsts.cs
-    /// <summary>
-    ///     char code 32
-    /// </summary>
+    
+    
+    
     public const char space = ' ';
-    /// <summary>
-    ///     Look similar as 32 space
-    /// </summary>
+    
+    
+    
     public const char nbsp = (char)160;
     #region Generated with SunamoFramework.HtmlEntitiesForNonDigitsOrLetterChars
     public const char dollar = '$';
@@ -214,9 +434,9 @@ ndash, slash
     public const char sol = '/';
     public const char lowbar = '_';
     public const char lt = '<';
-    /// <summary>
-    ///     skip in specialChars2 - already as equal
-    /// </summary>
+    
+    
+    
     public const char equals = '=';
     public const char gt = '>';
     public const char amp = '&';
@@ -250,23 +470,23 @@ ndash, slash
     public const char asterisk = '*';
     public const char apostrophe = '\'';
     public const char sc = ';';
-    /// <summary>
-    ///     quotation marks
-    /// </summary>
+    
+    
+    
     public const char qm = '"';
-    /// <summary>
-    ///     Question
-    /// </summary>
+    
+    
+    
     public const char q = '?';
-    /// <summary>
-    ///     Left bracket
-    /// </summary>
+    
+    
+    
     public const char lb = '(';
     public const char rb = ')';
     public const char slash = '/';
-    /// <summary>
-    ///     backspace
-    /// </summary>
+    
+    
+    
     public const char bs2 = '\b';
     #endregion
 }
