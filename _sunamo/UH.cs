@@ -1,9 +1,9 @@
 
 
 namespace SunamoFtp;
-public class UH
+internal class UH
 {
-    public static string GetFileName(string rp, bool wholeUrl = false)
+    internal static string GetFileName(string rp, bool wholeUrl = false)
     {
         if (wholeUrl)
         {
@@ -17,7 +17,7 @@ public class UH
         return rp.Substring(dex + 1);
     }
 
-    public static string Combine(bool dir, params string[] p)
+    internal static string Combine(bool dir, params string[] p)
     {
         string vr = string.Join(AllChars.slash, p).Replace("///", AllStrings.slash).Replace("//", AllStrings.slash).TrimEnd(AllChars.slash).Replace(":/", "://");
         if (dir)

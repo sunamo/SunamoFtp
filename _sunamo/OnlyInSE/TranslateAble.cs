@@ -1,6 +1,6 @@
 
 namespace SunamoFtp;
-public class TranslateAble
+internal class TranslateAble
 {
     
     
@@ -10,7 +10,7 @@ public class TranslateAble
     
     
     
-    public static string i18n(string xlfKey)
+    internal static string i18n(string xlfKey)
     {
         return xlfKey;
     }

@@ -1,9 +1,9 @@
 using System.Collections;
 
 namespace SunamoFtp;
-public class SHJoin
+internal class SHJoin
 {
-    public static string JoinFromIndex(int dex, object delimiter2, IList parts)
+    internal static string JoinFromIndex(int dex, object delimiter2, IList parts)
     {
         string delimiter = delimiter2.ToString();
         StringBuilder sb = new StringBuilder();

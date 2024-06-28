@@ -1,7 +1,7 @@
 namespace SunamoFtp;
-public class SHParts
+internal class SHParts
 {
-    public static string RemoveAfterFirst(string t, string ch)
+    internal static string RemoveAfterFirst(string t, string ch)
     {
         int dex = t.IndexOf(ch);
         if (dex == -1 || dex == t.Length - 1)

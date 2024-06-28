@@ -1,10 +1,10 @@
 namespace SunamoFtp;
 
 
-public class EmptyArrays
+internal class EmptyArrays
 {
-    public static Char[] Chars = new Char[] { };
-    public static string[] Strings = new string[] { };
-    public static Object[] Objects = new Object[] { };
-    public static Byte[] Bytes = new Byte[] { };
+    internal static Char[] Chars = new Char[] { };
+    internal static string[] Strings = new string[] { };
+    internal static Object[] Objects = new Object[] { };
+    internal static Byte[] Bytes = new Byte[] { };
 }

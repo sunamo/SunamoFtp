@@ -1,7 +1,7 @@
 namespace SunamoFtp;
 
 
-public interface IFtpClientExt
+internal interface IFtpClientExt
 {
     bool IsInFormatOfAlbum(string folderName);
     string SlashWwwSlash { get; }
