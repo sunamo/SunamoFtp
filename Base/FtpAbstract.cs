@@ -1,3 +1,5 @@
+
+namespace SunamoFtp;
 public abstract class FtpAbstract
 {
     #region Variables

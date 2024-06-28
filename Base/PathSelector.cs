@@ -1,3 +1,5 @@
+
+namespace SunamoFtp;
 public class PathSelector
 {
     string firstToken = "";

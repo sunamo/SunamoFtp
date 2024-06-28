@@ -1,3 +1,5 @@
+
+namespace SunamoFtp;
 public class AllStrings
 {
     public const string dot = ".";

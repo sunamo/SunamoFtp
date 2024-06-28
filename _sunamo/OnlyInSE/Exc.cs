@@ -1,3 +1,5 @@
+
+namespace SunamoFtp;
 using System.Diagnostics;
 using System.Text;
 
