@@ -1,10 +1,3 @@
-namespace
-#if SunamoFluentFtp
-SunamoFluentFtp
-#else
-SunamoFtp
-#endif
-;
 public abstract class FtpAbstract
 {
     #region Variables

@@ -1,10 +1,3 @@
-namespace
-#if SunamoFluentFtp
-SunamoFluentFtp
-#else
-SunamoFtp
-#endif
-;
 public class PathSelector
 {
     string firstToken = "";

@@ -1,10 +1,3 @@
-namespace
-#if SunamoFluentFtp
-SunamoFluentFtp
-#else
-SunamoFtp
-#endif
-;
 public abstract class FtpBaseNew : FtpAbstract, IDisposable
 {
     public abstract void DebugAllEntries();
