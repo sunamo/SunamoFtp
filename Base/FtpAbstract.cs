@@ -94,7 +94,7 @@ public abstract class FtpAbstract
     public abstract bool deleteRemoteFile(string fileName);
     public abstract void renameRemoteFile(string oldFileName, string newFileName);
     public abstract bool rmdir(List<string> slozkyNeuploadovatAVS, string dirName);
-    public abstract void DeleteRecursively(List<string> slozkyNeuploadovatAVS, string dirName, int i, List<DirectoriesToDelete> td);
+    public abstract void DeleteRecursively(List<string> slozkyNeuploadovatAVS, string dirName, int i, List<DirectoriesToDeleteFtp> td);
     public abstract void CreateDirectoryIfNotExists(string dirName);
     public abstract List<string> ListDirectoryDetails();
     public abstract Dictionary<string, List<string>> getFSEntriesListRecursively(List<string> slozkyNeuploadovatAVS);

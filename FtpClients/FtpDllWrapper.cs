@@ -45,7 +45,7 @@ public class FtpDllWrapper : FtpBaseNew
         ThrowEx.NotImplementedMethod();
     }
 
-    public override void DeleteRecursively(List<string> slozkyNeuploadovatAVS, string dirName, int i, List<DirectoriesToDelete> td)
+    public override void DeleteRecursively(List<string> slozkyNeuploadovatAVS, string dirName, int i, List<DirectoriesToDeleteFtp> td)
     {
         ThrowEx.NotImplementedMethod();
     }

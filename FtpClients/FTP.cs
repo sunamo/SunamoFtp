@@ -1132,7 +1132,7 @@ public class FTP : FtpBase
         {
             if (retValue == 550)
             {
-                DeleteRecursively(slozkyNeuploadovatAVS, dirName, 0, new List<DirectoriesToDelete>());
+                DeleteRecursively(slozkyNeuploadovatAVS, dirName, 0, new List<DirectoriesToDeleteFtp>());
             }
             else
             {
@@ -1545,7 +1545,7 @@ public class FTP : FtpBase
     /// <param name="dirName"></param>
     /// <param name="i"></param>
     /// <param name="td"></param>
-    public override void DeleteRecursively(List<string> slozkyNeuploadovatAVS, string dirName, int i, List<DirectoriesToDelete> td)
+    public override void DeleteRecursively(List<string> slozkyNeuploadovatAVS, string dirName, int i, List<DirectoriesToDeleteFtp> td)
     {
         chdirLite(dirName);
         List<string> smazat = ListDirectoryDetails();

@@ -196,13 +196,13 @@ public class FtpNet : FtpBase
     /// </summary>
     /// <param name="slozkyNeuploadovatAVS"></param>
     /// <param name="dirName"></param>
-    public override void DeleteRecursively(List<string> slozkyNeuploadovatAVS, string dirName, int i, List<DirectoriesToDelete> td)
+    public override void DeleteRecursively(List<string> slozkyNeuploadovatAVS, string dirName, int i, List<DirectoriesToDeleteFtp> td)
     {
 
         i++;
         List<string> smazat = ListDirectoryDetails();
         //bool pridano = false;
-        td.Add(new DirectoriesToDelete { hloubka = i });
+        td.Add(new DirectoriesToDeleteFtp { hloubka = i });
         Dictionary<string, List<string>> ds = null;
         foreach (var item in td)
         {
