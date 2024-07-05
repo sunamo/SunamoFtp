@@ -1,4 +1,3 @@
-
 namespace SunamoFtp.Base;
 
 

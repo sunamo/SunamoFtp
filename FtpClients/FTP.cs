@@ -1,9 +1,3 @@
-
-
-
-
-
-
 namespace SunamoFtp.FtpClients;
 public class FTP : FtpBase
 {

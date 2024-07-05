@@ -1,5 +1,3 @@
-using System.Collections;
-
 namespace SunamoFtp._sunamo.SunamoStringJoin;
 internal class SHJoin
 {

@@ -1,7 +1,4 @@
-
 namespace SunamoFtp._sunamo.SunamoExceptions.OnlyInSE;
-using System.Diagnostics;
-using System.Text;
 
 
 
@@ -118,4 +115,3 @@ internal class Exc
     #endregion
     #endregion
 }
-

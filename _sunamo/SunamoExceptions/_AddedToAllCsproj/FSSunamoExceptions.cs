@@ -1,10 +1,4 @@
-
 namespace SunamoFtp._sunamo.SunamoExceptions._AddedToAllCsproj;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 internal class FSSunamoExceptions
 {
     internal static void CreateUpfoldersPsysicallyUnlessThere(string nad)

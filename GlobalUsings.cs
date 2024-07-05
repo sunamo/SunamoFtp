@@ -27,3 +27,4 @@ global using SunamoFtp._public.SunamoData.Data;
 global using SunamoFtp._public.SunamoInterfaces.Interfaces;
 global using SunamoFtp._sunamo.SunamoExceptions.OnlyInSE;
 global using SunamoFtp._sunamo.SunamoExceptions._AddedToAllCsproj;
+global using System.Diagnostics;

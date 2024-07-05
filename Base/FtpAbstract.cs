@@ -1,4 +1,3 @@
-
 namespace SunamoFtp.Base;
 public abstract class FtpAbstract
 {
