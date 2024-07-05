@@ -1,4 +1,4 @@
-namespace SunamoFtp;
+namespace SunamoFtp._public.SunamoData.Data;
 
 
 public class DirectoriesToDeleteFtp

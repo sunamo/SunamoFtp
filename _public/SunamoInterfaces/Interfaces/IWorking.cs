@@ -1,4 +1,4 @@
-namespace SunamoFtp;
+namespace SunamoFtp._public.SunamoInterfaces.Interfaces;
 
 
 public interface IWorking

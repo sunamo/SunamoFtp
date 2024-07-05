@@ -1,4 +1,4 @@
-namespace SunamoFtp;
+namespace SunamoFtp._sunamo.SunamoValues;
 
 
 internal class EmptyArrays

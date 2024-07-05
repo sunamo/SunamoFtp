@@ -1,4 +1,4 @@
-namespace SunamoFtp;
+namespace SunamoFtp.Base;
 
 public enum FileSystemType
 {

@@ -1,4 +1,4 @@
-namespace SunamoFtp;
+namespace SunamoFtp._sunamo.SunamoStringParts;
 internal class SHParts
 {
     internal static string RemoveAfterFirst(string t, string ch)

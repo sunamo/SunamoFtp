@@ -1,4 +1,4 @@
-namespace SunamoFtp;
+namespace SunamoFtp._sunamo.SunamoStringSplit;
 internal class SHSplit
 {
     internal static List<string> Split(string item, params string[] space)

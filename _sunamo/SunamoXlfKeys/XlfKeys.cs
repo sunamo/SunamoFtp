@@ -1,4 +1,4 @@
-namespace SunamoFtp;
+namespace SunamoFtp._sunamo.SunamoXlfKeys;
 
 
 

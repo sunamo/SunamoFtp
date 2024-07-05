@@ -1,5 +1,5 @@
 
-namespace SunamoFtp;
+namespace SunamoFtp.Base;
 public abstract class FtpBaseNew : FtpAbstract, IDisposable
 {
     public abstract void DebugAllEntries();
