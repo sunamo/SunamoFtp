@@ -5,6 +5,12 @@
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <Version>24.7.1.1</Version>
     <Description>Base classes and infrastructure for FTP clients</Description>
+    <Authors>www.sunamo.cz</Authors>
+    <Copyright>www.sunamo.cz</Copyright>
+    <PackageProjectUrl>https://sunamo.cz/</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/sunamo/SunamoFtp.git</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Ftp.dll" Version="2.0.23268.1746">
