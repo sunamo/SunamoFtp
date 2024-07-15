@@ -1,10 +1,5 @@
 namespace SunamoFtp.FtpClients;
 
-
-
-
-
-
 public class FtpNet : FtpBase
 {
     static Type type = typeof(FtpNet);
@@ -33,7 +28,7 @@ public class FtpNet : FtpBase
             if (remoteFolder.StartsWith(actualPath))
             {
                 remoteFolder = remoteFolder.Substring(actualPath.Length);
-                var tokens = SHSplit.Split(remoteFolder, ps.Delimiter);
+                var tokens = SHSplit.SplitMore(remoteFolder, ps.Delimiter);
                 foreach (string item in tokens)
                 {
                     CreateDirectoryIfNotExists(item);
@@ -43,7 +38,7 @@ public class FtpNet : FtpBase
             else
             {
                 ps.ActualPath = "";
-                var tokens = SHSplit.Split(remoteFolder, ps.Delimiter);
+                var tokens = SHSplit.SplitMore(remoteFolder, ps.Delimiter);
                 int pridat = 0;
                 for (int i = 0 + pridat; i < tokens.Count; i++)
                 {
@@ -353,7 +348,7 @@ public class FtpNet : FtpBase
                     line = reader.ReadLine();
                 }
                 result.Remove(result.ToString().LastIndexOf('\n'), 1);
-                return SHSplit.SplitChar(result.ToString(), '\n');
+                return SHSplit.SplitCharMore(result.ToString(), '\n');
             }
             catch (Exception ex)
             {
@@ -431,7 +426,7 @@ public class FtpNet : FtpBase
 
             foreach (string item in fse)
             {
-                int tokens = item.Split(AllChars.space).Length; //SHSplit.Split(item, AllStrings.space).Count;
+                int tokens = item.Split(AllChars.space).Length; //SHSplit.SplitMore(item, AllStrings.space).Count;
                 if (tokens < 8)
                 {
                     vseMa8 = false;
@@ -488,7 +483,7 @@ public class FtpNet : FtpBase
 
             foreach (string item in fse)
             {
-                int tokens = SHSplit.Split(item, AllStrings.space).Count;
+                int tokens = SHSplit.SplitMore(item, AllStrings.space).Count;
                 if (tokens < 8)
                 {
                     vseMa8 = false;
@@ -963,7 +958,7 @@ public class FtpNet : FtpBase
             }
             else if (fz == 'd')
             {
-                string folderName = SHJoin.JoinFromIndex(8, AllChars.space, SHSplit.Split(item, AllStrings.space));
+                string folderName = SHJoin.JoinFromIndex(8, AllChars.space, SHSplit.SplitMore(item, AllStrings.space));
 
                 if (!FtpHelper.IsThisOrUp(folderName))
                 {

@@ -1,4 +1,5 @@
 namespace SunamoFtp.Base;
+
 public class PathSelector
 {
     string firstToken = "";
@@ -118,7 +119,7 @@ public class PathSelector
         set
         {
             tokens.Clear();
-            tokens.AddRange(value.Split(new string[] { delimiter }, StringSplitOptions.RemoveEmptyEntries)); //SHSplit.Split(value, delimiter));
+            tokens.AddRange(value.Split(new string[] { delimiter }, StringSplitOptions.RemoveEmptyEntries)); //SHSplit.SplitMore(value, delimiter));
         }
     }
 }

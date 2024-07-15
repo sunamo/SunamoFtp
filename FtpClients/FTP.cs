@@ -1,4 +1,5 @@
 namespace SunamoFtp.FtpClients;
+
 public class FTP : FtpBase
 {
     static Type type = typeof(FTP);
@@ -1191,7 +1192,7 @@ public class FTP : FtpBase
 
             foreach (string item in fse)
             {
-                int tokens = item.Split(AllChars.space).Length; //SHSplit.Split(item, AllStrings.space).Count;
+                int tokens = item.Split(AllChars.space).Length; //SHSplit.SplitMore(item, AllStrings.space).Count;
                 if (tokens < 8)
                 {
                     vseMa8 = false;
@@ -1323,7 +1324,7 @@ public class FTP : FtpBase
             }
         }
 
-        List<string> mess = SHSplit.SplitChar(mes, '\n');
+        List<string> mess = SHSplit.SplitCharMore(mes, '\n');
         // Rozdělím získaný string \n a vezmu předposlední prvek, nebo první, který pak vrátím
         if (mes.Length > 2)
         {
