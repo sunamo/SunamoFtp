@@ -1,4 +1,5 @@
 namespace SunamoFtp._sunamo.SunamoStringJoin;
+
 internal class SHJoin
 {
     internal static string JoinFromIndex(int dex, object delimiter2, IList parts)
