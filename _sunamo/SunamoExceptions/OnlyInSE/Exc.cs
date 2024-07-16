@@ -86,7 +86,7 @@ internal class Exc
         StackTrace stackTrace = new();
         var methodBase = stackTrace.GetFrame(v).GetMethod();
         var methodName = methodBase.Name;
-        if (_trimTestOnEnd) methodName = SHSunamoExceptions.TrimEnd(methodName, "Test");
+        if (_trimTestOnEnd) methodName = SH.TrimEnd(methodName, "Test");
         return methodName;
     }
     #region MyRegion
