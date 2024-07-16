@@ -1,4 +1,4 @@
-//namespace SunamoFtp._sunamo.SunamoExceptions._AddedToAllCsproj;
+namespace SunamoFtp._sunamo;
 
 internal class SH
 {
