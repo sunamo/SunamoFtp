@@ -387,10 +387,11 @@ internal class Exceptions
     internal static string IsEmpty(string before, IEnumerable folders, string colName,
     string additionalMessage = Consts.se)
     {
-        if (string.IsNullOrEmpty(additionalMessage))
-        {
-            throw new ArgumentException($"'{nameof(additionalMessage)}' cannot be null or empty.", nameof(additionalMessage));
-        }
+        // Nemůže tu být žádná taková validace, protože vyhodí výjimku i když kolekce není prázdná
+        // if (string.IsNullOrEmpty(additionalMessage))
+        // {
+        //     throw new ArgumentException($"'{nameof(additionalMessage)}' cannot be null or empty.", nameof(additionalMessage));
+        // }
         
         return folders.OfType<object>().Count() == 0
         ? before + colName + " has no elements. " + additionalMessage
