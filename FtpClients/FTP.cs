@@ -1,68 +1,69 @@
+using System.Security.Authentication;
+
 namespace SunamoFtp.FtpClients;
 
 public class FTP : FtpBase
 {
-    static Type type = typeof(FTP);
-    /// <summary>
-    /// aktuální vzdálený adresář.
-    /// </summary>
-    //string remotePath;
-    string remotePath
-    {
-        get
-        {
-            return ps.ActualPath;
-        }
-        set
-        {
-        }
-    }
-
-    string mes;
-    /// <summary>
-    ///
-    /// </summary>
-    private int bytes;
-    /// <summary>
-    ///
-    /// </summary>
-    private Socket clientSocket;
-    /// <summary>
-    /// Hodnotu kterou ukládá třeba readReply, který volá třeba sendCommand
-    /// </summary>
-    private int retValue;
-    /// <summary>
-    /// Zda se vypisují příkazy na konzoli.
-    /// </summary>
-    private bool debug;
-    private string reply;
-    /// <summary>
-    /// Zda se používá PP stream(binární přenos) místo clientSocket(ascii převod)
-    /// </summary>
-    private bool useStream;
-    private bool isUpload;
-    /// <summary>
-    /// Stream který se používá při downloadu.
-    /// </summary>
-    private Stream stream = null;
-    /// <summary>
-    /// Stream který se používá při uploadu a to tak že do něho zapíšu jeho M Write
-    /// </summary>
-    private Stream stream2 = null;
+    private static Type type = typeof(FTP);
 
     /// <summary>
     /// Velikost bloku po které se čte.
     /// </summary>
-    private static int BLOCK_SIZE = 1024;
-    /// <summary>
-    /// Buffer je pouhý 1KB
-    /// </summary>
-    byte[] buffer = new byte[BLOCK_SIZE];
+    private static readonly int BLOCK_SIZE = 1024;
+
     /// <summary>
     /// Konstanta obsahující ASCII kódování
     /// </summary>
-    readonly Encoding ASCII = Encoding.ASCII;
-    IFtpClientExt ftpClient = null;
+    private readonly Encoding ASCII = Encoding.ASCII;
+
+    /// <summary>
+    /// Buffer je pouhý 1KB
+    /// </summary>
+    private readonly byte[] buffer = new byte[BLOCK_SIZE];
+
+    /// <summary>
+    ///
+    /// </summary>
+    private int bytes;
+
+    /// <summary>
+    ///
+    /// </summary>
+    private Socket clientSocket;
+
+    /// <summary>
+    /// Zda se vypisují příkazy na konzoli.
+    /// </summary>
+    private bool debug;
+
+    private readonly IFtpClientExt ftpClient;
+    private bool isUpload;
+
+    private string mes;
+    private string reply;
+
+    /// <summary>
+    /// Hodnotu kterou ukládá třeba readReply, který volá třeba sendCommand
+    /// </summary>
+    private int retValue;
+
+    private bool startup = true;
+
+    /// <summary>
+    /// Stream který se používá při downloadu.
+    /// </summary>
+    private Stream stream;
+
+    /// <summary>
+    /// Stream který se používá při uploadu a to tak že do něho zapíšu jeho M Write
+    /// </summary>
+    private Stream stream2;
+
+    /// <summary>
+    /// Zda se používá PP stream(binární přenos) místo clientSocket(ascii převod)
+    /// </summary>
+    private bool useStream;
+
     /// <summary>
     /// IK, OOP.
     /// </summary>
@@ -70,6 +71,18 @@ public class FTP : FtpBase
     {
         this.ftpClient = ftpClient;
         debug = false;
+    }
+
+    /// <summary>
+    /// aktuální vzdálený adresář.
+    /// </summary>
+    //string remotePath;
+    private string remotePath
+    {
+        get => ps.ActualPath;
+        set
+        {
+        }
     }
 
 
@@ -83,9 +96,6 @@ public class FTP : FtpBase
     }
 
 
-
-
-
     /// <summary>
     /// S PP remotePath na A1
     /// </summary>
@@ -96,15 +106,9 @@ public class FTP : FtpBase
         if (remotePath == ftpClient.WwwSlash)
         {
             if (ps.ActualPath != ftpClient.WwwSlash)
-            {
-
-
                 while (ps.CanGoToUpFolder)
-                {
                     //ps.RemoveLastToken();
                     goToUpFolder();
-                }
-            }
             //chdirLite("www");
         }
         else
@@ -124,10 +128,7 @@ public class FTP : FtpBase
     public override void LoginIfIsNot(bool startup)
     {
         base.startup = startup;
-        if (!logined)
-        {
-            login();
-        }
+        if (!logined) login();
     }
 
     /// <summary>
@@ -142,19 +143,13 @@ public class FTP : FtpBase
     {
         OnNewStatus("Získávám seznam souborů ze složky" + " " + ps.ActualPath + " " + "příkazem NLST");
         #region MyRegion
-        if (!logined)
-        {
-            login();
-        }
+        if (!logined) login();
 
-        Socket cSocket = createDataSocket();
+        var cSocket = createDataSocket();
 
         sendCommand("NLST" + " " + mask);
 
-        if (!(retValue == 150 || retValue == 125))
-        {
-            throw new Exception(reply.Substring(4));
-        }
+        if (!(retValue == 150 || retValue == 125)) throw new Exception(reply.Substring(4));
 
         mes = "";
         #endregion
@@ -162,17 +157,14 @@ public class FTP : FtpBase
         #region MyRegion
         while (true)
         {
-            int bytes = cSocket.Receive(buffer, buffer.Length, 0);
+            var bytes = cSocket.Receive(buffer, buffer.Length, 0);
             mes += ASCII.GetString(buffer, 0, bytes);
 
-            if (bytes < buffer.Length)
-            {
-                break;
-            }
+            if (bytes < buffer.Length) break;
         }
 
         string[] seperator = ["\r\n"];
-        List<string> mess = mes.Split(seperator, StringSplitOptions.RemoveEmptyEntries).ToList();
+        var mess = mes.Split(seperator, StringSplitOptions.RemoveEmptyEntries).ToList();
 
         cSocket.Close();
         #endregion
@@ -180,19 +172,13 @@ public class FTP : FtpBase
         readReply();
 
 
-        if (retValue != 226)
-        {
-            throw new Exception(reply.Substring(4));
-        }
+        if (retValue != 226) throw new Exception(reply.Substring(4));
         return mess;
     }
 
     public override void goToUpFolderForce()
     {
-        if (FtpLogging.GoToUpFolder)
-        {
-            OnNewStatus("Přecházím do nadsložky" + " " + ps.ActualPath);
-        }
+        if (FtpLogging.GoToUpFolder) OnNewStatus("Přecházím do nadsložky" + " " + ps.ActualPath);
         sendCommand("CWD " + "..");
         ps.RemoveLastTokenForce();
         NewStatusNewFolder();
@@ -217,23 +203,19 @@ public class FTP : FtpBase
     }
 
 
-
     public override Dictionary<string, List<string>> getFSEntriesListRecursively(List<string> slozkyNeuploadovatAVS)
     {
-        if (!logined)
-        {
-            login();
-        }
+        if (!logined) login();
         // Musí se do ní ukládat cesta k celé složce, nikoliv jen název aktuální složky
-        List<string> projeteSlozky = new List<string>();
-        Dictionary<string, List<string>> vr = new Dictionary<string, List<string>>();
-        List<string> fse = ListDirectoryDetails();
+        var projeteSlozky = new List<string>();
+        var vr = new Dictionary<string, List<string>>();
+        var fse = ListDirectoryDetails();
 
-        string actualPath = ps.ActualPath;
+        var actualPath = ps.ActualPath;
         OnNewStatus("Získávám rekurzivní seznam souborů ze složky" + " " + actualPath);
-        foreach (string item in fse)
+        foreach (var item in fse)
         {
-            char fz = item[0];
+            var fz = item[0];
             if (fz == AllChars.dash)
             {
                 if (vr.ContainsKey(actualPath))
@@ -242,14 +224,14 @@ public class FTP : FtpBase
                 }
                 else
                 {
-                    List<string> ppk = new List<string>();
+                    var ppk = new List<string>();
                     ppk.Add(item);
                     vr.Add(actualPath, ppk);
                 }
             }
             else if (fz == 'd')
             {
-                string folderName = SHJoin.JoinFromIndex(8, AllChars.space, item.Split(new String[] { AllStrings.space }, StringSplitOptions.RemoveEmptyEntries).ToList());
+                var folderName = SHJoin.JoinFromIndex(8, AllChars.space, item.Split(new[] { AllStrings.space }, StringSplitOptions.RemoveEmptyEntries).ToList());
                 ////DebugLogger.Instance.WriteLine("Název alba22: " + folderName);
                 if (!FtpHelper.IsThisOrUp(folderName))
                 {
@@ -259,7 +241,7 @@ public class FTP : FtpBase
                     }
                     else
                     {
-                        List<string> ppk = new List<string>();
+                        var ppk = new List<string>();
                         ppk.Add(item + AllStrings.slash);
                         vr.Add(actualPath, ppk);
                     }
@@ -280,15 +262,15 @@ public class FTP : FtpBase
                 goToUpFolderForce();
                 fse = ListDirectoryDetails();
                 actualPath = ps.ActualPath;
-                foreach (string item in fse)
+                foreach (var item in fse)
                 {
-                    char fz = item[0];
+                    var fz = item[0];
                     if (fz == AllChars.dash)
                     {
                     }
                     else if (fz == 'd')
                     {
-                        string folderName = SHJoin.JoinFromIndex(8, AllChars.space, item.Split(AllChars.space));
+                        var folderName = SHJoin.JoinFromIndex(8, AllChars.space, item.Split(AllChars.space));
                         if (!FtpHelper.IsThisOrUp(folderName))
                         {
                             if (vr.ContainsKey(actualPath))
@@ -297,7 +279,7 @@ public class FTP : FtpBase
                             }
                             else
                             {
-                                List<string> ppk = new List<string>();
+                                var ppk = new List<string>();
                                 ppk.Add(item);
                                 vr.Add(actualPath, ppk);
                             }
@@ -321,49 +303,32 @@ public class FTP : FtpBase
     {
         if (remoteFolder.Contains("/" + "Kocicky" + "/"))
         {
-            int i = 0;
-            int ii = i;
+            var i = 0;
+            var ii = i;
         }
-        if (!logined)
-        {
-            login();
-        }
-        if (FtpLogging.GoToFolder)
-        {
-            OnNewStatus("Přecházím do složky" + " " + remoteFolder);
-        }
+        if (!logined) login();
+        if (FtpLogging.GoToFolder) OnNewStatus("Přecházím do složky" + " " + remoteFolder);
 
 
-        string actualPath = ps.ActualPath;
-        int dd = remoteFolder.Length - 1;
-        if (actualPath == remoteFolder)
+        var actualPath = ps.ActualPath;
+        var dd = remoteFolder.Length - 1;
+        if (actualPath == remoteFolder) return;
+
+        setRemotePath(ftpClient.WwwSlash);
+        actualPath = ps.ActualPath;
+        // Vzdálená složka začíná s aktuální cestou == vzdálená složka je delší. Pouze přejdi hloubš
+        if (remoteFolder.StartsWith(actualPath))
         {
-            return;
+            remoteFolder = remoteFolder.Substring(actualPath.Length);
+            var tokens = remoteFolder.Split(new[] { ps.Delimiter }, StringSplitOptions.RemoveEmptyEntries).ToList();
+            foreach (var item in tokens) CreateDirectoryIfNotExists(item);
         }
+        // Vzdálená složka nezačíná aktuální cestou,
         else
         {
             setRemotePath(ftpClient.WwwSlash);
-            actualPath = ps.ActualPath;
-            // Vzdálená složka začíná s aktuální cestou == vzdálená složka je delší. Pouze přejdi hloubš
-            if (remoteFolder.StartsWith(actualPath))
-            {
-                remoteFolder = remoteFolder.Substring(actualPath.Length);
-                var tokens = remoteFolder.Split(new String[] { ps.Delimiter }, StringSplitOptions.RemoveEmptyEntries).ToList();
-                foreach (string item in tokens)
-                {
-                    CreateDirectoryIfNotExists(item);
-                }
-            }
-            // Vzdálená složka nezačíná aktuální cestou,
-            else
-            {
-                setRemotePath(ftpClient.WwwSlash);
-                var tokens = remoteFolder.Split(new String[] { ps.Delimiter }, StringSplitOptions.RemoveEmptyEntries).ToList();
-                for (int i = ps.indexZero; i < tokens.Count; i++)
-                {
-                    CreateDirectoryIfNotExists(tokens[i]);
-                }
-            }
+            var tokens = remoteFolder.Split(new[] { ps.Delimiter }, StringSplitOptions.RemoveEmptyEntries).ToList();
+            for (var i = ps.indexZero; i < tokens.Count; i++) CreateDirectoryIfNotExists(tokens[i]);
         }
     }
 
@@ -380,27 +345,20 @@ public class FTP : FtpBase
 
         OnNewStatus("Pokouším se získat velikost souboru" + " " + UH.Combine(false, ps.ActualPath, fileName));
 
-        if (!logined)
-        {
-            login();
-        }
+        if (!logined) login();
 
         sendCommand("SIZE" + " " + fileName);
         long size = 0;
 
         if (retValue == 213)
-        {
             size = long.Parse(reply.Substring(4));
-        }
         else
-        {
             throw new Exception(reply.Substring(4));
-        }
 
         return size;
 
     }
-    bool startup = true;
+
     /// <summary>
     /// Tuto metodu je třeba nutno zavolat ihned po nastavení proměnných.
     /// Pokud nejsem připojený, přihlásím se na server bez uživatele
@@ -440,7 +398,7 @@ public class FTP : FtpBase
         #endregion
 
         #region Hodnota 230 znamená že mohu pokračovat bez hesla. Pokud ne, pošlu své heslo příkazem PASS
-        bool bad = false;
+        var bad = false;
         if (retValue != 230)
         {
             if (debug)
@@ -458,18 +416,10 @@ public class FTP : FtpBase
 
         logined = !bad;
         if (logined)
-        {
-
             OnNewStatus("Logined to" + " " + remoteHost);
-        }
         else
-        {
             OnNewStatus("Not logined to" + " " + remoteHost);
-        }
     }
-
-    #region IPv6
-    #endregion
 
     /// <summary>
     /// Získám socket TCP typu Stream. Toto je důležité a proto se tato metoda musí vždy volat.
@@ -481,18 +431,11 @@ public class FTP : FtpBase
         OnNewStatus("Přihlašuji se na FTP Server bez uživatele");
         clientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
         IPAddress v4 = null;
-        string remoteHost2 = remoteHost;
-        if (FtpHelper.IsSchemaFtp(remoteHost))
-        {
-            remoteHost2 = FtpHelper.ReplaceSchemaFtp(remoteHost2);
-
-        }
-        if (!IPAddress.TryParse(remoteHost2, out v4))
-        {
-            v4 = Dns.GetHostEntry(remoteHost).AddressList[0].MapToIPv4();
-        }
-        string d = v4.ToString();
-        IPEndPoint ep = new IPEndPoint(v4, remotePort);
+        var remoteHost2 = remoteHost;
+        if (FtpHelper.IsSchemaFtp(remoteHost)) remoteHost2 = FtpHelper.ReplaceSchemaFtp(remoteHost2);
+        if (!IPAddress.TryParse(remoteHost2, out v4)) v4 = Dns.GetHostEntry(remoteHost).AddressList[0].MapToIPv4();
+        var d = v4.ToString();
+        var ep = new IPEndPoint(v4, remotePort);
 
         try
         {
@@ -538,14 +481,9 @@ public class FTP : FtpBase
 
         }
 
-        else
-        {
+        OnNewStatus("No Certificate Validation Errors");
 
-            OnNewStatus("No Certificate Validation Errors");
-
-            return true;
-
-        }
+        return true;
 
     }
 
@@ -615,15 +553,15 @@ public class FTP : FtpBase
     /// <param name="Csocket"></param>
     public void getSslStream(Socket Csocket)
     {
-        RemoteCertificateValidationCallback callback = new RemoteCertificateValidationCallback(OnCertificateValidation);
-        SslStream _sslStream = new SslStream(new NetworkStream(Csocket));//,new RemoteCertificateValidationCallback(ValidateServerCertificate), null);
+        RemoteCertificateValidationCallback callback = OnCertificateValidation;
+        var _sslStream = new SslStream(new NetworkStream(Csocket));//,new RemoteCertificateValidationCallback(ValidateServerCertificate), null);
 
         try
         {
             _sslStream.AuthenticateAsClient(
                 remoteHost,
                 null,
-                System.Security.Authentication.SslProtocols.Ssl3 | System.Security.Authentication.SslProtocols.Tls,
+                SslProtocols.Ssl3 | SslProtocols.Tls,
                 true);
 
             if (_sslStream.IsAuthenticated)
@@ -659,10 +597,7 @@ public class FTP : FtpBase
             OnNewStatus("Nastavuji ASCII mód přenosu");
             sendCommand("TYPE" + " " + "");
         }
-        if (retValue != 200)
-        {
-            throw new Exception(reply.Substring(4));
-        }
+        if (retValue != 200) throw new Exception(reply.Substring(4));
     }
 
     /// <summary>
@@ -701,17 +636,11 @@ public class FTP : FtpBase
             }
         }
 
-        bool resume = false;
+        var resume = false;
         #region Pokud nejsem přihlášený, přihlásím se na nastavím binární mód
-        if (string.IsNullOrEmpty(locFileName))
-        {
-            throw new Exception("Musíte zadat jméno souboru do kterého chcete stáhnout");
-        }
+        if (string.IsNullOrEmpty(locFileName)) throw new Exception("Musíte zadat jméno souboru do kterého chcete stáhnout");
 
-        if (!logined)
-        {
-            login();
-        }
+        if (!logined) login();
 
         setBinaryMode(true);
         #endregion
@@ -725,10 +654,10 @@ public class FTP : FtpBase
             st.Close();
         }
 
-        FileStream output = new FileStream(locFileName, FileMode.Open);
+        var output = new FileStream(locFileName, FileMode.Open);
         #endregion
 
-        Socket cSocket = createDataSocket();
+        var cSocket = createDataSocket();
 
         long offset = 0;
 
@@ -741,21 +670,15 @@ public class FTP : FtpBase
             if (offset > 0)
             {
                 sendCommand("REST" + " " + offset);
-                if (retValue != 350)
-                {
-                    offset = 0;
-                }
+                if (retValue != 350) offset = 0;
             }
             #endregion
 
             #region Pokud budeme navazovat, posunu v otevřeném souboru na konec
             if (offset > 0)
             {
-                if (debug)
-                {
-                    OnNewStatus("seeking to" + " " + offset);
-                }
-                long npos = output.Seek(offset, SeekOrigin.Begin);
+                if (debug) OnNewStatus("seeking to" + " " + offset);
+                var npos = output.Seek(offset, SeekOrigin.Begin);
                 OnNewStatus("new pos=" + npos);
             }
             #endregion
@@ -764,10 +687,7 @@ public class FTP : FtpBase
         #region Pošlu příkaz RETR a všechny přijaté bajty zapíšu
         sendCommand("RETR" + " " + UH.GetFileName(remFileName));
 
-        if (!(retValue == 150 || retValue == 125))
-        {
-            throw new Exception(reply.Substring(4));
-        }
+        if (!(retValue == 150 || retValue == 125)) throw new Exception(reply.Substring(4));
 
         while (true)
         {
@@ -775,26 +695,18 @@ public class FTP : FtpBase
             bytes = cSocket.Receive(buffer, buffer.Length, 0);
             output.Write(buffer, 0, bytes);
 
-            if (bytes <= 0)
-            {
-                break;
-            }
+            if (bytes <= 0) break;
         }
 
         output.Close();
-        if (cSocket.Connected)
-        {
-            cSocket.Close();
-        }
+        if (cSocket.Connected) cSocket.Close();
 
         OnNewStatus("");
 
         readReply();
 
-        if (!(retValue == 226 || retValue == 250))
-        {
-            throw new Exception(reply.Substring(4));
-        }
+        if (!(retValue == 226 || retValue == 250)) throw new Exception(reply.Substring(4));
+
         #endregion
         return true;
     }
@@ -810,25 +722,20 @@ public class FTP : FtpBase
     /// <param name="resume"></param>
     public void uploadSecure(string fileName, bool resume)
     {
-        string path = UH.Combine(false, ps.ActualPath, fileName);
+        var path = UH.Combine(false, ps.ActualPath, fileName);
         OnUploadingNewStatus(path);
 
         #region Pošlu příkaz PASV a příhlásím se pokud nejsem
         sendCommand("PASV");
 
-        if (retValue != 227)
-        {
-            throw new Exception(reply.Substring(4));
-        }
+        if (retValue != 227) throw new Exception(reply.Substring(4));
 
-        if (!logined)
-        {
-            login();
-        }
+        if (!logined) login();
+
         #endregion
 
         #region Získám socket, z něho stream a pokud navazuzuji, pokusím se nastavit binární mód a offset podle toho kolik dat už na serveru bylo.
-        Socket cSocket = createDataSocket();
+        var cSocket = createDataSocket();
         isUpload = true;
 
         getSslStream(cSocket);
@@ -836,7 +743,6 @@ public class FTP : FtpBase
         long offset = 0;
 
         if (resume)
-        {
             try
             {
 
@@ -848,31 +754,25 @@ public class FTP : FtpBase
             {
                 offset = 0;
             }
-        }
+
         #endregion
 
         #region Pokud je tam nějaký offset, pošlu opět příkaz rest s offsetem, abych nastavil od čeho budu uploadovat
         if (offset > 0)
         {
             sendCommand("REST" + " " + offset);
-            if (retValue != 350)
-            {
-                offset = 0;
-            }
+            if (retValue != 350) offset = 0;
         }
         #endregion
 
         #region Pošlu příkaz STOR s jménem souboru a zapíšu všechny bajty z souboru do bufferu byte[]
         sendCommand("STOR" + " " + Path.GetFileName(fileName));
 
-        if (!(retValue == 125 || retValue == 150))
-        {
-            throw new Exception(reply.Substring(4));
-        }
+        if (!(retValue == 125 || retValue == 150)) throw new Exception(reply.Substring(4));
 
 
-        FileStream input = File.OpenRead(fileName);
-        byte[] bufferFile = new byte[input.Length];
+        var input = File.OpenRead(fileName);
+        var bufferFile = new byte[input.Length];
 
         input.Read(bufferFile, 0, bufferFile.Length);
         input.Close();
@@ -882,10 +782,7 @@ public class FTP : FtpBase
         if (offset != 0)
         {
 
-            if (debug)
-            {
-                OnNewStatus("seeking to" + " " + offset);
-            }
+            if (debug) OnNewStatus("seeking to" + " " + offset);
             input.Seek(offset, SeekOrigin.Begin);
         }
 
@@ -899,38 +796,30 @@ public class FTP : FtpBase
 
 
         stream2.Close();
-        if (cSocket.Connected)
-        {
-            cSocket.Close();
-        }
+        if (cSocket.Connected) cSocket.Close();
 
         readReply();
-        if (!(retValue == 226 || retValue == 250))
-        {
-            throw new Exception(reply.Substring(4));
-        }
+        if (!(retValue == 226 || retValue == 250)) throw new Exception(reply.Substring(4));
+
         #endregion
     }
 
     public override List<string> ListDirectoryDetails()
     {
-        List<string> vr = new List<string>();
-        string _Path = UH.Combine(true, remoteHost, ps.ActualPath);
+        var vr = new List<string>();
+        var _Path = UH.Combine(true, remoteHost, ps.ActualPath);
         // Get the object used to communicate with the server.
-        FtpWebRequest request = (FtpWebRequest)WebRequest.Create(_Path);
+        var request = (FtpWebRequest)WebRequest.Create(_Path);
         request.Method = WebRequestMethods.Ftp.ListDirectoryDetails;
 
         // This example assumes the FTP site uses anonymous logon.
         request.Credentials = new NetworkCredential(remoteUser, remotePass);
 
-        FtpWebResponse response = (FtpWebResponse)request.GetResponse();
+        var response = (FtpWebResponse)request.GetResponse();
 
-        Stream responseStream = response.GetResponseStream();
-        StreamReader reader = new StreamReader(responseStream);
-        while (!reader.EndOfStream)
-        {
-            vr.Add(reader.ReadLine());
-        }
+        var responseStream = response.GetResponseStream();
+        var reader = new StreamReader(responseStream);
+        while (!reader.EndOfStream) vr.Add(reader.ReadLine());
 
         reader.Close();
         response.Close();
@@ -952,19 +841,15 @@ public class FTP : FtpBase
         OnNewStatus("Uploaduji" + " " + UH.Combine(false, ps.ActualPath, fileName));
         #region Tento kód mi nedovolil často nauploadovat ani jeden soubor, takže ho nahradím speciálními třídami .net
         #region Pokud nejsem nalogovaný, přihlásím se.
-        if (!logined)
-        {
-            login();
-        }
+        if (!logined) login();
         sendCommand("PASV");
         #endregion
 
         #region Pokud mám navazovat, zjistím si veliksot vzdáleného souboru.
-        Socket cSocket = createDataSocket();
+        var cSocket = createDataSocket();
         long offset = 0;
         isUpload = true;
         if (resume)
-        {
             try
             {
                 setBinaryMode(true);
@@ -974,60 +859,44 @@ public class FTP : FtpBase
             {
                 offset = 0;
             }
-        }
+
         #endregion
 
         #region Pošlu příkaz REST s offsetem a poté už STOR
         if (offset > 0)
         {
             sendCommand("REST" + " " + offset);
-            if (retValue != 350)
-            {
-                offset = 0;
-            }
+            if (retValue != 350) offset = 0;
         }
 
         sendCommand("STOR" + " " + Path.GetFileName(fileName));
 
-        if (!(retValue == 125 || retValue == 150))
-        {
-            throw new Exception(reply.Substring(4));
-        }
+        if (!(retValue == 125 || retValue == 150)) throw new Exception(reply.Substring(4));
+
         #endregion
 
         #region Pokud byl offset, seeknu se v souboru a čtu bajty a zapisuji je na server metodou cSocket.Send
         // open input stream to read source file
-        FileStream input = new FileStream(fileName, FileMode.Open);
+        var input = new FileStream(fileName, FileMode.Open);
 
         if (offset != 0)
         {
-            if (debug)
-            {
-                OnNewStatus("seeking to" + " " + offset);
-            }
+            if (debug) OnNewStatus("seeking to" + " " + offset);
             input.Seek(offset, SeekOrigin.Begin);
         }
 
         OnNewStatus("Uploading file" + " " + fileName + " to " + remotePath);
 
-        while ((bytes = input.Read(buffer, 0, buffer.Length)) > 0)
-        {
-            cSocket.Send(buffer, bytes, 0);
-        }
+        while ((bytes = input.Read(buffer, 0, buffer.Length)) > 0) cSocket.Send(buffer, bytes, 0);
         input.Close();
         #endregion
 
         #region Pokud jsem připojený, zavřu objekt cSocket a zavřu návratovou hodnotu
-        if (cSocket.Connected)
-        {
-            cSocket.Close();
-        }
+        if (cSocket.Connected) cSocket.Close();
 
         readReply();
-        if (!(retValue == 226 || retValue == 250))
-        {
-            throw new Exception(reply.Substring(4));
-        }
+        if (!(retValue == 226 || retValue == 250)) throw new Exception(reply.Substring(4));
+
         #endregion
         #endregion
 
@@ -1042,17 +911,11 @@ public class FTP : FtpBase
     public override bool deleteRemoteFile(string fileName)
     {
         OnNewStatus("Odstraňuji ze ftp serveru soubor" + " " + UH.Combine(false, ps.ActualPath, fileName));
-        if (!logined)
-        {
-            login();
-        }
+        if (!logined) login();
 
         sendCommand("DELE" + " " + fileName);
 
-        if (retValue != 250)
-        {
-            sendCommand("DELE" + " " + WebUtility.UrlDecode(fileName));
-        }
+        if (retValue != 250) sendCommand("DELE" + " " + WebUtility.UrlDecode(fileName));
         return true;
     }
 
@@ -1064,27 +927,15 @@ public class FTP : FtpBase
     public override void renameRemoteFile(string oldFileName, string newFileName)
     {
         OnNewStatus("Ve složce" + " " + ps.ActualPath + " " + "přejmenovávám soubor" + " " + "" + " " + oldFileName + " na " + newFileName);
-        if (!logined)
-        {
-            login();
-        }
+        if (!logined) login();
 
         sendCommand("RNFR" + " " + oldFileName);
 
-        if (retValue != 350)
-        {
-            throw new Exception(reply.Substring(4));
-        }
+        if (retValue != 350) throw new Exception(reply.Substring(4));
 
         sendCommand("RNTO" + " " + newFileName);
-        if (retValue != 250)
-        {
-            throw new Exception(reply.Substring(4));
-        }
-
+        if (retValue != 250) throw new Exception(reply.Substring(4));
     }
-
-
 
 
     /// <summary>
@@ -1094,17 +945,11 @@ public class FTP : FtpBase
     public override bool mkdir(string dirName)
     {
         OnNewStatus("Vytvářím adresář" + " " + UH.Combine(true, ps.ActualPath, dirName));
-        if (!logined)
-        {
-            login();
-        }
+        if (!logined) login();
 
         sendCommand("MKD " + dirName);
 
-        if (retValue != 250 && retValue != 257)
-        {
-            throw new Exception(reply.Substring(4));
-        }
+        if (retValue != 250 && retValue != 257) throw new Exception(reply.Substring(4));
         chdirLite(dirName);
         return true;
     }
@@ -1116,28 +961,19 @@ public class FTP : FtpBase
     public override bool rmdir(List<string> slozkyNeuploadovatAVS, string dirName)
     {
         OnNewStatus("Mažu adresář" + " " + UH.Combine(true, ps.ActualPath, dirName));
-        if (!logined)
-        {
-            login();
-        }
+        if (!logined) login();
 
         sendCommand("RMD " + dirName);
 
         if (retValue != 250)
         {
             if (retValue == 550)
-            {
                 DeleteRecursively(slozkyNeuploadovatAVS, dirName, 0, new List<DirectoriesToDeleteFtp>());
-            }
             else
-            {
                 throw new Exception(reply.Substring(4));
-            }
-
         }
         return true;
     }
-
 
 
     /// <summary>
@@ -1146,18 +982,11 @@ public class FTP : FtpBase
     /// <param name="dirName"></param>
     public override void CreateDirectoryIfNotExists(string dirName)
     {
-        if (dirName == AllStrings.dot || dirName == AllStrings.dd)
-        {
-            return;
-        }
+        if (dirName == AllStrings.dot || dirName == AllStrings.dd) return;
         if (!ExistsFolder(dirName))
-        {
             mkdir(dirName);
-        }
         else
-        {
             chdirLite(dirName);
-        }
 
 
         //ps.AddToken(dirName);
@@ -1165,16 +994,10 @@ public class FTP : FtpBase
 
     public override void chdirLite(string dirName)
     {
-        if (!logined)
-        {
-            login();
-        }
+        if (!logined) login();
         if (dirName != "")
         {
-            if (dirName[dirName.Length - 1] == AllStrings.slash[0])
-            {
-                dirName = dirName.Substring(0, dirName.Length - 1);
-            }
+            if (dirName[dirName.Length - 1] == AllStrings.slash[0]) dirName = dirName.Substring(0, dirName.Length - 1);
         }
         else
         {
@@ -1182,34 +1005,29 @@ public class FTP : FtpBase
         }
 
 
-        bool nalezenAdresar = false;
+        var nalezenAdresar = false;
         List<string> fse = null;
-        bool vseMa8 = false;
+        var vseMa8 = false;
         while (!vseMa8)
         {
             vseMa8 = true;
             fse = ListDirectoryDetails();
 
-            foreach (string item in fse)
+            foreach (var item in fse)
             {
-                int tokens = item.Split(AllChars.space).Length; //SHSplit.SplitMore(item, AllStrings.space).Count;
-                if (tokens < 8)
-                {
-                    vseMa8 = false;
-                }
+                var tokens = item.Split(AllChars.space).Length; //SHSplit.SplitMore(item, AllStrings.space).Count;
+                if (tokens < 8) vseMa8 = false;
             }
         }
-        foreach (string item in fse)
+        foreach (var item in fse)
         {
             string fn = null;
             if (FtpHelper.IsFile(item, out fn) == FileSystemType.Folder)
-            {
                 if (fn == dirName)
                 {
                     nalezenAdresar = true;
                     break;
                 }
-            }
         }
         if (!nalezenAdresar)
         {
@@ -1222,19 +1040,11 @@ public class FTP : FtpBase
         {
             sendCommand("CWD " + dirName);
 
-            if (retValue != 250)
-            {
-                throw new Exception(reply.Substring(4));
-            }
+            if (retValue != 250) throw new Exception(reply.Substring(4));
             if (dirName == AllStrings.dd)
-            {
                 ps.RemoveLastToken();
-            }
             else
-            {
-
                 ps.AddToken(dirName);
-            }
         }
 
 
@@ -1244,7 +1054,6 @@ public class FTP : FtpBase
     }
 
 
-
     /// <summary>
     /// Pošlu příkaz QUIT pokud clientSocket není null
     /// Zavřu, nulluji clientSocket a nastavím logined na false.
@@ -1252,10 +1061,7 @@ public class FTP : FtpBase
     public void close()
     {
         OnNewStatus("Uzavírám ftp relaci");
-        if (clientSocket != null)
-        {
-            sendCommand("QUIT");
-        }
+        if (clientSocket != null) sendCommand("QUIT");
 
         cleanup();
         OnNewStatus("Closing" + "." + "..");
@@ -1276,7 +1082,9 @@ public class FTP : FtpBase
     private void readReply()
     {
         if (useStream)
+        {
             reply = ResponseMsg();
+        }
         else
         {
 
@@ -1318,36 +1126,21 @@ public class FTP : FtpBase
 
             // Ty převedu na string metodou ASCII.GetString. Pokud bylo načteno bajtů méně než je velikost bufferu, breaknu to
             mes += ASCII.GetString(buffer, 0, bytes);
-            if (bytes < buffer.Length)
-            {
-                break;
-            }
+            if (bytes < buffer.Length) break;
         }
 
-        List<string> mess = SHSplit.SplitCharMore(mes, '\n');
+        var mess = SHSplit.SplitCharMore(mes, '\n');
         // Rozdělím získaný string \n a vezmu předposlední prvek, nebo první, který pak vrátím
         if (mes.Length > 2)
-        {
             mes = mess[mess.Count - 2];
-        }
         else
-        {
             mes = mess[0];
-        }
 
         //Když na 3. straně není mezera, zavolám tuto M znovu
-        if (!mes.Substring(3, 1).Equals(AllStrings.space))
-        {
-            return readLine();
-        }
+        if (!mes.Substring(3, 1).Equals(AllStrings.space)) return readLine();
 
         if (debug)
-        {
-            for (int k = 0; k < mess.Count - 1; k++)
-            {
-                OnNewStatus(mess[k]);
-            }
-        }
+            for (var k = 0; k < mess.Count - 1; k++) OnNewStatus(mess[k]);
         return mes;
     }
 
@@ -1357,9 +1150,9 @@ public class FTP : FtpBase
     /// <param name="message"></param>
     private void WriteMsg(string message)
     {
-        ASCIIEncoding en = new ASCIIEncoding();
+        var en = new ASCIIEncoding();
 
-        byte[] WriteBuffer = new byte[1024];
+        var WriteBuffer = new byte[1024];
         WriteBuffer = en.GetBytes(message);
 
         stream.Write(WriteBuffer, 0, WriteBuffer.Length);
@@ -1373,29 +1166,26 @@ public class FTP : FtpBase
     /// </summary>
     private string ResponseMsg()
     {
-        ASCIIEncoding enc = new ASCIIEncoding();
-        byte[] serverbuff = new byte[1024];
-        int count = 0;
+        var enc = new ASCIIEncoding();
+        var serverbuff = new byte[1024];
+        var count = 0;
         while (true)
         {
-            byte[] buff = new byte[2];
-            int bytes = stream.Read(buff, 0, 1);
+            var buff = new byte[2];
+            var bytes = stream.Read(buff, 0, 1);
             if (bytes == 1)
             {
                 serverbuff[count] = buff[0];
                 count++;
 
-                if (buff[0] == '\n')
-                {
-                    break;
-                }
+                if (buff[0] == '\n') break;
             }
             else
             {
                 break;
             };
         };
-        string retval = enc.GetString(serverbuff, 0, count);
+        var retval = enc.GetString(serverbuff, 0, count);
         //NewStatus(" READ:" + retval);
         retValue = int.Parse(retval.Substring(0, 3));
         return retval;
@@ -1411,11 +1201,9 @@ public class FTP : FtpBase
 
 
         #region Původní metoda sendCommand
-        byte[] cmdBytes = Encoding.ASCII.GetBytes((command + "\r\n").ToCharArray());
+        var cmdBytes = Encoding.ASCII.GetBytes((command + "\r\n").ToCharArray());
         if (useStream)
-        {
             WriteMsg(command + "\r\n");
-        }
         else
             clientSocket.Send(cmdBytes, cmdBytes.Length, 0);
 
@@ -1427,11 +1215,9 @@ public class FTP : FtpBase
     private void sendCommand2(string command)
     {
         #region Původní metoda sendCommand
-        byte[] cmdBytes = Encoding.ASCII.GetBytes((command + "\r\n").ToCharArray());
+        var cmdBytes = Encoding.ASCII.GetBytes((command + "\r\n").ToCharArray());
         if (useStream)
-        {
             WriteMsg(command + "\r\n");
-        }
         else
             clientSocket.Send(cmdBytes, cmdBytes.Length, 0);
 
@@ -1451,39 +1237,32 @@ public class FTP : FtpBase
         #region Nastavím pasivní způsob přenosu(příkaz PASV)
         sendCommand("PASV");
 
-        if (retValue != 227)
-        {
-            throw new Exception(reply.Substring(4));
-        }
+        if (retValue != 227) throw new Exception(reply.Substring(4));
+
         #endregion
 
         #region Získám IP adresu v řetězci z reply
-        int index1 = reply.IndexOf(AllChars.lb);
-        int index2 = reply.IndexOf(AllChars.rb);
-        string ipData = reply.Substring(index1 + 1, index2 - index1 - 1);
-        int[] parts = new int[6];
+        var index1 = reply.IndexOf(AllChars.lb);
+        var index2 = reply.IndexOf(AllChars.rb);
+        var ipData = reply.Substring(index1 + 1, index2 - index1 - 1);
+        var parts = new int[6];
 
-        int len = ipData.Length;
-        int partCount = 0;
-        string buf = "";
+        var len = ipData.Length;
+        var partCount = 0;
+        var buf = "";
         #endregion
 
         #region Získám do pole intů jednotlivé části IP adresy a spojím je do řetězce s tečkama
-        for (int i = 0; i < len && partCount <= 6; i++)
+        for (var i = 0; i < len && partCount <= 6; i++)
         {
 
-            char ch = char.Parse(ipData.Substring(i, 1));
+            var ch = char.Parse(ipData.Substring(i, 1));
             if (char.IsDigit(ch))
                 buf += ch;
-            else if (ch != AllChars.comma)
-            {
-                throw new Exception("Malformed PASV reply" + ": " + reply);
-            }
+            else if (ch != AllChars.comma) throw new Exception("Malformed PASV reply" + ": " + reply);
 
             #region Pokud je poslední znak čárka,
             if (ch == AllChars.comma || i + 1 == len)
-            {
-
                 try
                 {
                     parts[partCount++] = int.Parse(buf);
@@ -1493,19 +1272,19 @@ public class FTP : FtpBase
                 {
                     throw new Exception("Malformed PASV reply" + ": " + reply);
                 }
-            }
+
             #endregion
         }
 
-        string ipAddress = parts[0] + AllStrings.dot + parts[1] + AllStrings.dot +
-          parts[2] + AllStrings.dot + parts[3];
+        var ipAddress = parts[0] + AllStrings.dot + parts[1] + AllStrings.dot +
+                        parts[2] + AllStrings.dot + parts[3];
         #endregion
 
         #region Port získám tak čtvrtou část ip adresy bitově posunu o 8 a sečtu s pátou částí. Získám Socket, O IPEndPoint a pokusím se připojit na tento objekt.
-        int port = (parts[4] << 8) + parts[5];
+        var port = (parts[4] << 8) + parts[5];
 
-        Socket s = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-        IPEndPoint ep = new IPEndPoint(Dns.Resolve(ipAddress).AddressList[0], port);
+        var s = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+        var ep = new IPEndPoint(Dns.Resolve(ipAddress).AddressList[0], port);
 
         try
         {
@@ -1527,12 +1306,13 @@ public class FTP : FtpBase
         // Zkontrolovat zda se první nauploadoval _.txt
     }
 
+    #region IPv6
 
-
-
+    #endregion
 
 
     #region OK metody
+
     /// <summary>
     /// OK
     /// </summary>
@@ -1543,18 +1323,13 @@ public class FTP : FtpBase
     public override void DeleteRecursively(List<string> slozkyNeuploadovatAVS, string dirName, int i, List<DirectoriesToDeleteFtp> td)
     {
         chdirLite(dirName);
-        List<string> smazat = ListDirectoryDetails();
+        var smazat = ListDirectoryDetails();
         foreach (var item2 in smazat)
         {
-            FileSystemType fst = FtpHelper.IsFile(item2, out string fn);
+            var fst = FtpHelper.IsFile(item2, out var fn);
             if (fst == FileSystemType.File)
-            {
                 deleteRemoteFile(fn);
-            }
-            else if (fst == FileSystemType.Folder)
-            {
-                DeleteRecursively(slozkyNeuploadovatAVS, fn, i, td);
-            }
+            else if (fst == FileSystemType.Folder) DeleteRecursively(slozkyNeuploadovatAVS, fn, i, td);
             //////DebugLogger.Instance.WriteLine(item2);
         }
         goToUpFolderForce();
@@ -1576,12 +1351,5 @@ public class FTP : FtpBase
         ThrowEx.NotImplementedMethod();
     }
 
-
     #endregion
-
-
-
-
-
-
 }

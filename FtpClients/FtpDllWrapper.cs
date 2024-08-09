@@ -1,12 +1,10 @@
 namespace SunamoFtp.FtpClients;
 
-
-
-
 public class FtpDllWrapper : FtpBaseNew
 {
-    public Ftp Client = null;
-    static Type type = typeof(FtpDllWrapper);
+    private static Type type = typeof(FtpDllWrapper);
+    public Ftp Client;
+
     public FtpDllWrapper(Ftp ftp)
     {
         Client = ftp;
@@ -36,7 +34,6 @@ public class FtpDllWrapper : FtpBaseNew
     {
         //InitApp.Logger.WriteLine("All file entries" + ":");
         //Client.GetList().ForEach(d => InitApp.Logger.WriteLine(d.Name));
-
     }
 
     public override void DebugDirChmod(string dir)
@@ -44,7 +41,8 @@ public class FtpDllWrapper : FtpBaseNew
         ThrowEx.NotImplementedMethod();
     }
 
-    public override void DeleteRecursively(List<string> slozkyNeuploadovatAVS, string dirName, int i, List<DirectoriesToDeleteFtp> td)
+    public override void DeleteRecursively(List<string> slozkyNeuploadovatAVS, string dirName, int i,
+        List<DirectoriesToDeleteFtp> td)
     {
         ThrowEx.NotImplementedMethod();
     }
@@ -118,11 +116,11 @@ public class FtpDllWrapper : FtpBaseNew
 
     public override
 #if ASYNC
-async Task
+        async Task
 #else
 void
 #endif
-UploadFile(string path)
+        UploadFile(string path)
     {
         ThrowEx.NotImplementedMethod();
     }

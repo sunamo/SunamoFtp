@@ -1,12 +1,10 @@
 namespace SunamoFtp.Other;
 
-
-
 public class FtpTest
 {
     /// <summary>
-    /// AppData.ci.GetCommonSettings(CommonSettingsKeys.ftp_wedos_user)
-    /// AppData.ci.GetCommonSettings(CommonSettingsKeys.ftp_wedos_pw)
+    ///     AppData.ci.GetCommonSettings(CommonSettingsKeys.ftp_wedos_user)
+    ///     AppData.ci.GetCommonSettings(CommonSettingsKeys.ftp_wedos_pw)
     /// </summary>
     /// <param name="ftpBase"></param>
     /// <param name="un"></param>
@@ -21,14 +19,14 @@ public class FtpTest
 
     public static void FtpDll(string un, string pw)
     {
-        FtpDllWrapper ftpDll = new FtpDllWrapper(new Ftp());
+        var ftpDll = new FtpDllWrapper(new Ftp());
         SetConnectionInfo(ftpDll, un, pw);
-        Ftp ftp = ftpDll.Client;
+        var ftp = ftpDll.Client;
 
         ftp.Connect(ftpDll.remoteHost);
         ftp.Login(ftpDll.remoteUser, ftpDll.remotePass);
 
-        string folder = "a";
+        var folder = "a";
         ftpDll.DebugActualFolder();
         ftpDll.DebugAllEntries();
 
@@ -39,7 +37,4 @@ public class FtpTest
 
         ftp.Close();
     }
-
-
-
 }
