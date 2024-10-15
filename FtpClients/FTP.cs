@@ -1,6 +1,5 @@
-using System.Security.Authentication;
-
 namespace SunamoFtp.FtpClients;
+using System.Security.Authentication;
 
 public class FTP : FtpBase
 {
