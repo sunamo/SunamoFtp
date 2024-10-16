@@ -10,7 +10,7 @@ public static class FtpHelper
     /// <param name="folderName2"></param>
     public static bool IsThisOrUp(string folderName2)
     {
-        return folderName2 == AllStrings.dot || folderName2 == AllStrings.dd;
+        return folderName2 == "." || folderName2 == "..";
     }
 
     /// <summary>
@@ -38,14 +38,14 @@ public static class FtpHelper
     public static FileSystemType IsFile(string entry)
     {
         string fileName = null;
-        var tokeny = entry.Split(AllChars.space).ToList(); //SHSplit.SplitMore(entry, AllStrings.space);
+        var tokeny = entry.Split(' ').ToList(); //SHSplit.SplitMore(entry, "");
         var isFile = IsFileShared(entry, tokeny, out fileName);
         return isFile;
     }
 
     public static FileSystemType IsFile(string entry, out string fileName)
     {
-        var tokeny = entry.Split(AllChars.space).ToList(); //SHSplit.SplitMore(entry, AllStrings.space);
+        var tokeny = entry.Split(' ').ToList(); //SHSplit.SplitMore(entry, "");
         var isFile = IsFileShared(entry, tokeny, out fileName);
         return isFile;
     }
@@ -53,7 +53,7 @@ public static class FtpHelper
     public static FileSystemType IsFile(string entry, out string fileName, out long length)
     {
         //drw-rw-rw-   1 user     group           0 Nov 21 18:03 App_Data
-        var tokeny = entry.Split(AllChars.space).ToList(); //SHSplit.SplitMore(entry, AllStrings.space);
+        var tokeny = entry.Split(' ').ToList(); //SHSplit.SplitMore(entry, "");
         var isFile = IsFileShared(entry, tokeny, out fileName);
         length = long.Parse(tokeny[4]);
 
@@ -62,10 +62,10 @@ public static class FtpHelper
 
     private static FileSystemType IsFileShared(string entry, List<string> tokeny, out string fileName)
     {
-        fileName = SHJoin.JoinFromIndex(8, AllChars.space, tokeny);
+        fileName = SHJoin.JoinFromIndex(8, ' ', tokeny);
         var isFile = FileSystemType.File;
         var f = entry[0];
-        if (f == AllChars.dash)
+        if (f == '-')
         {
         }
         else if (f == 'd')

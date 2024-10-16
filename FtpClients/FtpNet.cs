@@ -101,7 +101,7 @@ public class FtpNet : FtpBase
     {
         if (pocetExc < maxPocetExc)
         {
-            var ma = GetActualPath(dirName).TrimEnd(AllChars.slash);
+            var ma = GetActualPath(dirName).TrimEnd('/');
             OnNewStatus("Mažu adresář" + " " + ma);
 
             FtpWebRequest clsRequest = null;
@@ -238,7 +238,7 @@ public class FtpNet : FtpBase
                             }
 
                         goToUpFolderForce();
-                        rmdir(new List<string>(), Path.GetFileName(item2.Key.TrimEnd(AllChars.slash)));
+                        rmdir(new List<string>(), Path.GetFileName(item2.Key.TrimEnd('/')));
                     }
                 }
         }
@@ -326,8 +326,8 @@ public class FtpNet : FtpBase
     {
         if (dirName != "")
         {
-            dirName = Path.GetFileName(dirName.TrimEnd(AllChars.slash));
-            if (dirName[dirName.Length - 1] == AllStrings.slash[0]) dirName = dirName.Substring(0, dirName.Length - 1);
+            dirName = Path.GetFileName(dirName.TrimEnd('/'));
+            if (dirName[dirName.Length - 1] == "/"[0]) dirName = dirName.Substring(0, dirName.Length - 1);
         }
         else
         {
@@ -345,7 +345,7 @@ public class FtpNet : FtpBase
 
             foreach (var item in fse)
             {
-                var tokens = item.Split(AllChars.space).Length; //SHSplit.SplitMore(item, AllStrings.space).Count;
+                var tokens = item.Split(' ').Length; //SHSplit.SplitMore(item, "").Count;
                 if (tokens < 8) vseMa8 = false;
             }
         }
@@ -378,7 +378,7 @@ public class FtpNet : FtpBase
         // Trim slash from end in dirName variable
         if (dirName != "")
         {
-            if (dirName[dirName.Length - 1] == AllStrings.slash[0]) dirName = dirName.Substring(0, dirName.Length - 1);
+            if (dirName[dirName.Length - 1] == "/"[0]) dirName = dirName.Substring(0, dirName.Length - 1);
         }
         else
         {
@@ -396,7 +396,7 @@ public class FtpNet : FtpBase
 
             foreach (var item in fse)
             {
-                var tokens = SHSplit.SplitMore(item, AllStrings.space).Count;
+                var tokens = SHSplit.SplitMore(item, "").Count;
                 if (tokens < 8) vseMa8 = false;
             }
         }
@@ -421,7 +421,7 @@ public class FtpNet : FtpBase
         }
         else
         {
-            if (dirName == AllStrings.dd)
+            if (dirName == "..")
                 ps.RemoveLastToken();
             else
                 ps.AddToken(dirName);
@@ -494,7 +494,7 @@ public class FtpNet : FtpBase
             StreamReader reader = null;
             FtpWebResponse response = null;
 
-            var _Path = UH.Combine(true, remoteHost + AllStrings.colon + remotePort, ps.ActualPath);
+            var _Path = UH.Combine(true, remoteHost + ":" + remotePort, ps.ActualPath);
             try
             {
                 // Get the object used to communicate with the server.
@@ -769,7 +769,7 @@ public class FtpNet : FtpBase
         foreach (var item in fse)
         {
             var fz = item[0];
-            if (fz == AllChars.dash)
+            if (fz == '-')
             {
                 if (vr.ContainsKey(actualPath))
                 {
@@ -784,18 +784,18 @@ public class FtpNet : FtpBase
             }
             else if (fz == 'd')
             {
-                var folderName = SHJoin.JoinFromIndex(8, AllChars.space, SHSplit.SplitMore(item, AllStrings.space));
+                var folderName = SHJoin.JoinFromIndex(8, ' ', SHSplit.SplitMore(item, ""));
 
                 if (!FtpHelper.IsThisOrUp(folderName))
                 {
                     if (vr.ContainsKey(actualPath))
                     {
-                        vr[actualPath].Add(item + AllStrings.slash);
+                        vr[actualPath].Add(item + "/");
                     }
                     else
                     {
                         var ppk = new List<string>();
-                        ppk.Add(item + AllStrings.slash);
+                        ppk.Add(item + "/");
                         vr.Add(actualPath, ppk);
                     }
 

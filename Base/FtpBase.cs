@@ -11,7 +11,7 @@ public abstract class FtpBase : FtpAbstract
     {
         ps = new PathSelector("");
         remoteHost = string.Empty;
-        //remotePath = AllStrings.dot;
+        //remotePath = ".";
         remoteUser = string.Empty;
         remotePass = string.Empty;
         remotePort = 21;
@@ -167,7 +167,7 @@ public abstract class FtpBase : FtpAbstract
 
     public string GetActualPath()
     {
-        return UH.Combine(true, remoteHost + AllStrings.colon + remotePort, ps.ActualPath);
+        return UH.Combine(true, remoteHost + ":" + remotePort, ps.ActualPath);
     }
 
     /// <summary>
@@ -176,8 +176,8 @@ public abstract class FtpBase : FtpAbstract
     /// <param name="dirName"></param>
     public string GetActualPath(string dirName)
     {
-        var s = /*UH.Combine(true,*/ remoteHost + AllStrings.colon + remotePort + ps.ActualPath + dirName;
-        return s.TrimEnd(AllChars.slash);
+        var s = /*UH.Combine(true,*/ remoteHost + ":" + remotePort + ps.ActualPath + dirName;
+        return s.TrimEnd('/');
     }
 
     #region OK Methods
@@ -267,11 +267,11 @@ public abstract class FtpBase : FtpAbstract
             var actualPath = ps.ActualPath;
             foreach (var item in fse)
             {
-                var size = SHJoin.JoinFromIndex(4, AllChars.space, item.Split(AllChars.space).ToList());
+                var size = SHJoin.JoinFromIndex(4, ' ', item.Split(' ').ToList());
                 var fz = item[0];
-                if (fz == AllChars.dash)
+                if (fz == '-')
                 {
-                    if (size != "0") folderSizeRec += ulong.Parse(size.Substring(0, size.IndexOf(AllChars.space) + 1));
+                    if (size != "0") folderSizeRec += ulong.Parse(size.Substring(0, size.IndexOf(' ') + 1));
 
                     if (vr.ContainsKey(actualPath))
                     {
@@ -286,7 +286,7 @@ public abstract class FtpBase : FtpAbstract
                 }
                 else if (fz == 'd')
                 {
-                    var folderName2 = SHJoin.JoinFromIndex(8, AllChars.space, item.Split(AllChars.space));
+                    var folderName2 = SHJoin.JoinFromIndex(8, ' ', item.Split(' '));
                     if (!FtpHelper.IsThisOrUp(folderName2))
                     {
                         if (slozkyNeuploadovatAVS.Contains(folderName2) && ps.ActualPath == MainWindow.WwwSlash)
@@ -351,7 +351,7 @@ public abstract class FtpBase : FtpAbstract
     /// <param name="_FTPPass">FTP login password</param>
     public void UploadFile(string _FileName)
     {
-        var _UploadPath = UH.Combine(false, remoteHost + AllStrings.colon + remotePort + AllStrings.slash,
+        var _UploadPath = UH.Combine(false, remoteHost + ":" + remotePort + "/",
             UH.Combine(true, ps.ActualPath, Path.GetFileName(_FileName)));
         if (reallyUpload) UploadFileMain(_FileName, _UploadPath);
 
@@ -368,7 +368,7 @@ public abstract class FtpBase : FtpAbstract
     public bool UploadFile(string fullFilePath, string actualFtpPath)
     {
         var _UploadPath = UH.Combine(false,
-            remoteHost + AllStrings.colon + remotePort + AllStrings.slash + AllStrings.slash,
+            remoteHost + ":" + remotePort + "/" + "/",
             UH.Combine(false, actualFtpPath, Path.GetFileName(fullFilePath)));
         var vr = true;
         if (reallyUpload) vr = UploadFileMain(fullFilePath, _UploadPath);
@@ -386,7 +386,7 @@ public abstract class FtpBase : FtpAbstract
     {
         var nazevSlozky = Path.GetFileName(slozkaFrom);
         var pathFolder = UH.Combine(true, ps.ActualPath, nazevSlozky);
-        slozkaFrom = slozkaFrom.TrimEnd(AllChars.bs);
+        slozkaFrom = slozkaFrom.TrimEnd('\\');
         var soubory = Directory.GetFiles(slozkaFrom).ToList();
         var slozky = Directory.GetDirectories(slozkaFrom);
 

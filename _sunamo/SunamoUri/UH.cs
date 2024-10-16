@@ -6,22 +6,22 @@ internal class UH
     {
         if (wholeUrl)
         {
-            var d = SHParts.RemoveAfterFirst(rp, AllStrings.q);
+            var d = SHParts.RemoveAfterFirst(rp, "?");
             //var result = FS.ReplaceInvalidFileNameChars(d, EmptyArrays.Chars);
             return d;
         }
 
-        rp = SHParts.RemoveAfterFirst(rp, AllStrings.q);
-        rp = rp.TrimEnd(AllChars.slash);
-        var dex = rp.LastIndexOf(AllChars.slash);
+        rp = SHParts.RemoveAfterFirst(rp, "?");
+        rp = rp.TrimEnd('/');
+        var dex = rp.LastIndexOf('/');
         return rp.Substring(dex + 1);
     }
 
     internal static string Combine(bool dir, params string[] p)
     {
-        var vr = string.Join(AllChars.slash, p).Replace("///", AllStrings.slash).Replace("//", AllStrings.slash)
-            .TrimEnd(AllChars.slash).Replace(":/", "://");
-        if (dir) vr += AllStrings.slash;
+        var vr = string.Join('/', p).Replace("///", "/").Replace("//", "/")
+            .TrimEnd('/').Replace(":/", "://");
+        if (dir) vr += "/";
         return vr;
     }
 }

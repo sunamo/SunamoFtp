@@ -9,7 +9,7 @@ internal class CA
         first == "System.Collections.Generic.List`1[System.Object]")) return true;
         return false;
     }
-    internal static void InitFillWith(List<string> datas, int pocet, string initWith = Consts.stringEmpty)
+    internal static void InitFillWith(List<string> datas, int pocet, string initWith = "")
     {
         InitFillWith<string>(datas, pocet, initWith);
     }

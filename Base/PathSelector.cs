@@ -15,23 +15,23 @@ public class PathSelector
     public PathSelector(string initialDirectory)
     {
         if (initialDirectory.Contains(":\\") || initialDirectory != "") firstTokenMustExists = true;
-        if (initialDirectory.Contains(AllStrings.bs))
+        if (initialDirectory.Contains("\""))
         {
-            Delimiter = AllStrings.bs;
+            Delimiter = "\"";
         }
         else
         {
-            Delimiter = AllStrings.slash;
+            Delimiter = "/";
             if (initialDirectory.Contains(Delimiter))
             {
-                if (initialDirectory.StartsWith(AllStrings.slash))
+                if (initialDirectory.StartsWith("/"))
                 {
                     throw new Exception("Počáteční složka nemůže začínat s lomítkem na začátku");
-                    var druhy = initialDirectory.IndexOf(AllChars.slash, 1);
+                    var druhy = initialDirectory.IndexOf('/', 1);
                     FirstToken = initialDirectory.Substring(0, druhy);
                 }
 
-                var prvni = initialDirectory.IndexOf(AllChars.slash);
+                var prvni = initialDirectory.IndexOf('/');
                 FirstToken = initialDirectory.Substring(0, prvni);
             }
         }
@@ -55,7 +55,7 @@ public class PathSelector
         {
             if (tokens.Count != 0)
                 return string.Join(Delimiter, tokens.ToArray()) + Delimiter;
-            return AllStrings.slash;
+            return "/";
         }
         set
         {

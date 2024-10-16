@@ -215,7 +215,7 @@ public class FTP : FtpBase
         foreach (var item in fse)
         {
             var fz = item[0];
-            if (fz == AllChars.dash)
+            if (fz == '-')
             {
                 if (vr.ContainsKey(actualPath))
                 {
@@ -230,18 +230,18 @@ public class FTP : FtpBase
             }
             else if (fz == 'd')
             {
-                var folderName = SHJoin.JoinFromIndex(8, AllChars.space, item.Split(new[] { AllStrings.space }, StringSplitOptions.RemoveEmptyEntries).ToList());
+                var folderName = SHJoin.JoinFromIndex(8, ' ', item.Split(new[] { "" }, StringSplitOptions.RemoveEmptyEntries).ToList());
                 ////DebugLogger.Instance.WriteLine("Název alba22: " + folderName);
                 if (!FtpHelper.IsThisOrUp(folderName))
                 {
                     if (vr.ContainsKey(actualPath))
                     {
-                        vr[actualPath].Add(item + AllStrings.slash);
+                        vr[actualPath].Add(item + "/");
                     }
                     else
                     {
                         var ppk = new List<string>();
-                        ppk.Add(item + AllStrings.slash);
+                        ppk.Add(item + "/");
                         vr.Add(actualPath, ppk);
                     }
                     getFSEntriesListRecursively(slozkyNeuploadovatAVS, projeteSlozky, vr, ps.ActualPath, folderName);
@@ -264,12 +264,12 @@ public class FTP : FtpBase
                 foreach (var item in fse)
                 {
                     var fz = item[0];
-                    if (fz == AllChars.dash)
+                    if (fz == '-')
                     {
                     }
                     else if (fz == 'd')
                     {
-                        var folderName = SHJoin.JoinFromIndex(8, AllChars.space, item.Split(AllChars.space));
+                        var folderName = SHJoin.JoinFromIndex(8, ' ', item.Split(' '));
                         if (!FtpHelper.IsThisOrUp(folderName))
                         {
                             if (vr.ContainsKey(actualPath))
@@ -645,7 +645,7 @@ public class FTP : FtpBase
         #endregion
 
         #region Pokud neexistuje, vytvořím jej a hned zavřu. Načtu jej do FS s FileMode Open
-        OnNewStatus("Downloading file" + " " + remFileName + " " + "from" + " " + remoteHost + AllStrings.slash + remotePath);
+        OnNewStatus("Downloading file" + " " + remFileName + " " + "from" + " " + remoteHost + "/" + remotePath);
 
         if (!File.Exists(locFileName))
         {
@@ -981,7 +981,7 @@ public class FTP : FtpBase
     /// <param name="dirName"></param>
     public override void CreateDirectoryIfNotExists(string dirName)
     {
-        if (dirName == AllStrings.dot || dirName == AllStrings.dd) return;
+        if (dirName == "." || dirName == "..") return;
         if (!ExistsFolder(dirName))
             mkdir(dirName);
         else
@@ -996,7 +996,7 @@ public class FTP : FtpBase
         if (!logined) login();
         if (dirName != "")
         {
-            if (dirName[dirName.Length - 1] == AllStrings.slash[0]) dirName = dirName.Substring(0, dirName.Length - 1);
+            if (dirName[dirName.Length - 1] == "/"[0]) dirName = dirName.Substring(0, dirName.Length - 1);
         }
         else
         {
@@ -1014,7 +1014,7 @@ public class FTP : FtpBase
 
             foreach (var item in fse)
             {
-                var tokens = item.Split(AllChars.space).Length; //SHSplit.SplitMore(item, AllStrings.space).Count;
+                var tokens = item.Split(' ').Length; //SHSplit.SplitMore(item, "").Count;
                 if (tokens < 8) vseMa8 = false;
             }
         }
@@ -1040,7 +1040,7 @@ public class FTP : FtpBase
             sendCommand("CWD " + dirName);
 
             if (retValue != 250) throw new Exception(reply.Substring(4));
-            if (dirName == AllStrings.dd)
+            if (dirName == "..")
                 ps.RemoveLastToken();
             else
                 ps.AddToken(dirName);
@@ -1136,7 +1136,7 @@ public class FTP : FtpBase
             mes = mess[0];
 
         //Když na 3. straně není mezera, zavolám tuto M znovu
-        if (!mes.Substring(3, 1).Equals(AllStrings.space)) return readLine();
+        if (!mes.Substring(3, 1).Equals("")) return readLine();
 
         if (debug)
             for (var k = 0; k < mess.Count - 1; k++) OnNewStatus(mess[k]);
@@ -1241,8 +1241,8 @@ public class FTP : FtpBase
         #endregion
 
         #region Získám IP adresu v řetězci z reply
-        var index1 = reply.IndexOf(AllChars.lb);
-        var index2 = reply.IndexOf(AllChars.rb);
+        var index1 = reply.IndexOf('(');
+        var index2 = reply.IndexOf(')');
         var ipData = reply.Substring(index1 + 1, index2 - index1 - 1);
         var parts = new int[6];
 
@@ -1258,10 +1258,10 @@ public class FTP : FtpBase
             var ch = char.Parse(ipData.Substring(i, 1));
             if (char.IsDigit(ch))
                 buf += ch;
-            else if (ch != AllChars.comma) throw new Exception("Malformed PASV reply" + ": " + reply);
+            else if (ch != ',') throw new Exception("Malformed PASV reply" + ": " + reply);
 
             #region Pokud je poslední znak čárka,
-            if (ch == AllChars.comma || i + 1 == len)
+            if (ch == ',' || i + 1 == len)
                 try
                 {
                     parts[partCount++] = int.Parse(buf);
@@ -1275,8 +1275,8 @@ public class FTP : FtpBase
             #endregion
         }
 
-        var ipAddress = parts[0] + AllStrings.dot + parts[1] + AllStrings.dot +
-                        parts[2] + AllStrings.dot + parts[3];
+        var ipAddress = parts[0] + "." + parts[1] + "." +
+                        parts[2] + "." + parts[3];
         #endregion
 
         #region Port získám tak čtvrtou část ip adresy bitově posunu o 8 a sečtu s pátou částí. Získám Socket, O IPEndPoint a pokusím se připojit na tento objekt.
