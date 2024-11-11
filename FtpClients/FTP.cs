@@ -230,7 +230,7 @@ public class FTP : FtpBase
             }
             else if (fz == 'd')
             {
-                var folderName = SHJoin.JoinFromIndex(8, ' ', item.Split(new[] { "" }, StringSplitOptions.RemoveEmptyEntries).ToList());
+                var folderName = SHJoin.JoinFromIndex(8, ' ', item.Split(new[] { " " }, StringSplitOptions.RemoveEmptyEntries).ToList());
                 ////DebugLogger.Instance.WriteLine("Název alba22: " + folderName);
                 if (!FtpHelper.IsThisOrUp(folderName))
                 {
@@ -589,12 +589,12 @@ public class FTP : FtpBase
         if (mode)
         {
             OnNewStatus("Nastavuji binární mód přenosu");
-            sendCommand("TYPE" + " " + "");
+            sendCommand("TYPE" + " ");
         }
         else
         {
             OnNewStatus("Nastavuji ASCII mód přenosu");
-            sendCommand("TYPE" + " " + "");
+            sendCommand("TYPE" + " ");
         }
         if (retValue != 200) throw new Exception(reply.Substring(4));
     }
@@ -925,7 +925,7 @@ public class FTP : FtpBase
     /// <param name="newFileName"></param>
     public override void renameRemoteFile(string oldFileName, string newFileName)
     {
-        OnNewStatus("Ve složce" + " " + ps.ActualPath + " " + "přejmenovávám soubor" + " " + "" + " " + oldFileName + " na " + newFileName);
+        OnNewStatus("Ve složce" + " " + ps.ActualPath + " " + "přejmenovávám soubor" + " " + oldFileName + " na " + newFileName);
         if (!logined) login();
 
         sendCommand("RNFR" + " " + oldFileName);

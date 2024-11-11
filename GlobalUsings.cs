@@ -24,3 +24,4 @@ global using System.Diagnostics;
 global using System.Reflection;
 global using SunamoFtp._sunamo.SunamoValues;
 global using System.Diagnostics.CodeAnalysis;
+global using SunamoFtp._sunamo;

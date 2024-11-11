@@ -219,7 +219,7 @@ public abstract class FtpBase : FtpAbstract
 
         var directories = Directory.GetDirectories(slozkaNaLocalu);
         var files = Directory.GetFiles(slozkaNaLocalu).ToList();
-        OnNewStatus("Uploaduji všechny soubory" + " " + "" + files.Count() + " " + " " + "do složky ftp serveru" + " " +
+        OnNewStatus("Uploaduji všechny soubory" + " " + files.Count() + " " + "do složky ftp serveru" + " " +
                     ps.ActualPath);
 
         if (!UploadFiles(files)) return false;
@@ -257,7 +257,7 @@ public abstract class FtpBase : FtpAbstract
         if (!projiteSlozky.Contains(nextPath))
         {
             NewStatus(
-                "Složka do které se mělo přejít" + " " + "" + nextPath + " " + " " + "ještě nebyla v projeté kolekci",
+                "Složka do které se mělo přejít" + " " + nextPath + " " + "ještě nebyla v projeté kolekci",
                 EmptyArrays.Objects);
             ps.AddToken(folderName);
             projiteSlozky.Add(nextPath);
@@ -318,7 +318,7 @@ public abstract class FtpBase : FtpAbstract
         }
         else
         {
-            NewStatus("Složka do které se mělo přejít" + " " + "" + nextPath + " " + " " + "již byla v projeté kolekci",
+            NewStatus("Složka do které se mělo přejít" + " " + nextPath + " " + "již byla v projeté kolekci",
                 EmptyArrays.Objects);
         }
 
@@ -391,7 +391,7 @@ public abstract class FtpBase : FtpAbstract
         var slozky = Directory.GetDirectories(slozkaFrom);
 
         NewStatus(
-            "Uploaduji všechny soubory" + " " + "" + soubory.Count() + " " + " " + "do složky ftp serveru" + " " +
+            "Uploaduji všechny soubory" + " " + soubory.Count() + " " + "do složky ftp serveru" + " " +
             pathFolder, EmptyArrays.Objects);
 
         CreateDirectoryIfNotExists(nazevSlozky);

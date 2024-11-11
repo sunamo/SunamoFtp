@@ -44,7 +44,7 @@ public class FtpNet : FtpBase
     /// <param name="newFileName"></param>
     public override void renameRemoteFile(string oldFileName, string newFileName)
     {
-        OnNewStatus("Ve složce" + " " + ps.ActualPath + " " + "přejmenovávám soubor" + " " + "" + " " + oldFileName +
+        OnNewStatus("Ve složce" + " " + ps.ActualPath + " " + "přejmenovávám soubor" + " " + oldFileName +
                     " na " + newFileName);
 
         if (pocetExc < maxPocetExc)
@@ -168,9 +168,9 @@ public class FtpNet : FtpBase
                 if (item.adresare.Count != 0)
                 {
                     foreach (var item2 in item.adresare)
-                    foreach (var item3 in item2)
-                        if (item3.Key == ps.ActualPath)
-                            ds = item2;
+                        foreach (var item3 in item2)
+                            if (item3.Key == ps.ActualPath)
+                                ds = item2;
                 }
                 else
                 {
@@ -224,23 +224,23 @@ public class FtpNet : FtpBase
             var smazaneAdresare = new List<string>();
             for (var y = td.Count - 1; y >= 0; y--)
                 foreach (var item in td[y].adresare)
-                foreach (var item2 in item)
-                {
-                    ps.ActualPath = item2.Key;
-                    var sa = item2.Key;
-                    if (!smazaneAdresare.Contains(sa))
+                    foreach (var item2 in item)
                     {
-                        smazaneAdresare.Add(sa);
-                        foreach (var item3 in item2.Value)
-                            while (!
-                                   deleteRemoteFile(item3))
-                            {
-                            }
+                        ps.ActualPath = item2.Key;
+                        var sa = item2.Key;
+                        if (!smazaneAdresare.Contains(sa))
+                        {
+                            smazaneAdresare.Add(sa);
+                            foreach (var item3 in item2.Value)
+                                while (!
+                                       deleteRemoteFile(item3))
+                                {
+                                }
 
-                        goToUpFolderForce();
-                        rmdir(new List<string>(), Path.GetFileName(item2.Key.TrimEnd('/')));
+                            goToUpFolderForce();
+                            rmdir(new List<string>(), Path.GetFileName(item2.Key.TrimEnd('/')));
+                        }
                     }
-                }
         }
     }
 
@@ -396,7 +396,7 @@ public class FtpNet : FtpBase
 
             foreach (var item in fse)
             {
-                var tokens = SHSplit.SplitMore(item, "").Count;
+                var tokens = SHSplit.SplitMore(item, " ").Count;
                 if (tokens < 8) vseMa8 = false;
             }
         }
