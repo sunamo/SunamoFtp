@@ -1,5 +1,4 @@
 namespace SunamoFtp._sunamo.SunamoUri;
-
 internal class UH
 {
     internal static string GetFileName(string rp, bool wholeUrl = false)
@@ -7,7 +6,7 @@ internal class UH
         if (wholeUrl)
         {
             var d = SHParts.RemoveAfterFirst(rp, "?");
-            //var result = FS.ReplaceInvalidFileNameChars(d, EmptyArrays.Chars);
+            //var result = FS.ReplaceInvalidFileNameChars(d, []Chars);
             return d;
         }
 

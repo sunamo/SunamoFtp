@@ -1,5 +1,4 @@
 namespace SunamoFtp.Base;
-
 public abstract class FtpBase : FtpAbstract
 {
     #region ctor
@@ -26,7 +25,7 @@ public abstract class FtpBase : FtpAbstract
 
     public void OnNewStatusNewFolder()
     {
-        NewStatus("Nová složka je" + " " + ps.ActualPath, EmptyArrays.Objects);
+        NewStatus("Nová složka je" + " " + ps.ActualPath, []);
     }
 
     /// <summary>
@@ -258,7 +257,7 @@ public abstract class FtpBase : FtpAbstract
         {
             NewStatus(
                 "Složka do které se mělo přejít" + " " + nextPath + " " + "ještě nebyla v projeté kolekci",
-                EmptyArrays.Objects);
+                []);
             ps.AddToken(folderName);
             projiteSlozky.Add(nextPath);
 
@@ -319,7 +318,7 @@ public abstract class FtpBase : FtpAbstract
         else
         {
             NewStatus("Složka do které se mělo přejít" + " " + nextPath + " " + "již byla v projeté kolekci",
-                EmptyArrays.Objects);
+                []);
         }
 
         //ps.ActualPath = p;
@@ -392,7 +391,7 @@ public abstract class FtpBase : FtpAbstract
 
         NewStatus(
             "Uploaduji všechny soubory" + " " + soubory.Count() + " " + "do složky ftp serveru" + " " +
-            pathFolder, EmptyArrays.Objects);
+            pathFolder, []);
 
         CreateDirectoryIfNotExists(nazevSlozky);
         foreach (var item in soubory)
