@@ -3,7 +3,7 @@
     <TargetFramework>net9.0</TargetFramework>
     <OutputType>Library</OutputType>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <Version>24.12.14.1</Version>
+    <Version>25.1.25.1</Version>
     <Description>Base classes and infrastructure for FTP clients</Description>
     <Authors>www.sunamo.cz</Authors>
     <Copyright>www.sunamo.cz</Copyright>
@@ -13,7 +13,7 @@
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageReadmeFile>readme.md</PackageReadmeFile>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <PackageReleaseNotes>Added #nullable context</PackageReleaseNotes>
+    <PackageReleaseNotes>Removed absolute paths exists in my PC filesystem</PackageReleaseNotes>
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
