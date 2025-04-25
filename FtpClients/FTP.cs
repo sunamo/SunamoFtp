@@ -832,7 +832,7 @@ public class FTP : FtpBase
             fse = ListDirectoryDetails();
             foreach (var item in fse)
             {
-                var tokens = item.Split(' ').Length; //SHSplit.SplitMore(item, "").Count;
+                var tokens = item.Split(' ').Length; //SHSplit.Split(item, "").Count;
                 if (tokens < 8) vseMa8 = false;
             }
         }
@@ -930,7 +930,7 @@ public class FTP : FtpBase
             mes += ASCII.GetString(buffer, 0, bytes);
             if (bytes < buffer.Length) break;
         }
-        var mess = SHSplit.SplitCharMore(mes, '\n');
+        var mess = SHSplit.SplitChar(mes, '\n');
         // Rozdělím získaný string \n a vezmu předposlední prvek, nebo první, který pak vrátím
         if (mes.Length > 2)
             mes = mess[mess.Count - 2];

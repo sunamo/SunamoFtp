@@ -22,14 +22,14 @@ public class FtpNet : FtpBase
         if (remoteFolder.StartsWith(actualPath))
         {
             remoteFolder = remoteFolder.Substring(actualPath.Length);
-            var tokens = SHSplit.SplitMore(remoteFolder, ps.Delimiter);
+            var tokens = SHSplit.Split(remoteFolder, ps.Delimiter);
             foreach (var item in tokens) CreateDirectoryIfNotExists(item);
         }
         // Vzdálená složka nezačíná aktuální cestou,
         else
         {
             ps.ActualPath = "";
-            var tokens = SHSplit.SplitMore(remoteFolder, ps.Delimiter);
+            var tokens = SHSplit.Split(remoteFolder, ps.Delimiter);
             var pridat = 0;
             for (var i = 0 + pridat; i < tokens.Count; i++) CreateDirectoryIfNotExists(tokens[i]);
         }
@@ -284,7 +284,7 @@ public class FtpNet : FtpBase
                 }
 
                 result.Remove(result.ToString().LastIndexOf('\n'), 1);
-                return SHSplit.SplitCharMore(result.ToString(), '\n');
+                return SHSplit.SplitChar(result.ToString(), '\n');
             }
             catch (Exception ex)
             {
@@ -345,7 +345,7 @@ public class FtpNet : FtpBase
 
             foreach (var item in fse)
             {
-                var tokens = item.Split(' ').Length; //SHSplit.SplitMore(item, "").Count;
+                var tokens = item.Split(' ').Length; //SHSplit.Split(item, "").Count;
                 if (tokens < 8) vseMa8 = false;
             }
         }
@@ -396,7 +396,7 @@ public class FtpNet : FtpBase
 
             foreach (var item in fse)
             {
-                var tokens = SHSplit.SplitMore(item, " ").Count;
+                var tokens = SHSplit.Split(item, " ").Count;
                 if (tokens < 8) vseMa8 = false;
             }
         }
@@ -784,7 +784,7 @@ public class FtpNet : FtpBase
             }
             else if (fz == 'd')
             {
-                var folderName = SHJoin.JoinFromIndex(8, ' ', SHSplit.SplitMore(item, ""));
+                var folderName = SHJoin.JoinFromIndex(8, ' ', SHSplit.Split(item, ""));
 
                 if (!FtpHelper.IsThisOrUp(folderName))
                 {

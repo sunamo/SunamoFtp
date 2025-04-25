@@ -61,7 +61,7 @@ public class PathSelector
         {
             tokens.Clear();
             tokens.AddRange(value.Split(new[] { Delimiter },
-                StringSplitOptions.RemoveEmptyEntries)); //SHSplit.SplitMore(value, delimiter));
+                StringSplitOptions.RemoveEmptyEntries)); //SHSplit.Split(value, delimiter));
         }
     }
 
