@@ -204,7 +204,7 @@ public class FTP : FtpBase
                         ppk.Add(item + "/");
                         vr.Add(actualPath, ppk);
                     }
-                    getFSEntriesListRecursively(slozkyNeuploadovatAVS, projeteSlozky, vr, ps.ActualPath, folderName);
+                    //getFSEntriesListRecursively(slozkyNeuploadovatAVS, projeteSlozky, vr, ps.ActualPath, folderName);
                 }
             }
             else
@@ -689,7 +689,7 @@ public class FTP : FtpBase
     /// </summary>
     /// <param name="fileName"></param>
     /// <param name="resume"></param>
-    public void upload(string fileName, bool resume, byte[] fileContents)
+    public void upload(string fileName, bool resume, byte[] buffer)
     {
         OnNewStatus("Uploaduji" + " " + UH.Combine(false, ps.ActualPath, fileName));
         #region Tento kód mi nedovolil často nauploadovat ani jeden soubor, takže ho nahradím speciálními třídami .net
@@ -976,8 +976,10 @@ public class FTP : FtpBase
             else
             {
                 break;
-            };
-        };
+            }
+            ;
+        }
+        ;
         var retval = enc.GetString(serverbuff, 0, count);
         //NewStatus(" READ:" + retval);
         retValue = int.Parse(retval.Substring(0, 3));
@@ -1068,7 +1070,7 @@ public class FTP : FtpBase
         return s;
         #endregion
     }
-    public void uploadSecureFolder(string slozkaTo)
+    public void uploadSecureFolder()
     {
         OnNewStatus("Byla volána metoda uploadSecureFolder která je prázdná");
         // Zkontrolovat zda se první nauploadoval _.txt

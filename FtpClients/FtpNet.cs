@@ -799,7 +799,7 @@ public class FtpNet : FtpBase
                         vr.Add(actualPath, ppk);
                     }
 
-                    getFSEntriesListRecursively(slozkyNeuploadovatAVS, projeteSlozky, vr, ps.ActualPath, folderName);
+                    //getFSEntriesListRecursively(slozkyNeuploadovatAVS, projeteSlozky, vr, ps.ActualPath, folderName);
                 }
             }
             else
