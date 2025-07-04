@@ -249,7 +249,7 @@ public abstract class FtpBase : FtpAbstract
     /// <param name="p"></param>
     /// <param name="folderName"></param>
     public void getFSEntriesListRecursively(List<string> slozkyNeuploadovatAVS, List<string> projiteSlozky,
-        Dictionary<string, List<string>> vr, string p, string folderName)
+        Dictionary<string, List<string>> vr, string folderName)
     {
         LoginIfIsNot(startup);
         var nextPath = UH.Combine(true, ps.ActualPath, folderName);
@@ -301,8 +301,7 @@ public abstract class FtpBase : FtpAbstract
                             vr.Add(actualPath, ppk);
                         }
 
-                        getFSEntriesListRecursively(slozkyNeuploadovatAVS, projiteSlozky, vr, ps.ActualPath,
-                            folderName2);
+                        //getFSEntriesListRecursively(slozkyNeuploadovatAVS, projiteSlozky, vr, ps.ActualPath,folderName2);
                     }
                 }
 
