@@ -9,7 +9,7 @@ public class FtpTest
     /// <param name="ftpBase"></param>
     /// <param name="un"></param>
     /// <param name="pw"></param>
-    private static void SetConnectionInfo(FtpAbstract ftpBase, string un, string pw)
+    public static void SetConnectionInfo(FtpAbstract ftpBase, string un, string pw)
     {
         // Wedos
         ftpBase.setRemoteHost("185.8.239.101");
@@ -17,5 +17,5 @@ public class FtpTest
         ftpBase.setRemotePass(pw);
     }
 
-    
+
 }
