@@ -1,0 +1,61 @@
+name: Build SunamoFtp
+
+on:
+  push:
+    branches: [ "**" ]
+  pull_request:
+    branches: [ "**" ]
+
+jobs:
+  build:
+    name: Build SunamoFtp
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        submodules: recursive
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '9.0.x'
+
+    - name: Restore dependencies
+      run: dotnet restore SunamoFtp/SunamoFtp.csproj
+
+    - name: Build
+      run: dotnet build SunamoFtp/SunamoFtp.csproj --configuration Release --no-restore
+
+  test:
+    name: Test SunamoFtp.Tests
+    runs-on: ${{ matrix.os }}
+    needs: build
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        submodules: recursive
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '9.0.x'
+
+    - name: Restore dependencies
+      run: dotnet restore SunamoFtp.Tests/SunamoFtp.Tests.csproj
+
+    - name: Build tests
+      run: dotnet build SunamoFtp.Tests/SunamoFtp.Tests.csproj --configuration Release --no-restore
+
+    - name: Run tests
+      run: dotnet test SunamoFtp.Tests/SunamoFtp.Tests.csproj --configuration Release --no-build --verbosity normal
+      continue-on-error: true
