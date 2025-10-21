@@ -1,3 +1,6 @@
+// EN: Variable names have been checked and replaced with self-descriptive names
+// CZ: Názvy proměnných byly zkontrolovány a nahrazeny samopopisnými názvy
+
 namespace SunamoFtp._sunamo.SunamoStringJoin;
 
 internal class SHJoin
@@ -5,16 +8,16 @@ internal class SHJoin
     internal static string JoinFromIndex(int dex, object delimiter2, IList parts)
     {
         var delimiter = delimiter2.ToString();
-        var sb = new StringBuilder();
+        var stringBuilder = new StringBuilder();
         var i = 0;
         foreach (var item in parts)
         {
-            if (i >= dex) sb.Append(item + delimiter);
+            if (i >= dex) stringBuilder.Append(item + delimiter);
             i++;
         }
 
-        var vr = sb.ToString();
-        return vr.Substring(0, vr.Length - 1);
-        //return SHSubstring.SubstringLength(vr, 0, vr.Length - 1);
+        var result = stringBuilder.ToString();
+        return result.Substring(0, result.Length - 1);
+        //return SHSubstring.SubstringLength(result, 0, result.Length - 1);
     }
 }

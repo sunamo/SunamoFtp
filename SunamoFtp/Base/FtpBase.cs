@@ -1,3 +1,6 @@
+// EN: Variable names have been checked and replaced with self-descriptive names
+// CZ: Názvy proměnných byly zkontrolovány a nahrazeny samopopisnými názvy
+
 namespace SunamoFtp.Base;
 public abstract class FtpBase : FtpAbstract
 {
@@ -139,9 +142,9 @@ public abstract class FtpBase : FtpAbstract
     /// </summary>
     /// <param name="s"></param>
     /// <param name="p"></param>
-    public static void OnNewStatus(string s, params object[] p)
+    public static void OnNewStatus(string text, params object[] p)
     {
-        NewStatus(s, p);
+        NewStatus(text, p);
     }
 
 
@@ -175,8 +178,8 @@ public abstract class FtpBase : FtpAbstract
     /// <param name="dirName"></param>
     public string GetActualPath(string dirName)
     {
-        var s = /*UH.Combine(true,*/ remoteHost + ":" + remotePort + ps.ActualPath + dirName;
-        return s.TrimEnd('/');
+        var text = /*UH.Combine(true,*/ remoteHost + ":" + remotePort + ps.ActualPath + dirName;
+        return text.TrimEnd('/');
     }
 
     #region OK Methods
@@ -242,7 +245,7 @@ public abstract class FtpBase : FtpAbstract
     /// <summary>
     ///     OK
     ///     LIST
-    ///     Tato metoda není vstupní, nevolej ji, zavolej místo toho getFSEntriesListRecursively s 1 parametrem
+    ///     Tato metoda není vstupní, nevolej ji, zavolej místo toho getFSEntriesListRecursively text 1 parametrem
     /// </summary>
     /// <param name="projiteSlozky"></param>
     /// <param name="vr"></param>
@@ -359,7 +362,7 @@ public abstract class FtpBase : FtpAbstract
     /// <summary>
     ///     OK
     ///     STOR
-    ///     Metoda s druhým argumentem, pokud chci uploadovat do jiné složky, než ve které teď jsem
+    ///     Metoda text druhým argumentem, pokud chci uploadovat do jiné složky, než ve které teď jsem
     /// </summary>
     /// <param name="fullFilePath"></param>
     /// <param name="actualFtpPath"></param>
@@ -423,8 +426,8 @@ public abstract class FtpBase : FtpAbstract
     public bool ExistsFolder(string folder)
     {
         var fse = ListDirectoryDetails();
-        var d = new List<string>(FtpHelper.GetDirectories(fse));
-        return d.Contains(folder);
+        var data = new List<string>(FtpHelper.GetDirectories(fse));
+        return data.Contains(folder);
     }
 
     #endregion

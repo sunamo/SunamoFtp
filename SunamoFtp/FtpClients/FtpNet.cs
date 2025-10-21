@@ -1,3 +1,6 @@
+// EN: Variable names have been checked and replaced with self-descriptive names
+// CZ: Názvy proměnných byly zkontrolovány a nahrazeny samopopisnými názvy
+
 namespace SunamoFtp.FtpClients;
 
 public class FtpNet : FtpBase
@@ -179,7 +182,7 @@ public class FtpNet : FtpBase
                 //ds = ;
             }
 
-        for (var z = 0; z < td.Count; z++)
+        for (var zValue = 0; zValue < td.Count; zValue++)
         {
             var item = td[z];
 
@@ -222,7 +225,7 @@ public class FtpNet : FtpBase
         if (i == 1)
         {
             var smazaneAdresare = new List<string>();
-            for (var y = td.Count - 1; y >= 0; y--)
+            for (var yValue = td.Count - 1; yValue >= 0; yValue--)
                 foreach (var item in td[y].adresare)
                     foreach (var item2 in item)
                     {

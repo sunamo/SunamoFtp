@@ -1,3 +1,6 @@
+// EN: Variable names have been checked and replaced with self-descriptive names
+// CZ: Názvy proměnných byly zkontrolovány a nahrazeny samopopisnými názvy
+
 namespace SunamoFtp._sunamo.SunamoUri;
 internal class UH
 {
@@ -5,9 +8,9 @@ internal class UH
     {
         if (wholeUrl)
         {
-            var d = SHParts.RemoveAfterFirst(rp, "?");
-            //var result = FS.ReplaceInvalidFileNameChars(d, []Chars);
-            return d;
+            var data = SHParts.RemoveAfterFirst(rp, "?");
+            //var result = FS.ReplaceInvalidFileNameChars(data, []Chars);
+            return data;
         }
 
         rp = SHParts.RemoveAfterFirst(rp, "?");

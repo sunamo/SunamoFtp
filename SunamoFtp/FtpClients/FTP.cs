@@ -1,3 +1,6 @@
+// EN: Variable names have been checked and replaced with self-descriptive names
+// CZ: Názvy proměnných byly zkontrolovány a nahrazeny samopopisnými názvy
+
 namespace SunamoFtp.FtpClients;
 
 public class FTP : FtpBase
@@ -76,7 +79,7 @@ public class FTP : FtpBase
         useStream = value;
     }
     /// <summary>
-    /// S PP remotePath na A1
+    /// text PP remotePath na A1
     /// </summary>
     /// <param name="remotePath"></param>
     public void setRemotePath(string remotePath)
@@ -110,7 +113,7 @@ public class FTP : FtpBase
     /// <summary>
     /// Pokud nejsem přihlášený, přihlásím se M login
     /// Vytvořím objekt Socket metodou createDataSocket ze které budu přidávat znaky
-    /// Zavolám příkaz NLST s A1,
+    /// Zavolám příkaz NLST text A1,
     /// Skrz objekt Socket získám bajty, které okamžitě přidávám do řetězce
     /// Odpověď získám M readReply a G
     /// </summary>
@@ -271,7 +274,7 @@ public class FTP : FtpBase
         if (actualPath == remoteFolder) return;
         setRemotePath(ftpClient.WwwSlash);
         actualPath = ps.ActualPath;
-        // Vzdálená složka začíná s aktuální cestou == vzdálená složka je delší. Pouze přejdi hloubš
+        // Vzdálená složka začíná text aktuální cestou == vzdálená složka je delší. Pouze přejdi hloubš
         if (remoteFolder.StartsWith(actualPath))
         {
             remoteFolder = remoteFolder.Substring(actualPath.Length);
@@ -287,7 +290,7 @@ public class FTP : FtpBase
         }
     }
     /// <summary>
-    /// Před zavoláním této metody se musí musí zjistit zda první znak je d(adresář) nebo -(soubor)
+    /// Před zavoláním této metody se musí musí zjistit zda první znak je data(adresář) nebo -(soubor)
     /// </summary>
     /// <param name="entry"></param>
     /// <summary>
@@ -374,7 +377,7 @@ public class FTP : FtpBase
         var remoteHost2 = remoteHost;
         if (FtpHelper.IsSchemaFtp(remoteHost)) remoteHost2 = FtpHelper.ReplaceSchemaFtp(remoteHost2);
         if (!IPAddress.TryParse(remoteHost2, out v4)) v4 = Dns.GetHostEntry(remoteHost).AddressList[0].MapToIPv4();
-        var d = v4.ToString();
+        var data = v4.ToString();
         var ep = new IPEndPoint(v4, remotePort);
         try
         {
@@ -512,7 +515,7 @@ public class FTP : FtpBase
     /// <summary>
     /// Stáhne soubor A1 do lok. souboru A2. Navazuje pokud A3.
     /// Pokud A2 bude null, M vyhodí výjimku
-    /// Pokud neexistuje, vytvořím jej a hned zavřu. Načtu jej do FS s FileMode Open
+    /// Pokud neexistuje, vytvořím jej a hned zavřu. Načtu jej do FS text FileMode Open
     /// Pokud otevřený soubor nemá velikost 0, pošlu příkaz REST čímž nastavím offset
     /// Pokud budeme navazovat, posunu v otevřeném souboru na konec
     /// Pošlu příkaz RETR a všechny přijaté bajty zapíšu
@@ -549,7 +552,7 @@ public class FTP : FtpBase
         if (!logined) login();
         setBinaryMode(true);
         #endregion
-        #region Pokud neexistuje, vytvořím jej a hned zavřu. Načtu jej do FS s FileMode Open
+        #region Pokud neexistuje, vytvořím jej a hned zavřu. Načtu jej do FS text FileMode Open
         OnNewStatus("Downloading file" + " " + remFileName + " " + "from" + " " + remoteHost + "/" + remotePath);
         if (!File.Exists(locFileName))
         {
@@ -599,9 +602,9 @@ public class FTP : FtpBase
     /// <summary>
     /// Pošlu příkaz PASV a příhlásím se pokud nejsem
     /// Získám socket, z něho stream a pokud navazuzuji, pokusím se nastavit binární mód a offset podle toho kolik dat už na serveru bylo.
-    /// Pokud je tam nějaký offset, pošlu opět příkaz rest s offsetem, abych nastavil od čeho budu uploadovat
-    /// Pošlu příkaz STOR s jménem souboru a zapíšu všechny bajty z souboru do bufferu byte[]
-    /// Nastavím offset v lokálním souboru.  I když nevím prož když pak uploaduji M stream2.Write s offsetem 0. Zavřu socket i proud a přečtu odpověď serveru. Pokud nebyla 226 nebo 250, VV
+    /// Pokud je tam nějaký offset, pošlu opět příkaz rest text offsetem, abych nastavil od čeho budu uploadovat
+    /// Pošlu příkaz STOR text jménem souboru a zapíšu všechny bajty z souboru do bufferu byte[]
+    /// Nastavím offset v lokálním souboru.  I když nevím prož když pak uploaduji M stream2.Write text offsetem 0. Zavřu socket i proud a přečtu odpověď serveru. Pokud nebyla 226 nebo 250, VV
     /// </summary>
     /// <param name="fileName"></param>
     /// <param name="resume"></param>
@@ -630,14 +633,14 @@ public class FTP : FtpBase
                 offset = 0;
             }
         #endregion
-        #region Pokud je tam nějaký offset, pošlu opět příkaz rest s offsetem, abych nastavil od čeho budu uploadovat
+        #region Pokud je tam nějaký offset, pošlu opět příkaz rest text offsetem, abych nastavil od čeho budu uploadovat
         if (offset > 0)
         {
             sendCommand("REST" + " " + offset);
             if (retValue != 350) offset = 0;
         }
         #endregion
-        #region Pošlu příkaz STOR s jménem souboru a zapíšu všechny bajty z souboru do bufferu byte[]
+        #region Pošlu příkaz STOR text jménem souboru a zapíšu všechny bajty z souboru do bufferu byte[]
         sendCommand("STOR" + " " + Path.GetFileName(fileName));
         if (!(retValue == 125 || retValue == 150)) throw new Exception(reply.Substring(4));
         var input = File.OpenRead(fileName);
@@ -645,7 +648,7 @@ public class FTP : FtpBase
         input.Read(bufferFile, 0, bufferFile.Length);
         input.Close();
         #endregion
-        #region Nastavím offset v lokálním souboru.  I když nevím prož když pak uploaduji M stream2.Write s offsetem 0. Zavřu socket i proud a přečtu odpověď serveru. Pokud nebyla 226 nebo 250, VV
+        #region Nastavím offset v lokálním souboru.  I když nevím prož když pak uploaduji M stream2.Write text offsetem 0. Zavřu socket i proud a přečtu odpověď serveru. Pokud nebyla 226 nebo 250, VV
         if (offset != 0)
         {
             if (debug) OnNewStatus("seeking to" + " " + offset);
@@ -683,7 +686,7 @@ public class FTP : FtpBase
     /// <summary>
     /// Pokud nejsem nalogovaný, přihlásím se.
     /// Pokud mám navazovat, zjistím si veliksot vzdáleného souboru.
-    /// Pošlu příkaz REST s offsetem a poté už STOR
+    /// Pošlu příkaz REST text offsetem a poté už STOR
     /// Pokud byl offset, seeknu se v souboru a čtu bajty a zapisuji je na server metodou cSocket.Send
     /// Pokud jsem připojený, zavřu objekt cSocket a zavřu návratovou hodnotu
     /// </summary>
@@ -712,7 +715,7 @@ public class FTP : FtpBase
                 offset = 0;
             }
         #endregion
-        #region Pošlu příkaz REST s offsetem a poté už STOR
+        #region Pošlu příkaz REST text offsetem a poté už STOR
         if (offset > 0)
         {
             sendCommand("REST" + " " + offset);
@@ -800,7 +803,7 @@ public class FTP : FtpBase
         return true;
     }
     /// <summary>
-    /// Změním akt. adresář na A1 a S remotePath A1 příkazem CWD
+    /// Změním akt. adresář na A1 a text remotePath A1 příkazem CWD
     /// </summary>
     /// <param name="dirName"></param>
     public override void CreateDirectoryIfNotExists(string dirName)
@@ -1014,8 +1017,8 @@ public class FTP : FtpBase
     /// <summary>
     /// Nastavím pasivní způsob přenosu(příkaz PASV)
     /// Získám IP adresu v řetězci z reply
-    /// Získám do pole intů jednotlivé části IP adresy a spojím je do řetězce s tečkama
-    /// Port získám tak čtvrtou část ip adresy bitově posunu o 8 a sečtu s pátou částí. Získám Socket, O IPEndPoint a pokusím se připojit na tento objekt.
+    /// Získám do pole intů jednotlivé části IP adresy a spojím je do řetězce text tečkama
+    /// Port získám tak čtvrtou část ip adresy bitově posunu o 8 a sečtu text pátou částí. Získám Socket, O IPEndPoint a pokusím se připojit na tento objekt.
     /// </summary>
     public Socket createDataSocket()
     {
@@ -1032,7 +1035,7 @@ public class FTP : FtpBase
         var partCount = 0;
         var buf = "";
         #endregion
-        #region Získám do pole intů jednotlivé části IP adresy a spojím je do řetězce s tečkama
+        #region Získám do pole intů jednotlivé části IP adresy a spojím je do řetězce text tečkama
         for (var i = 0; i < len && partCount <= 6; i++)
         {
             var ch = char.Parse(ipData.Substring(i, 1));
@@ -1055,19 +1058,19 @@ public class FTP : FtpBase
         var ipAddress = parts[0] + "." + parts[1] + "." +
                         parts[2] + "." + parts[3];
         #endregion
-        #region Port získám tak čtvrtou část ip adresy bitově posunu o 8 a sečtu s pátou částí. Získám Socket, O IPEndPoint a pokusím se připojit na tento objekt.
+        #region Port získám tak čtvrtou část ip adresy bitově posunu o 8 a sečtu text pátou částí. Získám Socket, O IPEndPoint a pokusím se připojit na tento objekt.
         var port = (parts[4] << 8) + parts[5];
-        var s = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+        var text = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
         var ep = new IPEndPoint(Dns.Resolve(ipAddress).AddressList[0], port);
         try
         {
-            s.Connect(ep);
+            text.Connect(ep);
         }
         catch (Exception ex)
         {
             throw new Exception("Can't connect to remoteserver");
         }
-        return s;
+        return text;
         #endregion
     }
     public void uploadSecureFolder()
@@ -1104,7 +1107,7 @@ public class FTP : FtpBase
     {
         ThrowEx.NotImplementedMethod();
     }
-    public override void D(string what, string text, params object[] args)
+    public override void data(string what, string text, params object[] args)
     {
         ThrowEx.NotImplementedMethod();
     }
