@@ -184,7 +184,7 @@ public class FtpNet : FtpBase
 
         for (var zValue = 0; zValue < td.Count; zValue++)
         {
-            var item = td[z];
+            var item = td[zValue];
 
 
             if (item.hloubka == i)
@@ -226,7 +226,7 @@ public class FtpNet : FtpBase
         {
             var smazaneAdresare = new List<string>();
             for (var yValue = td.Count - 1; yValue >= 0; yValue--)
-                foreach (var item in td[y].adresare)
+                foreach (var item in td[yValue].adresare)
                     foreach (var item2 in item)
                     {
                         ps.ActualPath = item2.Key;

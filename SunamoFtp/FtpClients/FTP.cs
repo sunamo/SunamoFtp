@@ -38,7 +38,7 @@ public class FTP : FtpBase
     /// Hodnotu kterou ukládá třeba readReply, který volá třeba sendCommand
     /// </summary>
     private int retValue;
-    private bool startup = true;
+    private new bool startup = true;
     /// <summary>
     /// Stream který se používá při downloadu.
     /// </summary>
@@ -1107,7 +1107,7 @@ public class FTP : FtpBase
     {
         ThrowEx.NotImplementedMethod();
     }
-    public override void data(string what, string text, params object[] args)
+    public override void D(string what, string text, params object[] args)
     {
         ThrowEx.NotImplementedMethod();
     }
