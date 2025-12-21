@@ -1,6 +1,7 @@
+namespace SunamoFtp.FtpClients;
+
 // EN: Variable names have been checked and replaced with self-descriptive names
 // CZ: Názvy proměnných byly zkontrolovány a nahrazeny samopopisnými názvy
-namespace SunamoFtp.FtpClients;
 public partial class FtpNet : FtpBase
 {
     private static Type type = typeof(FtpNet);

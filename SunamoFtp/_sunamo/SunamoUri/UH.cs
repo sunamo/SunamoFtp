@@ -1,7 +1,5 @@
-// EN: Variable names have been checked and replaced with self-descriptive names
-// CZ: Názvy proměnných byly zkontrolovány a nahrazeny samopopisnými názvy
-
 namespace SunamoFtp._sunamo.SunamoUri;
+
 internal class UH
 {
     internal static string GetFileName(string rp, bool wholeUrl = false)
