@@ -1,14 +1,29 @@
 namespace SunamoFtp._sunamo.SunamoStringSplit;
 
+/// <summary>
+/// Helper class for string splitting operations
+/// </summary>
 internal class SHSplit
 {
-    internal static List<string> Split(string item, params string[] space)
+    /// <summary>
+    /// Splits a string by specified delimiters and removes empty entries
+    /// </summary>
+    /// <param name="text">Text to split</param>
+    /// <param name="delimiters">Delimiters to split by</param>
+    /// <returns>List of non-empty string parts</returns>
+    internal static List<string> Split(string text, params string[] delimiters)
     {
-        return item.Split(space, StringSplitOptions.RemoveEmptyEntries).ToList();
+        return text.Split(delimiters, StringSplitOptions.RemoveEmptyEntries).ToList();
     }
 
-    internal static List<string> SplitChar(string v1, params char[] v2)
+    /// <summary>
+    /// Splits a string by specified character delimiters
+    /// </summary>
+    /// <param name="text">Text to split</param>
+    /// <param name="delimiters">Character delimiters to split by</param>
+    /// <returns>List of string parts</returns>
+    internal static List<string> SplitChar(string text, params char[] delimiters)
     {
-        return v1.Split(v2).ToList();
+        return text.Split(delimiters).ToList();
     }
 }

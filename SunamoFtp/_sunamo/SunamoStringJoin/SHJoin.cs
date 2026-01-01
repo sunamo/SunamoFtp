@@ -1,20 +1,29 @@
 namespace SunamoFtp._sunamo.SunamoStringJoin;
 
+/// <summary>
+/// Helper class for string joining operations
+/// </summary>
 internal class SHJoin
 {
-    internal static string JoinFromIndex(int dex, object delimiter2, IList parts)
+    /// <summary>
+    /// Joins list elements starting from specified index with delimiter
+    /// </summary>
+    /// <param name="startIndex">Index to start joining from</param>
+    /// <param name="delimiter">Delimiter to use between elements</param>
+    /// <param name="parts">List of parts to join</param>
+    /// <returns>Joined string</returns>
+    internal static string JoinFromIndex(int startIndex, object delimiter, IList parts)
     {
-        var delimiter = delimiter2.ToString();
+        var delimiterString = delimiter.ToString();
         var stringBuilder = new StringBuilder();
-        var i = 0;
+        var currentIndex = 0;
         foreach (var item in parts)
         {
-            if (i >= dex) stringBuilder.Append(item + delimiter);
-            i++;
+            if (currentIndex >= startIndex) stringBuilder.Append(item + delimiterString);
+            currentIndex++;
         }
 
         var result = stringBuilder.ToString();
         return result.Substring(0, result.Length - 1);
-        //return SHSubstring.SubstringLength(result, 0, result.Length - 1);
     }
 }

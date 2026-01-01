@@ -1,13 +1,22 @@
 namespace SunamoFtp._sunamo.SunamoStringParts;
 
+/// <summary>
+/// Helper class for string manipulation operations
+/// </summary>
 internal class SHParts
 {
-    internal static string RemoveAfterFirst(string t, string ch)
+    /// <summary>
+    /// Removes everything after the first occurrence of specified delimiter
+    /// </summary>
+    /// <param name="text">Text to process</param>
+    /// <param name="delimiter">Delimiter to search for</param>
+    /// <returns>Text up to first delimiter, or original text if delimiter not found</returns>
+    internal static string RemoveAfterFirst(string text, string delimiter)
     {
-        var dex = t.IndexOf(ch);
-        if (dex == -1 || dex == t.Length - 1) return t;
+        var index = text.IndexOf(delimiter);
+        if (index == -1 || index == text.Length - 1) return text;
 
-        var vr = t.Remove(dex);
-        return vr;
+        var result = text.Remove(index);
+        return result;
     }
 }

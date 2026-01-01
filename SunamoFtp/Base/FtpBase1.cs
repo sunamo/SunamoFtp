@@ -5,26 +5,24 @@ namespace SunamoFtp.Base;
 public abstract partial class FtpBase : FtpAbstract
 {
     /// <summary>
-    ///     OK
-    ///     LIST
-    ///     Tato metoda není vstupní, nevolej ji, zavolej místo toho getFSEntriesListRecursively text 1 parametrem
+    /// Recursively gets all filesystem entries from FTP server starting from specified folder. This is an internal method - call the 1-parameter overload instead.
     /// </summary>
-    /// <param name = "projiteSlozky"></param>
-    /// <param name = "vr"></param>
-    /// <param name = "p"></param>
-    /// <param name = "folderName"></param>
-    public void getFSEntriesListRecursively(List<string> slozkyNeuploadovatAVS, List<string> projiteSlozky, Dictionary<string, List<string>> vr, string folderName)
+    /// <param name="foldersToSkip">List of folder names to skip during traversal</param>
+    /// <param name="visitedFolders">List of already visited folder paths to avoid infinite loops</param>
+    /// <param name="result">Dictionary to collect filesystem entries mapped by directory path</param>
+    /// <param name="folderName">Folder name to start traversal from</param>
+    public void getFSEntriesListRecursively(List<string> foldersToSkip, List<string> visitedFolders, Dictionary<string, List<string>> result, string folderName)
     {
         LoginIfIsNot(startup);
-        var nextPath = UH.Combine(true, ps.ActualPath, folderName);
-        if (!projiteSlozky.Contains(nextPath))
+        var nextPath = UH.Combine(true, PathSelector.ActualPath, folderName);
+        if (!visitedFolders.Contains(nextPath))
         {
             NewStatus("Složka do které se mělo přejít" + " " + nextPath + " " + "ještě nebyla v projeté kolekci", []);
-            ps.AddToken(folderName);
-            projiteSlozky.Add(nextPath);
-            var fse = ListDirectoryDetails();
-            var actualPath = ps.ActualPath;
-            foreach (var item in fse)
+            PathSelector.AddToken(folderName);
+            visitedFolders.Add(nextPath);
+            var ftpEntries = ListDirectoryDetails();
+            var actualPath = PathSelector.ActualPath;
+            foreach (var item in ftpEntries)
             {
                 var size = SHJoin.JoinFromIndex(4, ' ', item.Split(' ').ToList());
                 var fz = item[0];
@@ -32,15 +30,15 @@ public abstract partial class FtpBase : FtpAbstract
                 {
                     if (size != "0")
                         folderSizeRec += ulong.Parse(size.Substring(0, size.IndexOf(' ') + 1));
-                    if (vr.ContainsKey(actualPath))
+                    if (result.ContainsKey(actualPath))
                     {
-                        vr[actualPath].Add(item);
+                        result[actualPath].Add(item);
                     }
                     else
                     {
-                        var ppk = new List<string>();
-                        ppk.Add(item);
-                        vr.Add(actualPath, ppk);
+                        var entries = new List<string>();
+                        entries.Add(item);
+                        result.Add(actualPath, entries);
                     }
                 }
                 else if (fz == 'd')
@@ -48,19 +46,19 @@ public abstract partial class FtpBase : FtpAbstract
                     var folderName2 = SHJoin.JoinFromIndex(8, ' ', item.Split(' '));
                     if (!FtpHelper.IsThisOrUp(folderName2))
                     {
-                        if (slozkyNeuploadovatAVS.Contains(folderName2) && ps.ActualPath == MainWindow.WwwSlash)
+                        if (foldersToSkip.Contains(folderName2) && PathSelector.ActualPath == MainWindow.WwwSlash)
                             continue;
-                        if (vr.ContainsKey(actualPath))
+                        if (result.ContainsKey(actualPath))
                         {
-                            vr[actualPath].Add(item);
+                            result[actualPath].Add(item);
                         }
                         else
                         {
-                            var ppk = new List<string>();
-                            ppk.Add(item);
-                            vr.Add(actualPath, ppk);
+                            var entries = new List<string>();
+                            entries.Add(item);
+                            result.Add(actualPath, entries);
                         }
-                    //getFSEntriesListRecursively(slozkyNeuploadovatAVS, projiteSlozky, vr, ps.ActualPath,folderName2);
+                    //getFSEntriesListRecursively(foldersToSkip, visitedFolders, result, PathSelector.ActualPath,folderName2);
                     }
                 }
                 else
@@ -69,80 +67,71 @@ public abstract partial class FtpBase : FtpAbstract
                 }
             }
 
-            if (ps.CanGoToUpFolder)
+            if (PathSelector.CanGoToUpFolder)
                 goToUpFolder();
-        //ps.RemoveLastToken();
+        //PathSelector.RemoveLastToken();
         }
         else
         {
             NewStatus("Složka do které se mělo přejít" + " " + nextPath + " " + "již byla v projeté kolekci", []);
         }
-    //ps.ActualPath = p;
+    //PathSelector.ActualPath = p;
     }
 
-    private static Type type = typeof(FtpBase);
     /// <summary>
-    ///     OK
-    ///     RETR
-    ///     Stáhne soubor A1 do lok. souboru A2. Nenavazuje
+    /// Downloads a file from FTP server to local filesystem (deletes local file if exists)
     /// </summary>
-    /// <param name = "remFileName"></param>
-    /// <param name = "locFileName"></param>
+    /// <param name="remFileName">Remote file name on FTP server</param>
+    /// <param name="locFileName">Local file path to save to</param>
     public void download(string remFileName, string locFileName)
     {
         download(remFileName, locFileName, true);
     }
 
     /// <summary>
-    ///     OK
-    ///     STOR
-    ///     Před použitím této metody se musím přesunout do složky do které chci uploadovat.
-    ///     Methods to upload file to FTP Server
+    /// Uploads file to current FTP directory. You must navigate to target folder before calling this method.
     /// </summary>
-    /// <param name = "_FileName">local source file name</param>
-    /// <param name = "_UploadPath">Upload FTP path including Host name</param>
-    /// <param name = "_FTPUser">FTP login username</param>
-    /// <param name = "_FTPPass">FTP login password</param>
+    /// <param name="_FileName">Local source file path</param>
     public void UploadFile(string _FileName)
     {
-        var _UploadPath = UH.Combine(false, remoteHost + ":" + remotePort + "/", UH.Combine(true, ps.ActualPath, Path.GetFileName(_FileName)));
+        var _UploadPath = UH.Combine(false, remoteHost + ":" + remotePort + "/", UH.Combine(true, PathSelector.ActualPath, Path.GetFileName(_FileName)));
         if (reallyUpload)
             UploadFileMain(_FileName, _UploadPath);
     //MainWindow.FileUploaded(_FileName);
     }
 
     /// <summary>
-    ///     OK
-    ///     STOR
-    ///     Metoda text druhým argumentem, pokud chci uploadovat do jiné složky, než ve které teď jsem
+    /// Uploads file to specified FTP folder path (allows uploading to different folder than current)
     /// </summary>
-    /// <param name = "fullFilePath"></param>
-    /// <param name = "actualFtpPath"></param>
+    /// <param name="fullFilePath">Local file path to upload</param>
+    /// <param name="actualFtpPath">Target FTP folder path</param>
+    /// <returns>True if file was uploaded successfully</returns>
     public bool UploadFile(string fullFilePath, string actualFtpPath)
     {
         var _UploadPath = UH.Combine(false, remoteHost + ":" + remotePort + "/" + "/", UH.Combine(false, actualFtpPath, Path.GetFileName(fullFilePath)));
-        var vr = true;
+        var result = true;
         if (reallyUpload)
-            vr = UploadFileMain(fullFilePath, _UploadPath);
-        return vr;
+            result = UploadFileMain(fullFilePath, _UploadPath);
+        return result;
     }
 
     /// <summary>
-    ///     OK
-    ///     STOR
+    /// Shared method for uploading folder to FTP server (used by both recursive and non-recursive variants)
     /// </summary>
-    /// <param name = "slozkaTo"></param>
-    /// <param name = "iw"></param>
-    public bool uploadFolderShared(string slozkaFrom, bool rek, IWorking working)
+    /// <param name="sourceFolder">Local source folder path</param>
+    /// <param name="rek">Whether to recursively upload subfolders</param>
+    /// <param name="working">Working state tracker to allow cancellation</param>
+    /// <returns>True if folder was uploaded successfully</returns>
+    public bool uploadFolderShared(string sourceFolder, bool rek, IWorking working)
     {
-        var nazevSlozky = Path.GetFileName(slozkaFrom);
-        var pathFolder = UH.Combine(true, ps.ActualPath, nazevSlozky);
-        slozkaFrom = slozkaFrom.TrimEnd('\\');
-        var soubory = Directory.GetFiles(slozkaFrom).ToList();
-        var slozky = Directory.GetDirectories(slozkaFrom);
-        NewStatus("Uploaduji všechny soubory" + " " + soubory.Count() + " " + "do složky ftp serveru" + " " + pathFolder, []);
-        CreateDirectoryIfNotExists(nazevSlozky);
-        foreach (var item in soubory)
+        var folderName = Path.GetFileName(sourceFolder);
+        var pathFolder = UH.Combine(true, PathSelector.ActualPath, folderName);
+        sourceFolder = sourceFolder.TrimEnd('\\');
+        var files = Directory.GetFiles(sourceFolder).ToList();
+        var folders = Directory.GetDirectories(sourceFolder);
+        NewStatus("Uploaduji všechny files" + " " + files.Count() + " " + "do složky ftp serveru" + " " + pathFolder, []);
+        CreateDirectoryIfNotExists(folderName);
+        foreach (var item in files)
         {
             if (!working.IsWorking)
                 return false;
@@ -151,15 +140,15 @@ public abstract partial class FtpBase : FtpAbstract
 
         if (rek)
         {
-            if (slozky.Count() == 0)
+            if (folders.Count() == 0)
             {
                 goToUpFolder();
             }
             else
             {
-                foreach (var item in slozky)
+                foreach (var item in folders)
                     uploadFolderShared(item, rek, working);
-                if (slozky.Count() != 0)
+                if (folders.Count() != 0)
                     goToUpFolder();
             }
         }
@@ -168,14 +157,14 @@ public abstract partial class FtpBase : FtpAbstract
     }
 
     /// <summary>
-    ///     OK
-    ///     Do A1 se zadává název souboru bez cesty
+    /// Checks if folder exists in current FTP directory
     /// </summary>
-    /// <param name = "folder"></param>
+    /// <param name="folder">Folder name (without path)</param>
+    /// <returns>True if folder exists in current directory</returns>
     public bool ExistsFolder(string folder)
     {
-        var fse = ListDirectoryDetails();
-        var data = new List<string>(FtpHelper.GetDirectories(fse));
+        var ftpEntries = ListDirectoryDetails();
+        var data = new List<string>(FtpHelper.GetDirectories(ftpEntries));
         return data.Contains(folder);
     }
 }

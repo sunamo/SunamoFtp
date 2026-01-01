@@ -4,30 +4,35 @@ namespace SunamoFtp.FtpClients;
 // CZ: Názvy proměnných byly zkontrolovány a nahrazeny samopopisnými názvy
 public partial class FTP : FtpBase
 {
-    public override Dictionary<string, List<string>> getFSEntriesListRecursively(List<string> slozkyNeuploadovatAVS)
+    /// <summary>
+    /// Recursively retrieves all file system entries (files and folders) from the FTP server starting at the current path.
+    /// </summary>
+    /// <param name="foldersToSkip">List of folder names to skip during traversal</param>
+    /// <returns>Dictionary mapping folder paths to lists of entry details</returns>
+    public override Dictionary<string, List<string>> getFSEntriesListRecursively(List<string> foldersToSkip)
     {
         if (!logined)
             login();
         // Musí se do ní ukládat cesta k celé složce, nikoliv jen název aktuální složky
-        var projeteSlozky = new List<string>();
-        var vr = new Dictionary<string, List<string>>();
-        var fse = ListDirectoryDetails();
-        var actualPath = ps.ActualPath;
+        var visitedFolders = new List<string>();
+        var result = new Dictionary<string, List<string>>();
+        var ftpEntries = ListDirectoryDetails();
+        var actualPath = PathSelector.ActualPath;
         OnNewStatus("Získávám rekurzivní seznam souborů ze složky" + " " + actualPath);
-        foreach (var item in fse)
+        foreach (var item in ftpEntries)
         {
             var fz = item[0];
             if (fz == '-')
             {
-                if (vr.ContainsKey(actualPath))
+                if (result.ContainsKey(actualPath))
                 {
-                    vr[actualPath].Add(item);
+                    result[actualPath].Add(item);
                 }
                 else
                 {
-                    var ppk = new List<string>();
-                    ppk.Add(item);
-                    vr.Add(actualPath, ppk);
+                    var entries = new List<string>();
+                    entries.Add(item);
+                    result.Add(actualPath, entries);
                 }
             }
             else if (fz == 'd')
@@ -36,17 +41,17 @@ public partial class FTP : FtpBase
                 ////DebugLogger.Instance.WriteLine("Název alba22: " + folderName);
                 if (!FtpHelper.IsThisOrUp(folderName))
                 {
-                    if (vr.ContainsKey(actualPath))
+                    if (result.ContainsKey(actualPath))
                     {
-                        vr[actualPath].Add(item + "/");
+                        result[actualPath].Add(item + "/");
                     }
                     else
                     {
-                        var ppk = new List<string>();
-                        ppk.Add(item + "/");
-                        vr.Add(actualPath, ppk);
+                        var entries = new List<string>();
+                        entries.Add(item + "/");
+                        result.Add(actualPath, entries);
                     }
-                //getFSEntriesListRecursively(slozkyNeuploadovatAVS, projeteSlozky, vr, ps.ActualPath, folderName);
+                //getFSEntriesListRecursively(foldersToSkip, visitedFolders, result, PathSelector.ActualPath, folderName);
                 }
             }
             else
@@ -55,16 +60,16 @@ public partial class FTP : FtpBase
             }
         }
 
-        if (ps.indexZero > 0)
+        if (PathSelector.indexZero > 0)
         {
             setRemotePath(ftpClient.WwwSlash);
             // TODO: Zatím mi to bude stačit jen o 1 úrověň výše
-            if (ps.indexZero == 1)
+            if (PathSelector.indexZero == 1)
             {
                 goToUpFolderForce();
-                fse = ListDirectoryDetails();
-                actualPath = ps.ActualPath;
-                foreach (var item in fse)
+                ftpEntries = ListDirectoryDetails();
+                actualPath = PathSelector.ActualPath;
+                foreach (var item in ftpEntries)
                 {
                     var fz = item[0];
                     if (fz == '-')
@@ -75,15 +80,15 @@ public partial class FTP : FtpBase
                         var folderName = SHJoin.JoinFromIndex(8, ' ', item.Split(' '));
                         if (!FtpHelper.IsThisOrUp(folderName))
                         {
-                            if (vr.ContainsKey(actualPath))
+                            if (result.ContainsKey(actualPath))
                             {
-                                vr[actualPath].Add(item);
+                                result[actualPath].Add(item);
                             }
                             else
                             {
-                                var ppk = new List<string>();
-                                ppk.Add(item);
-                                vr.Add(actualPath, ppk);
+                                var entries = new List<string>();
+                                entries.Add(item);
+                                result.Add(actualPath, entries);
                             }
                         }
                     }
@@ -99,9 +104,13 @@ public partial class FTP : FtpBase
             }
         }
 
-        return vr;
+        return result;
     }
 
+    /// <summary>
+    /// Navigates to the specified remote folder path on the FTP server, creating directories if needed.
+    /// </summary>
+    /// <param name="remoteFolder">The full path to the remote folder to navigate to</param>
     public override void goToPath(string remoteFolder)
     {
         if (remoteFolder.Contains("/" + "Kocicky" + "/"))
@@ -114,17 +123,17 @@ public partial class FTP : FtpBase
             login();
         if (FtpLogging.GoToFolder)
             OnNewStatus("Přecházím do složky" + " " + remoteFolder);
-        var actualPath = ps.ActualPath;
+        var actualPath = PathSelector.ActualPath;
         var dd = remoteFolder.Length - 1;
         if (actualPath == remoteFolder)
             return;
         setRemotePath(ftpClient.WwwSlash);
-        actualPath = ps.ActualPath;
+        actualPath = PathSelector.ActualPath;
         // Vzdálená složka začíná text aktuální cestou == vzdálená složka je delší. Pouze přejdi hloubš
         if (remoteFolder.StartsWith(actualPath))
         {
             remoteFolder = remoteFolder.Substring(actualPath.Length);
-            var tokens = remoteFolder.Split(new[] { ps.Delimiter }, StringSplitOptions.RemoveEmptyEntries).ToList();
+            var tokens = remoteFolder.Split(new[] { PathSelector.Delimiter }, StringSplitOptions.RemoveEmptyEntries).ToList();
             foreach (var item in tokens)
                 CreateDirectoryIfNotExists(item);
         }
@@ -132,23 +141,20 @@ public partial class FTP : FtpBase
         else
         {
             setRemotePath(ftpClient.WwwSlash);
-            var tokens = remoteFolder.Split(new[] { ps.Delimiter }, StringSplitOptions.RemoveEmptyEntries).ToList();
-            for (var i = ps.indexZero; i < tokens.Count; i++)
+            var tokens = remoteFolder.Split(new[] { PathSelector.Delimiter }, StringSplitOptions.RemoveEmptyEntries).ToList();
+            for (var i = PathSelector.indexZero; i < tokens.Count; i++)
                 CreateDirectoryIfNotExists(tokens[i]);
         }
     }
 
     /// <summary>
-    /// Před zavoláním této metody se musí musí zjistit zda první znak je data(adresář) nebo -(soubor)
+    /// Gets the size of a remote file by sending the SIZE command. Logs in if not already authenticated.
     /// </summary>
-    /// <param name = "entry"></param>
-    /// <summary>
-    /// Posílám příkaz SIZE. Pokud nejsem nalogovaný, přihlásím se.
-    /// </summary>
-    /// <param name = "fileName"></param>
+    /// <param name="fileName">The name of the file to get the size of</param>
+    /// <returns>The size of the file in bytes</returns>
     public override long getFileSize(string fileName)
     {
-        OnNewStatus("Pokouším se získat velikost souboru" + " " + UH.Combine(false, ps.ActualPath, fileName));
+        OnNewStatus("Pokouším se získat velikost souboru" + " " + UH.Combine(false, PathSelector.ActualPath, fileName));
         if (!logined)
             login();
         sendCommand("SIZE" + " " + fileName);
@@ -161,11 +167,10 @@ public partial class FTP : FtpBase
     }
 
     /// <summary>
-    /// Tuto metodu je třeba nutno zavolat ihned po nastavení proměnných.
-    /// Pokud nejsem připojený, přihlásím se na server bez uživatele
-    /// Poté se přihlásím příkazem remoteUser
-    /// Hodnota 230 znamená že mohu pokračovat bez hesla. Pokud ne, pošlu své heslo příkazem PASS
-    /// Nastavím že jsem přihlášený a pokusím se nastavit vzdálený adresář remotePath
+    /// Logs in to the FTP server using the configured credentials.
+    /// This method should be called immediately after setting the connection variables.
+    /// If not connected, connects to the server first, then sends USER command, and PASS command if required.
+    /// Response code 230 means login successful without password, otherwise sends password with PASS command.
     /// </summary>
     public void login()
     {
@@ -220,9 +225,10 @@ public partial class FTP : FtpBase
     }
 
     /// <summary>
-    /// Získám socket TCP typu Stream. Toto je důležité a proto se tato metoda musí vždy volat.
-    /// Naloguji se na vzdálený server - zatím bez uživatele.
-    /// Vyhodím výjimku IOException pokud vrácená hodnota nebude 220 a pošlu příkaz quit
+    /// Establishes a TCP socket connection to the FTP server without user authentication.
+    /// Creates a Stream-type TCP socket and connects to the remote server.
+    /// Throws IOException if the response code is not 220.
+    /// This method must always be called before authenticating with user credentials.
     /// </summary>
     public void loginWithoutUser()
     {

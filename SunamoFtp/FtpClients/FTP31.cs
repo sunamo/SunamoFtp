@@ -5,10 +5,12 @@ namespace SunamoFtp.FtpClients;
 public partial class FTP : FtpBase
 {
     /// <summary>
-    /// Zjistím si bajty z O clientSocket nebo stream a převedu je na ASCII string
-    /// Rozdělím získaný string \n a vezmu předposlední prvek, nebo první, který pak vrátím
-    /// Když na 3. straně není mezera, zavolám tuto M znovu
+    /// Reads a line of response from the FTP server.
+    /// Gets bytes from the client socket or stream and converts them to ASCII string.
+    /// Splits the string by newline characters and takes the second-to-last or first element.
+    /// If the character at position 3 is not a space, recursively calls this method again.
     /// </summary>
+    /// <returns>The response line from the FTP server</returns>
     private string readLine()
     {
         // Zjistím si bajty z O clientSocket nebo stream a převedu je na ASCII string

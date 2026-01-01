@@ -8,31 +8,31 @@ public partial class FtpNet : FtpBase
     ///     OK
     ///     LIST
     ///     Toto je vstupní metoda, metodu getFSEntriesListRecursively s 5ti parametry nevolej, ač má stejný název
-    ///     Vrátí soubory i složky, ale pozor, složky jsou vždycky až po souborech
+    ///     Vrátí files i složky, ale pozor, složky jsou vždycky až po souborech
     /// </summary>
-    /// <param name = "slozkyNeuploadovatAVS"></param>
-    public override Dictionary<string, List<string>> getFSEntriesListRecursively(List<string> slozkyNeuploadovatAVS)
+    /// <param name = "foldersToSkip"></param>
+    public override Dictionary<string, List<string>> getFSEntriesListRecursively(List<string> foldersToSkip)
     {
         // Musí se do ní ukládat cesta k celé složce, nikoliv jen název aktuální složky
-        var projeteSlozky = new List<string>();
-        var vr = new Dictionary<string, List<string>>();
-        var fse = ListDirectoryDetails();
-        var actualPath = ps.ActualPath;
+        var visitedFolders = new List<string>();
+        var result = new Dictionary<string, List<string>>();
+        var ftpEntries = ListDirectoryDetails();
+        var actualPath = PathSelector.ActualPath;
         OnNewStatus("Získávám rekurzivní seznam souborů ze složky" + " " + actualPath);
-        foreach (var item in fse)
+        foreach (var item in ftpEntries)
         {
             var fz = item[0];
             if (fz == '-')
             {
-                if (vr.ContainsKey(actualPath))
+                if (result.ContainsKey(actualPath))
                 {
-                    vr[actualPath].Add(item);
+                    result[actualPath].Add(item);
                 }
                 else
                 {
-                    var ppk = new List<string>();
-                    ppk.Add(item);
-                    vr.Add(actualPath, ppk);
+                    var entries = new List<string>();
+                    entries.Add(item);
+                    result.Add(actualPath, entries);
                 }
             }
             else if (fz == 'd')
@@ -40,17 +40,17 @@ public partial class FtpNet : FtpBase
                 var folderName = SHJoin.JoinFromIndex(8, ' ', SHSplit.Split(item, ""));
                 if (!FtpHelper.IsThisOrUp(folderName))
                 {
-                    if (vr.ContainsKey(actualPath))
+                    if (result.ContainsKey(actualPath))
                     {
-                        vr[actualPath].Add(item + "/");
+                        result[actualPath].Add(item + "/");
                     }
                     else
                     {
-                        var ppk = new List<string>();
-                        ppk.Add(item + "/");
-                        vr.Add(actualPath, ppk);
+                        var entries = new List<string>();
+                        entries.Add(item + "/");
+                        result.Add(actualPath, entries);
                     }
-                //getFSEntriesListRecursively(slozkyNeuploadovatAVS, projeteSlozky, vr, ps.ActualPath, folderName);
+                //getFSEntriesListRecursively(foldersToSkip, visitedFolders, result, PathSelector.ActualPath, folderName);
                 }
             }
             else
@@ -59,7 +59,7 @@ public partial class FtpNet : FtpBase
             }
         }
 
-        return vr;
+        return result;
     }
 
     /// <summary>
@@ -70,8 +70,8 @@ public partial class FtpNet : FtpBase
     public override void goToUpFolderForce()
     {
         if (FtpLogging.GoToUpFolder)
-            OnNewStatus("Přecházím do nadsložky" + " " + ps.ActualPath);
-        ps.RemoveLastTokenForce();
+            OnNewStatus("Přecházím do nadsložky" + " " + PathSelector.ActualPath);
+        PathSelector.RemoveLastTokenForce();
         OnNewStatusNewFolder();
     }
 
@@ -80,9 +80,9 @@ public partial class FtpNet : FtpBase
     /// </summary>
     public override void goToUpFolder()
     {
-        if (ps.CanGoToUpFolder)
+        if (PathSelector.CanGoToUpFolder)
         {
-            ps.RemoveLastToken();
+            PathSelector.RemoveLastToken();
             OnNewStatusNewFolder();
         }
         else
@@ -91,16 +91,28 @@ public partial class FtpNet : FtpBase
         }
     }
 
+    /// <summary>
+    /// Debug output for current folder path (not implemented)
+    /// </summary>
     public override void DebugActualFolder()
     {
         ThrowEx.NotImplementedMethod();
     }
 
+    /// <summary>
+    /// Debug output method for logging FTP operations (not implemented)
+    /// </summary>
+    /// <param name="what">Operation or context identifier</param>
+    /// <param name="text">Message format string</param>
+    /// <param name="args">Format arguments</param>
     public override void D(string what, string text, params object[] args)
     {
         ThrowEx.NotImplementedMethod();
     }
 
+    /// <summary>
+    /// Establishes connection to the FTP server (not implemented)
+    /// </summary>
     public override void Connect()
     {
         ThrowEx.NotImplementedMethod();

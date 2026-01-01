@@ -17,9 +17,9 @@ public partial class FtpNet : FtpBase
     /// <param name = "mask"></param>
     public List<string> getFileList(string mask)
     {
-        if (pocetExc < maxPocetExc)
+        if (ExceptionCount < MaxExceptionCount)
         {
-            OnNewStatus("Získávám seznam souborů ze složky" + " " + ps.ActualPath + " " + "příkazem NLST");
+            OnNewStatus("Získávám seznam souborů ze složky" + " " + PathSelector.ActualPath + " " + "příkazem NLST");
             var result = new StringBuilder();
             FtpWebRequest reqFTP = null;
             StreamReader reader = null;
@@ -50,9 +50,9 @@ public partial class FtpNet : FtpBase
                 if (response != null)
                     response.Dispose();
                 OnNewStatus("Error get filelist" + ": " + ex.Message);
-                if (pocetExc == 2)
+                if (ExceptionCount == 2)
                 {
-                    pocetExc = 0;
+                    ExceptionCount = 0;
                     var downloadFiles = new List<string>();
                     return downloadFiles;
                 }
@@ -71,7 +71,7 @@ public partial class FtpNet : FtpBase
         }
 
         {
-            pocetExc = 0;
+            ExceptionCount = 0;
             var downloadFiles = new List<string>();
             return downloadFiles;
         }
@@ -98,13 +98,13 @@ public partial class FtpNet : FtpBase
         }
 
         var nalezenAdresar = false;
-        List<string> fse = null;
+        List<string> ftpEntries = null;
         var vseMa8 = false;
         while (!vseMa8)
         {
             vseMa8 = true;
-            fse = ListDirectoryDetails();
-            foreach (var item in fse)
+            ftpEntries = ListDirectoryDetails();
+            foreach (var item in ftpEntries)
             {
                 var tokens = item.Split(' ').Length; //SHSplit.Split(item, "").Count;
                 if (tokens < 8)
@@ -112,7 +112,7 @@ public partial class FtpNet : FtpBase
             }
         }
 
-        foreach (var item in fse)
+        foreach (var item in ftpEntries)
         {
             string fn = null;
             if (FtpHelper.IsFile(item, out fn) == FileSystemType.Folder)
@@ -131,10 +131,14 @@ public partial class FtpNet : FtpBase
         }
         else
         {
-            ps.AddToken(dirName);
+            PathSelector.AddToken(dirName);
         }
     }
 
+    /// <summary>
+    /// Changes current directory on FTP server (lightweight version without full navigation)
+    /// </summary>
+    /// <param name="dirName">Directory name to change to</param>
     public override void chdirLite(string dirName)
     {
         // Trim slash from end in dirName variable
@@ -149,13 +153,13 @@ public partial class FtpNet : FtpBase
         }
 
         var nalezenAdresar = false;
-        List<string> fse = null;
+        List<string> ftpEntries = null;
         var vseMa8 = false;
         while (!vseMa8)
         {
             vseMa8 = true;
-            fse = ListDirectoryDetails();
-            foreach (var item in fse)
+            ftpEntries = ListDirectoryDetails();
+            foreach (var item in ftpEntries)
             {
                 var tokens = SHSplit.Split(item, " ").Count;
                 if (tokens < 8)
@@ -163,7 +167,7 @@ public partial class FtpNet : FtpBase
             }
         }
 
-        foreach (var item in fse)
+        foreach (var item in ftpEntries)
         {
             string fn = null;
             if (FtpHelper.IsFile(item, out fn) == FileSystemType.Folder)
@@ -184,9 +188,9 @@ public partial class FtpNet : FtpBase
         else
         {
             if (dirName == "..")
-                ps.RemoveLastToken();
+                PathSelector.RemoveLastToken();
             else
-                ps.AddToken(dirName);
+                PathSelector.AddToken(dirName);
         }
     }
 
@@ -198,9 +202,9 @@ public partial class FtpNet : FtpBase
     /// <param name = "dirName"></param>
     public override bool mkdir(string dirName)
     {
-        if (pocetExc < maxPocetExc)
+        if (ExceptionCount < MaxExceptionCount)
         {
-            var adr = UH.Combine(true, ps.ActualPath, dirName);
+            var adr = UH.Combine(true, PathSelector.ActualPath, dirName);
             OnNewStatus("Vytvářím adresář" + " " + adr);
             FtpWebRequest reqFTP = null;
             FtpWebResponse response = null;
@@ -215,10 +219,10 @@ public partial class FtpNet : FtpBase
                 reqFTP.Credentials = new NetworkCredential(remoteUser, remotePass);
                 response = (FtpWebResponse)reqFTP.GetResponse();
                 ftpStream = response.GetResponseStream();
-                ps.AddToken(dirName);
+                PathSelector.AddToken(dirName);
                 ftpStream.Dispose();
                 response.Dispose();
-                pocetExc = 0;
+                ExceptionCount = 0;
                 return true;
             }
             catch (Exception ex)
@@ -227,7 +231,7 @@ public partial class FtpNet : FtpBase
                     ftpStream.Dispose();
                 if (response != null)
                     response.Dispose();
-                pocetExc++;
+                ExceptionCount++;
                 OnNewStatus("Error create new dir" + ": " + ex.Message);
                 return mkdir(dirName);
             }
@@ -240,7 +244,7 @@ public partial class FtpNet : FtpBase
             }
         }
 
-        pocetExc = 0;
+        ExceptionCount = 0;
         return false;
     }
 }

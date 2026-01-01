@@ -2,9 +2,12 @@ namespace SunamoFtp.FtpClients;
 
 // EN: Variable names have been checked and replaced with self-descriptive names
 // CZ: Názvy proměnných byly zkontrolovány a nahrazeny samopopisnými názvy
+
+/// <summary>
+/// FTP client implementation using raw socket commands
+/// </summary>
 public partial class FTP : FtpBase
 {
-    private static Type type = typeof(FTP);
     /// <summary>
     /// Velikost bloku po které se čte.
     /// </summary>
@@ -65,39 +68,39 @@ public partial class FTP : FtpBase
      //string remotePath;
     private string remotePath
     {
-        get => ps.ActualPath;
+        get => PathSelector.ActualPath;
         set
         {
         }
     }
 
     /// <summary>
-    /// Nastaví zda se používá binární přenos.
+    /// Sets whether to use binary transfer mode
     /// </summary>
-    /// <param name = "value"></param>
+    /// <param name="value">True to enable binary transfer, false for ASCII</param>
     public void setUseStream(bool value)
     {
         useStream = value;
     }
 
     /// <summary>
-    /// text PP remotePath na A1
+    /// Sets the remote FTP path and navigates to it
     /// </summary>
-    /// <param name = "remotePath"></param>
+    /// <param name="remotePath">Remote FTP path to navigate to</param>
     public void setRemotePath(string remotePath)
     {
         OnNewStatus("Byl nastavena cesta ftp na" + " " + remotePath);
         if (remotePath == ftpClient.WwwSlash)
         {
-            if (ps.ActualPath != ftpClient.WwwSlash)
-                while (ps.CanGoToUpFolder)
-                    //ps.RemoveLastToken();
+            if (PathSelector.ActualPath != ftpClient.WwwSlash)
+                while (PathSelector.CanGoToUpFolder)
+                    //PathSelector.RemoveLastToken();
                     goToUpFolder();
         //chdirLite("www");
         }
         else
         {
-            ps.ActualPath = remotePath;
+            PathSelector.ActualPath = remotePath;
         }
     }
 
@@ -126,7 +129,7 @@ public partial class FTP : FtpBase
     /// <param name = "mask"></param>
     public List<string> getFileList(string mask)
     {
-        OnNewStatus("Získávám seznam souborů ze složky" + " " + ps.ActualPath + " " + "příkazem NLST");
+        OnNewStatus("Získávám seznam souborů ze složky" + " " + PathSelector.ActualPath + " " + "příkazem NLST");
 #region MyRegion
         if (!logined)
             login();
@@ -158,23 +161,23 @@ public partial class FTP : FtpBase
     public override void goToUpFolderForce()
     {
         if (FtpLogging.GoToUpFolder)
-            OnNewStatus("Přecházím do nadsložky" + " " + ps.ActualPath);
+            OnNewStatus("Přecházím do nadsložky" + " " + PathSelector.ActualPath);
         sendCommand("CWD " + "..");
-        ps.RemoveLastTokenForce();
+        PathSelector.RemoveLastTokenForce();
         NewStatusNewFolder();
     }
 
     private void NewStatusNewFolder()
     {
-        OnNewStatus("Nová složka je" + " " + ps.ActualPath);
+        OnNewStatus("Nová složka je" + " " + PathSelector.ActualPath);
     }
 
     public override void goToUpFolder()
     {
-        if (ps.CanGoToUpFolder)
+        if (PathSelector.CanGoToUpFolder)
         {
             sendCommand("CWD " + "..");
-            ps.RemoveLastToken();
+            PathSelector.RemoveLastToken();
         }
         else
         {

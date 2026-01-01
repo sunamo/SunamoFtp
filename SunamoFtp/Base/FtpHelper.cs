@@ -1,107 +1,150 @@
 namespace SunamoFtp.Base;
 
+/// <summary>
+/// Helper methods for FTP operations
+/// </summary>
 public static class FtpHelper
 {
-    private static Type type = typeof(FtpHelper);
-
     /// <summary>
-    ///     Vrátí zda A1 je .. nebo .
+    /// Checks if folder name is current directory (.) or parent directory (..)
     /// </summary>
-    /// <param name="folderName2"></param>
-    public static bool IsThisOrUp(string folderName2)
+    /// <param name="folderName">Folder name to check</param>
+    /// <returns>True if folder is . or ..</returns>
+    public static bool IsThisOrUp(string folderName)
     {
-        return folderName2 == "." || folderName2 == "..";
+        return folderName == "." || folderName == "..";
     }
 
     /// <summary>
-    ///     OK
+    /// Checks if file with given name and length exists on FTP hosting
     /// </summary>
-    /// <param name="item2"></param>
-    /// <param name="fse"></param>
-    /// <param name="fileLenght"></param>
-    public static bool IsFileOnHosting(string item2, List<string> fse, long fileLenght)
+    /// <param name="localFilePath">Local file path</param>
+    /// <param name="ftpEntries">List of FTP directory entries</param>
+    /// <param name="fileLength">File length to compare</param>
+    /// <returns>True if file with same name and length exists on hosting</returns>
+    public static bool IsFileOnHosting(string localFilePath, List<string> ftpEntries, long fileLength)
     {
-        item2 = Path.GetFileName(item2);
-        foreach (var item in fse)
+        localFilePath = Path.GetFileName(localFilePath);
+        foreach (var item in ftpEntries)
         {
-            long fl = 0;
-            string fn = null;
-            if (IsFile(item, out fn, out fl) == FileSystemType.File)
-                if (fn == item2)
-                    if (fl == fileLenght)
+            long entryFileLength = 0;
+            string entryFileName = null;
+            if (IsFile(item, out entryFileName, out entryFileLength) == FileSystemType.File)
+                if (entryFileName == localFilePath)
+                    if (entryFileLength == fileLength)
                         return true;
         }
 
         return false;
     }
 
+    /// <summary>
+    /// Determines if FTP entry is file, folder, or link
+    /// </summary>
+    /// <param name="entry">FTP directory entry</param>
+    /// <returns>File system type</returns>
     public static FileSystemType IsFile(string entry)
     {
         string fileName = null;
-        var tokeny = entry.Split(' ').ToList(); //SHSplit.Split(entry, "");
-        var isFile = IsFileShared(entry, tokeny, out fileName);
-        return isFile;
+        var tokens = entry.Split(' ').ToList();
+        var fileSystemType = IsFileShared(entry, tokens, out fileName);
+        return fileSystemType;
     }
 
+    /// <summary>
+    /// Determines if FTP entry is file, folder, or link and extracts file name
+    /// </summary>
+    /// <param name="entry">FTP directory entry</param>
+    /// <param name="fileName">Extracted file/folder name</param>
+    /// <returns>File system type</returns>
     public static FileSystemType IsFile(string entry, out string fileName)
     {
-        var tokeny = entry.Split(' ').ToList(); //SHSplit.Split(entry, "");
-        var isFile = IsFileShared(entry, tokeny, out fileName);
-        return isFile;
+        var tokens = entry.Split(' ').ToList();
+        var fileSystemType = IsFileShared(entry, tokens, out fileName);
+        return fileSystemType;
     }
 
+    /// <summary>
+    /// Determines if FTP entry is file, folder, or link and extracts file name and length
+    /// </summary>
+    /// <param name="entry">FTP directory entry (format: drw-rw-rw-   1 user     group           0 Nov 21 18:03 App_Data)</param>
+    /// <param name="fileName">Extracted file/folder name</param>
+    /// <param name="length">File length in bytes</param>
+    /// <returns>File system type</returns>
     public static FileSystemType IsFile(string entry, out string fileName, out long length)
     {
-        //drw-rw-rw-   1 user     group           0 Nov 21 18:03 App_Data
-        var tokeny = entry.Split(' ').ToList(); //SHSplit.Split(entry, "");
-        var isFile = IsFileShared(entry, tokeny, out fileName);
-        length = long.Parse(tokeny[4]);
+        var tokens = entry.Split(' ').ToList();
+        var fileSystemType = IsFileShared(entry, tokens, out fileName);
+        length = long.Parse(tokens[4]);
 
-        return isFile;
+        return fileSystemType;
     }
 
-    private static FileSystemType IsFileShared(string entry, List<string> tokeny, out string fileName)
+    /// <summary>
+    /// Shared logic for determining file system entry type
+    /// </summary>
+    /// <param name="entry">FTP directory entry</param>
+    /// <param name="tokens">Entry split into tokens</param>
+    /// <param name="fileName">Extracted file/folder name</param>
+    /// <returns>File system type</returns>
+    private static FileSystemType IsFileShared(string entry, List<string> tokens, out string fileName)
     {
-        fileName = SHJoin.JoinFromIndex(8, ' ', tokeny);
-        var isFile = FileSystemType.File;
-        var f = entry[0];
-        if (f == '-')
+        fileName = SHJoin.JoinFromIndex(8, ' ', tokens);
+        var fileSystemType = FileSystemType.File;
+        var firstChar = entry[0];
+        if (firstChar == '-')
         {
+            // It's a file
         }
-        else if (f == 'd')
+        else if (firstChar == 'd')
         {
             if (IsThisOrUp(fileName))
-                isFile = FileSystemType.Link;
+                fileSystemType = FileSystemType.Link;
             else
-                isFile = FileSystemType.Folder;
+                fileSystemType = FileSystemType.Folder;
         }
         else
         {
-            throw new Exception("Nový druh entry (change msdos directory listing to unix)");
+            throw new Exception("Unknown entry type (change msdos directory listing to unix)");
         }
 
-        return isFile;
+        return fileSystemType;
     }
 
-    public static bool IsSchemaFtp(string remFileName)
+    /// <summary>
+    /// Checks if string starts with FTP schema (ftp://)
+    /// </summary>
+    /// <param name="path">Path to check</param>
+    /// <returns>True if path starts with ftp://</returns>
+    public static bool IsSchemaFtp(string path)
     {
-        return remFileName.StartsWith("ftp" + ":" + "//");
+        return path.StartsWith("ftp" + ":" + "//");
     }
 
-    public static IList<string> GetDirectories(List<string> fse)
+    /// <summary>
+    /// Extracts directory names from FTP entries list
+    /// </summary>
+    /// <param name="ftpEntries">List of FTP directory entries</param>
+    /// <returns>List of directory names</returns>
+    public static IList<string> GetDirectories(List<string> ftpEntries)
     {
-        var vr = new List<string>();
-        foreach (var item in fse)
+        var result = new List<string>();
+        foreach (var item in ftpEntries)
         {
-            string fn = null;
-            if (IsFile(item, out fn) == FileSystemType.Folder) vr.Add(fn);
+            string fileName = null;
+            if (IsFile(item, out fileName) == FileSystemType.Folder) result.Add(fileName);
         }
 
-        return vr;
+        return result;
     }
 
-    public static string ReplaceSchemaFtp(string remoteHost2)
+    /// <summary>
+    /// Removes FTP schema prefix from hostname
+    /// </summary>
+    /// <param name="remoteHost">Remote host with or without ftp:// prefix</param>
+    /// <returns>Host without ftp:// prefix</returns>
+    public static string ReplaceSchemaFtp(string remoteHost)
     {
-        return remoteHost2.Replace("ftp" + ":" + "//", "");
+        return remoteHost.Replace("ftp" + ":" + "//", "");
     }
 }

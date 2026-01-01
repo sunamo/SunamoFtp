@@ -5,9 +5,10 @@ namespace SunamoFtp.FtpClients;
 public partial class FTP : FtpBase
 {
     /// <summary>
-    /// Zapíšu do PP stream A1.
+    /// Writes a message to the stream.
+    /// Converts the message to ASCII bytes and writes them to the stream.
     /// </summary>
-    /// <param name = "message"></param>
+    /// <param name="message">The message to write to the stream</param>
     private void WriteMsg(string message)
     {
         var en = new ASCIIEncoding();
@@ -18,9 +19,11 @@ public partial class FTP : FtpBase
     }
 
     /// <summary>
-    /// Přečtu všechny bajty z PP stream.
-    /// Uložím do retValue a G celý výstup.
+    /// Reads a response message from the FTP server stream.
+    /// Reads all bytes from the stream until newline character is encountered.
+    /// Stores the response code in retValue and returns the entire output.
     /// </summary>
+    /// <returns>The complete response message from the server</returns>
     private string ResponseMsg()
     {
         var enc = new ASCIIEncoding();
@@ -49,9 +52,11 @@ public partial class FTP : FtpBase
     }
 
     /// <summary>
-    /// Získám bajty z A1, pošlu odpověď a uložím PP reply a retValue
+    /// Sends a command to the FTP server.
+    /// Converts the command to ASCII bytes, sends it via stream or socket, and reads the server's reply.
+    /// Stores the response in reply and retValue properties.
     /// </summary>
-    /// <param name = "command"></param>
+    /// <param name="command">The FTP command to send (without CRLF terminator)</param>
     public void sendCommand(string command)
     {
 #region Původní metoda sendCommand
@@ -64,6 +69,12 @@ public partial class FTP : FtpBase
 #endregion
     }
 
+    /// <summary>
+    /// Sends a command to the FTP server (alternate implementation).
+    /// Identical to sendCommand - converts command to ASCII bytes, sends via stream or socket, and reads reply.
+    /// Stores the response in reply and retValue properties.
+    /// </summary>
+    /// <param name="command">The FTP command to send (without CRLF terminator)</param>
     private void sendCommand2(string command)
     {
 #region Původní metoda sendCommand
@@ -77,11 +88,13 @@ public partial class FTP : FtpBase
     }
 
     /// <summary>
-    /// Nastavím pasivní způsob přenosu(příkaz PASV)
-    /// Získám IP adresu v řetězci z reply
-    /// Získám do pole intů jednotlivé části IP adresy a spojím je do řetězce text tečkama
-    /// Port získám tak čtvrtou část ip adresy bitově posunu o 8 a sečtu text pátou částí. Získám Socket, O IPEndPoint a pokusím se připojit na tento objekt.
+    /// Creates a data socket for passive mode FTP transfer.
+    /// Sends PASV command, parses the IP address and port from the server's reply.
+    /// Extracts the IP address parts and joins them with dots.
+    /// Calculates the port by bit-shifting the 5th part by 8 and adding the 6th part.
+    /// Creates a Socket, IPEndPoint and attempts to connect to the server.
     /// </summary>
+    /// <returns>A connected socket ready for data transfer</returns>
     public Socket createDataSocket()
     {
 #region Nastavím pasivní způsob přenosu(příkaz PASV)
@@ -139,6 +152,10 @@ public partial class FTP : FtpBase
 #endregion
     }
 
+    /// <summary>
+    /// Placeholder method for uploading a folder securely.
+    /// Currently empty - not implemented. Should verify that _.txt file is uploaded first.
+    /// </summary>
     public void uploadSecureFolder()
     {
         OnNewStatus("Byla volána metoda uploadSecureFolder která je prázdná");
@@ -146,40 +163,57 @@ public partial class FTP : FtpBase
     }
 
     /// <summary>
-    /// OK
+    /// Recursively deletes a directory and all its contents from the FTP server.
+    /// Changes to the directory, lists all contents, deletes files and recursively deletes subdirectories.
+    /// After all contents are deleted, goes to parent folder and removes the now-empty directory.
     /// </summary>
-    /// <param name = "slozkyNeuploadovatAVS"></param>
-    /// <param name = "dirName"></param>
-    /// <param name = "i"></param>
-    /// <param name = "td"></param>
-    public override void DeleteRecursively(List<string> slozkyNeuploadovatAVS, string dirName, int i, List<DirectoriesToDeleteFtp> td)
+    /// <param name="foldersToSkip">List of folder names to skip during deletion</param>
+    /// <param name="dirName">The name of the directory to delete</param>
+    /// <param name="i">Recursion depth level (currently unused)</param>
+    /// <param name="td">List of directories to delete (currently unused)</param>
+    public override void DeleteRecursively(List<string> foldersToSkip, string dirName, int i, List<DirectoriesToDeleteFtp> td)
     {
         chdirLite(dirName);
-        var smazat = ListDirectoryDetails();
-        foreach (var item2 in smazat)
+        var toDelete = ListDirectoryDetails();
+        foreach (var item2 in toDelete)
         {
             var fst = FtpHelper.IsFile(item2, out var fn);
             if (fst == FileSystemType.File)
                 deleteRemoteFile(fn);
             else if (fst == FileSystemType.Folder)
-                DeleteRecursively(slozkyNeuploadovatAVS, fn, i, td);
+                DeleteRecursively(foldersToSkip, fn, i, td);
         //////DebugLogger.Instance.WriteLine(item2);
         }
 
         goToUpFolderForce();
-        rmdir(slozkyNeuploadovatAVS, dirName);
+        rmdir(foldersToSkip, dirName);
     }
 
+    /// <summary>
+    /// Outputs debug information about the current folder.
+    /// Not implemented - throws NotImplementedMethod exception.
+    /// </summary>
     public override void DebugActualFolder()
     {
         ThrowEx.NotImplementedMethod();
     }
 
+    /// <summary>
+    /// Debug output method.
+    /// Not implemented - throws NotImplementedMethod exception.
+    /// </summary>
+    /// <param name="what">What to debug</param>
+    /// <param name="text">Format string for output</param>
+    /// <param name="args">Arguments for the format string</param>
     public override void D(string what, string text, params object[] args)
     {
         ThrowEx.NotImplementedMethod();
     }
 
+    /// <summary>
+    /// Connects to the FTP server.
+    /// Not implemented - throws NotImplementedMethod exception.
+    /// </summary>
     public override void Connect()
     {
         ThrowEx.NotImplementedMethod();

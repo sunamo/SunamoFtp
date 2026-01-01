@@ -2,20 +2,31 @@ namespace SunamoFtp.FtpClients;
 
 // EN: Variable names have been checked and replaced with self-descriptive names
 // CZ: Názvy proměnných byly zkontrolovány a nahrazeny samopopisnými názvy
+
+/// <summary>
+/// FTP client implementation using FtpWebRequest
+/// </summary>
 public partial class FtpNet : FtpBase
 {
-    private static Type type = typeof(FtpNet);
+    /// <summary>
+    /// Performs login to FTP server if not already logged in
+    /// </summary>
+    /// <param name="startup">Indicates if this is initial startup login</param>
     public override void LoginIfIsNot(bool startup)
     {
         this.startup = startup;
     // Není potřeba se přihlašovat, přihlašovácí údaje posílám při každém příkazu
     }
 
+    /// <summary>
+    /// Navigates to specified path on FTP server, creating directories as needed
+    /// </summary>
+    /// <param name="remoteFolder">Remote folder path to navigate to</param>
     public override void goToPath(string remoteFolder)
     {
         if (FtpLogging.GoToFolder)
             OnNewStatus("Přecházím do složky" + " " + remoteFolder);
-        var actualPath = ps.ActualPath;
+        var actualPath = PathSelector.ActualPath;
         var dd = remoteFolder.Length - 1;
         if (actualPath == remoteFolder)
             return;
@@ -23,15 +34,15 @@ public partial class FtpNet : FtpBase
         if (remoteFolder.StartsWith(actualPath))
         {
             remoteFolder = remoteFolder.Substring(actualPath.Length);
-            var tokens = SHSplit.Split(remoteFolder, ps.Delimiter);
+            var tokens = SHSplit.Split(remoteFolder, PathSelector.Delimiter);
             foreach (var item in tokens)
                 CreateDirectoryIfNotExists(item);
         }
         // Vzdálená složka nezačíná aktuální cestou,
         else
         {
-            ps.ActualPath = "";
-            var tokens = SHSplit.Split(remoteFolder, ps.Delimiter);
+            PathSelector.ActualPath = "";
+            var tokens = SHSplit.Split(remoteFolder, PathSelector.Delimiter);
             var pridat = 0;
             for (var i = 0 + pridat; i < tokens.Count; i++)
                 CreateDirectoryIfNotExists(tokens[i]);
@@ -46,8 +57,8 @@ public partial class FtpNet : FtpBase
     /// <param name = "newFileName"></param>
     public override void renameRemoteFile(string oldFileName, string newFileName)
     {
-        OnNewStatus("Ve složce" + " " + ps.ActualPath + " " + "přejmenovávám soubor" + " " + oldFileName + " na " + newFileName);
-        if (pocetExc < maxPocetExc)
+        OnNewStatus("Ve složce" + " " + PathSelector.ActualPath + " " + "přejmenovávám soubor" + " " + oldFileName + " na " + newFileName);
+        if (ExceptionCount < MaxExceptionCount)
         {
             FtpWebRequest reqFTP = null;
             Stream ftpStream = null;
@@ -65,7 +76,7 @@ public partial class FtpNet : FtpBase
             catch (Exception ex)
             {
                 OnNewStatus("Error rename file" + ": " + ex.Message);
-                pocetExc++;
+                ExceptionCount++;
                 renameRemoteFile(oldFileName, newFileName);
             }
             finally
@@ -77,25 +88,18 @@ public partial class FtpNet : FtpBase
             }
         }
 
-        pocetExc = 0;
+        ExceptionCount = 0;
     }
 
     /// <summary>
-    /// Před zavoláním této metody se musí musí zjistit zda první znak je d(adresář) nebo -(soubor)
+    /// Removes empty directory from FTP server using RMD command. Can only be called when directory is known to be empty, otherwise returns error 550.
     /// </summary>
-    /// <param name = "entry"></param>
-     
-    /// <summary>
-    ///     OK
-    ///     RMD
-    ///     Smaže v akt. složce adr. A1 příkazem RMD
-    ///     Tato metoda se může volat pouze když se bude vědět se složka je prázdná, jinak se program nesmaže a program vypíše
-    ///     chybu 550
-    /// </summary>
-    /// <param name = "dirName"></param>
-    public override bool rmdir(List<string> slozkyNeuploadovatAVS, string dirName)
+    /// <param name="foldersToSkip">List of folder names to skip during deletion</param>
+    /// <param name="dirName">Directory name to remove</param>
+    /// <returns>True if directory was removed successfully</returns>
+    public override bool rmdir(List<string> foldersToSkip, string dirName)
     {
-        if (pocetExc < maxPocetExc)
+        if (ExceptionCount < MaxExceptionCount)
         {
             var ma = GetActualPath(dirName).TrimEnd('/');
             OnNewStatus("Mažu adresář" + " " + ma);
@@ -117,7 +121,7 @@ public partial class FtpNet : FtpBase
             }
             catch (Exception ex)
             {
-                pocetExc++;
+                ExceptionCount++;
                 if (sr != null)
                     sr.Dispose();
                 if (datastream != null)
@@ -125,7 +129,7 @@ public partial class FtpNet : FtpBase
                 if (response != null)
                     response.Dispose();
                 OnNewStatus("Error delete folder" + ": " + ex.Message);
-                return rmdir(slozkyNeuploadovatAVS, dirName);
+                return rmdir(foldersToSkip, dirName);
             }
             finally
             {
@@ -137,35 +141,36 @@ public partial class FtpNet : FtpBase
                     response.Dispose();
             }
 
-            pocetExc = 0;
+            ExceptionCount = 0;
             return true;
         }
 
-        pocetExc = 0;
+        ExceptionCount = 0;
         return false;
     }
 
     /// <summary>
-    ///     OK
-    ///     DELE + RMD
+    /// Recursively deletes directory and its contents using DELE and RMD commands
     /// </summary>
-    /// <param name = "slozkyNeuploadovatAVS"></param>
-    /// <param name = "dirName"></param>
-    public override void DeleteRecursively(List<string> slozkyNeuploadovatAVS, string dirName, int i, List<DirectoriesToDeleteFtp> td)
+    /// <param name="foldersToSkip">List of folder names to skip during deletion</param>
+    /// <param name="dirName">Root directory name to start deletion from</param>
+    /// <param name="i">Current recursion depth level</param>
+    /// <param name="td">List to collect directories marked for deletion</param>
+    public override void DeleteRecursively(List<string> foldersToSkip, string dirName, int i, List<DirectoriesToDeleteFtp> td)
     {
         i++;
-        var smazat = ListDirectoryDetails();
+        var toDelete = ListDirectoryDetails();
         //bool pridano = false;
-        td.Add(new DirectoriesToDeleteFtp { hloubka = i });
+        td.Add(new DirectoriesToDeleteFtp { Depth = i });
         Dictionary<string, List<string>> ds = null;
         foreach (var item in td)
-            if (item.hloubka == i)
+            if (item.Depth == i)
             {
-                if (item.adresare.Count != 0)
+                if (item.Directories.Count != 0)
                 {
-                    foreach (var item2 in item.adresare)
+                    foreach (var item2 in item.Directories)
                         foreach (var item3 in item2)
-                            if (item3.Key == ps.ActualPath)
+                            if (item3.Key == PathSelector.ActualPath)
                                 ds = item2;
                 }
                 else
@@ -175,52 +180,52 @@ public partial class FtpNet : FtpBase
             //ds = ;
             }
 
-        for (var zValue = 0; zValue < td.Count; zValue++)
+        for (var itemIndex = 0; itemIndex < td.Count; itemIndex++)
         {
-            var item = td[zValue];
-            if (item.hloubka == i)
-                //ds.Add(ps.ActualPath, new List<string>());
-                foreach (var item2 in smazat)
+            var item = td[itemIndex];
+            if (item.Depth == i)
+                //ds.Add(PathSelector.ActualPath, new List<string>());
+                foreach (var item2 in toDelete)
                 {
                     var fn = "";
                     var fst = FtpHelper.IsFile(item2, out fn);
                     if (fst == FileSystemType.File)
                     {
-                        if (ds.ContainsKey(ps.ActualPath))
+                        if (ds.ContainsKey(PathSelector.ActualPath))
                         {
                         }
                         else
                         {
-                            ds.Add(ps.ActualPath, new List<string>());
+                            ds.Add(PathSelector.ActualPath, new List<string>());
                         }
 
-                        var f = ds[ps.ActualPath];
+                        var f = ds[PathSelector.ActualPath];
                         f.Add(fn);
                     }
                     else if (fst == FileSystemType.Folder)
                     {
-                        ps.AddToken(fn);
-                        ds.Add(ps.ActualPath, new List<string>());
+                        PathSelector.AddToken(fn);
+                        ds.Add(PathSelector.ActualPath, new List<string>());
                         //pridano = true;
-                        DeleteRecursively(slozkyNeuploadovatAVS, fn, i, td);
+                        DeleteRecursively(foldersToSkip, fn, i, td);
                     }
                 ////DebugLogger.Instance.WriteLine(item2);
                 }
-        //item.adresare.Add(ds);
+        //item.Directories.Add(ds);
         }
 
         if (true)
             foreach (var item in td)
-                if (item.hloubka == i)
-                    item.adresare.Add(ds);
+                if (item.Depth == i)
+                    item.Directories.Add(ds);
         if (i == 1)
         {
             var smazaneAdresare = new List<string>();
             for (var yValue = td.Count - 1; yValue >= 0; yValue--)
-                foreach (var item in td[yValue].adresare)
+                foreach (var item in td[yValue].Directories)
                     foreach (var item2 in item)
                     {
-                        ps.ActualPath = item2.Key;
+                        PathSelector.ActualPath = item2.Key;
                         var sa = item2.Key;
                         if (!smazaneAdresare.Contains(sa))
                         {

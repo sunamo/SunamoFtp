@@ -9,7 +9,7 @@ public abstract partial class FtpBase : FtpAbstract
     /// </summary>
     public FtpBase()
     {
-        ps = new PathSelector("");
+        PathSelector = new PathSelector("");
         remoteHost = string.Empty;
         //remotePath = ".";
         remoteUser = string.Empty;
@@ -18,10 +18,13 @@ public abstract partial class FtpBase : FtpAbstract
         logined = false;
     }
 
-    //public abstract void DeleteRecursively(List<string> slozkyNeuploadovatAVS, string dirName, int i, List<DirectoriesToDelete> td);
+    //public abstract void DeleteRecursively(List<string> foldersToSkip, string dirName, int i, List<DirectoriesToDelete> td);
+    /// <summary>
+    /// Triggers status update notification for new folder navigation
+    /// </summary>
     public void OnNewStatusNewFolder()
     {
-        NewStatus("Nová složka je" + " " + ps.ActualPath, []);
+        NewStatus("Nová složka je" + " " + PathSelector.ActualPath, []);
     }
 
     /// <summary>
@@ -34,7 +37,7 @@ public abstract partial class FtpBase : FtpAbstract
     /// <param name = "_UploadPath"></param>
     public virtual bool UploadFileMain(string local, string _UploadPath)
     {
-        if (pocetExc < maxPocetExc)
+        if (ExceptionCount < MaxExceptionCount)
         {
             OnNewStatus("Uploaduji" + " " + _UploadPath);
             var _FileInfo = new FileInfo(local);
@@ -77,12 +80,12 @@ public abstract partial class FtpBase : FtpAbstract
                 _Stream.Dispose();
                 _FileStream.Close();
                 _FileStream.Dispose();
-                pocetExc = 0;
+                ExceptionCount = 0;
             // Close the file stream and the Request Stream
             }
             catch (Exception ex)
             {
-                pocetExc++;
+                ExceptionCount++;
                 //CleanUp.Streams(_Stream, _FileStream);
                 _Stream.Dispose();
                 _FileStream.Dispose();
@@ -96,107 +99,122 @@ public abstract partial class FtpBase : FtpAbstract
                 _FileStream.Dispose();
             }
 
-            pocetExc = 0;
+            ExceptionCount = 0;
             return true;
         }
 
-        pocetExc = 0;
+        ExceptionCount = 0;
         return false;
     }
 
+    /// <summary>
+    /// Triggers status update notification for file upload using safe method
+    /// </summary>
+    /// <param name="path">Path being uploaded</param>
     public void OnUploadingNewStatus(string path)
     {
         OnNewStatus("Uploaduji" + " " + path + " " + "bezpečnou metodou");
     }
 
-    public static event Action<object, object[]> NewStatus;
     /// <summary>
-    ///     OK
+    /// Event raised when FTP operation status changes
     /// </summary>
-    /// <param name = "s"></param>
-    /// <param name = "p"></param>
+    public static event Action<object, object[]> NewStatus;
+
+    /// <summary>
+    /// Raises the NewStatus event with specified message and parameters
+    /// </summary>
+    /// <param name="text">Status message</param>
+    /// <param name="p">Additional parameters</param>
     public static void OnNewStatus(string text, params object[] p)
     {
         NewStatus(text, p);
     }
 
     /// <summary>
-    ///     STOR
-    ///     Nauploaduje pouze soubory které ještě v adresáři nejsou
+    /// Uploads only files that don't already exist in the current directory on FTP server
     /// </summary>
-    /// <param name = "files"></param>
-    /// <param name = "iw"></param>
+    /// <param name="files">List of local file paths to upload</param>
+    /// <returns>True if all files were uploaded successfully</returns>
     public bool UploadFiles(List<string> files)
     {
-        var fse = ListDirectoryDetails();
+        var ftpEntries = ListDirectoryDetails();
         foreach (var item in files)
         {
             var fi = new FileInfo(item);
             var fileSize = fi.Length;
-            if (!FtpHelper.IsFileOnHosting(item, fse, fileSize))
+            if (!FtpHelper.IsFileOnHosting(item, ftpEntries, fileSize))
                 UploadFile(item);
         }
 
         return true;
     }
 
+    /// <summary>
+    /// Gets the current FTP path including host and port
+    /// </summary>
+    /// <returns>Full FTP path</returns>
     public string GetActualPath()
     {
-        return UH.Combine(true, remoteHost + ":" + remotePort, ps.ActualPath);
+        return UH.Combine(true, remoteHost + ":" + remotePort, PathSelector.ActualPath);
     }
 
     /// <summary>
-    ///     A1 musí být vždy pouze název adresáře/souboru, nikdy to nemůže být plná cesta
+    /// Gets the FTP path for specified directory/file name appended to current path
     /// </summary>
-    /// <param name = "dirName"></param>
+    /// <param name="dirName">Directory or file name (not full path)</param>
+    /// <returns>Full FTP path including the specified name</returns>
     public string GetActualPath(string dirName)
     {
-        var text = /*UH.Combine(true,*/ remoteHost + ":" + remotePort + ps.ActualPath + dirName;
+        var text = /*UH.Combine(true,*/ remoteHost + ":" + remotePort + PathSelector.ActualPath + dirName;
         return text.TrimEnd('/');
     }
 
     /// <summary>
-    ///     OK
-    ///     Po zavolání této metody v třídě FTP, pokud chceš do adresáře, kde jsi byl před jejím zavoláním, musíš zavolat
-    ///     goToUpFolder
+    /// Uploads a local folder to FTP server. After calling this method in FTP class, you must call goToUpFolder to return to previous directory.
     /// </summary>
-    /// <param name = "slozkaFrom"></param>
-    public bool uploadFolder(string slozkaFrom, bool FTPclass, IWorking working)
+    /// <param name="sourceFolder">Local source folder path</param>
+    /// <param name="FTPclass">Indicates if called from FTP class (requires goToPath to restore)</param>
+    /// <param name="working">Working state tracker to allow cancellation</param>
+    /// <returns>True if folder was uploaded successfully</returns>
+    public bool uploadFolder(string sourceFolder, bool FTPclass, IWorking working)
     {
-        var actPath = ps.ActualPath;
-        var vr = uploadFolderShared(slozkaFrom, false, working);
+        var actPath = PathSelector.ActualPath;
+        var result = uploadFolderShared(sourceFolder, false, working);
         if (FTPclass)
             goToPath(actPath);
-        return vr;
+        return result;
     }
 
     /// <summary>
-    ///     STOR
+    /// Recursively uploads a local folder and all its contents to specified remote folder
     /// </summary>
-    /// <param name = "slozkaNaLocalu"></param>
-    /// <param name = "slozkaNaHostingu"></param>
-    /// <param name = "iw"></param>
-    public bool uploadFolderRek(string slozkaNaLocalu, string slozkaNaHostingu)
+    /// <param name="localFolder">Local folder path to upload</param>
+    /// <param name="remoteFolder">Remote FTP folder path to upload to</param>
+    /// <returns>True if all files and folders were uploaded successfully</returns>
+    public bool uploadFolderRek(string localFolder, string remoteFolder)
     {
-        // Musí to tu být právě kvůli předchozímu řádku List<string> fse = getFSEntriesList(); kdy získávám seznam souborů na FTP serveru
-        goToPath(slozkaNaHostingu);
-        var directories = Directory.GetDirectories(slozkaNaLocalu);
-        var files = Directory.GetFiles(slozkaNaLocalu).ToList();
-        OnNewStatus("Uploaduji všechny soubory" + " " + files.Count() + " " + "do složky ftp serveru" + " " + ps.ActualPath);
+        // Musí to tu být právě kvůli předchozímu řádku List<string> ftpEntries = getFSEntriesList(); kdy získávám seznam souborů na FTP serveru
+        goToPath(remoteFolder);
+        var directories = Directory.GetDirectories(localFolder);
+        var files = Directory.GetFiles(localFolder).ToList();
+        OnNewStatus("Uploaduji všechny files" + " " + files.Count() + " " + "do složky ftp serveru" + " " + PathSelector.ActualPath);
         if (!UploadFiles(files))
             return false;
         foreach (var item in directories)
-            if (!uploadFolderRek(item, UH.Combine(false, slozkaNaHostingu, Path.GetFileName(item))))
+            if (!uploadFolderRek(item, UH.Combine(false, remoteFolder, Path.GetFileName(item))))
                 return false;
         return true;
     }
 
     /// <summary>
-    ///     OK
+    /// Recursively uploads a local folder and all its contents to current FTP directory
     /// </summary>
-    /// <param name = "slozkaNaLocalu"></param>
-    public bool uploadFolderRek(string slozkaNaLocalu, IWorking iw)
+    /// <param name="localFolder">Local folder path to upload</param>
+    /// <param name="iw">Working state tracker to allow cancellation</param>
+    /// <returns>True if all files and folders were uploaded successfully</returns>
+    public bool uploadFolderRek(string localFolder, IWorking iw)
     {
-        return uploadFolderShared(slozkaNaLocalu, true, iw);
+        return uploadFolderShared(localFolder, true, iw);
     }
 }

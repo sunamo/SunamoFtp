@@ -1,27 +1,41 @@
 namespace SunamoFtp._sunamo.SunamoUri;
 
+/// <summary>
+/// Helper class for URI and path operations
+/// </summary>
 internal class UH
 {
-    internal static string GetFileName(string rp, bool wholeUrl = false)
+    /// <summary>
+    /// Extracts file name from URL or path
+    /// </summary>
+    /// <param name="path">URL or file path</param>
+    /// <param name="isWholeUrl">If true, preserves query strings</param>
+    /// <returns>File name extracted from path</returns>
+    internal static string GetFileName(string path, bool isWholeUrl = false)
     {
-        if (wholeUrl)
+        if (isWholeUrl)
         {
-            var data = SHParts.RemoveAfterFirst(rp, "?");
-            //var result = FS.ReplaceInvalidFileNameChars(data, []Chars);
+            var data = SHParts.RemoveAfterFirst(path, "?");
             return data;
         }
 
-        rp = SHParts.RemoveAfterFirst(rp, "?");
-        rp = rp.TrimEnd('/');
-        var dex = rp.LastIndexOf('/');
-        return rp.Substring(dex + 1);
+        path = SHParts.RemoveAfterFirst(path, "?");
+        path = path.TrimEnd('/');
+        var lastSlashIndex = path.LastIndexOf('/');
+        return path.Substring(lastSlashIndex + 1);
     }
 
-    internal static string Combine(bool dir, params string[] p)
+    /// <summary>
+    /// Combines multiple path segments into single path
+    /// </summary>
+    /// <param name="isDirectory">If true, ensures trailing slash</param>
+    /// <param name="paths">Path segments to combine</param>
+    /// <returns>Combined path</returns>
+    internal static string Combine(bool isDirectory, params string[] paths)
     {
-        var vr = string.Join('/', p).Replace("///", "/").Replace("//", "/")
+        var result = string.Join('/', paths).Replace("///", "/").Replace("//", "/")
             .TrimEnd('/').Replace(":/", "://");
-        if (dir) vr += "/";
-        return vr;
+        if (isDirectory) result += "/";
+        return result;
     }
 }
