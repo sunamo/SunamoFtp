@@ -1,25 +1,23 @@
 namespace SunamoFtp.FtpClients;
 
-// EN: Variable names have been checked and replaced with self-descriptive names
-// CZ: Názvy proměnných byly zkontrolovány a nahrazeny samopopisnými názvy
 public partial class FtpNet : FtpBase
 {
     /// <summary>
     ///     OK
     ///     NLST
-    ///     Vrátí pouze názvy souborů, bez složek nebo linků
-    ///     Pokud nejsem přihlášený, přihlásím se M login
-    ///     Vytvořím objekt Socket metodou createDataSocket ze které budu přidávat znaky
+    ///     Returns only file names, without folders or links
+    ///     If not logged in, log in using login method
+    ///     Vytvořím objekt Socket metodou CreateDataSocket ze které budu přidávat znaky
     ///     Zavolám příkaz NLST s A1,
     ///     Skrz objekt Socket získám bajty, které okamžitě přidávám do řetězce
-    ///     Odpověď získám M readReply a G
+    ///     Odpověď získám M ReadReply a G
     /// </summary>
     /// <param name = "mask"></param>
-    public List<string> getFileList(string mask)
+    public List<string> GetFileList(string mask)
     {
         if (ExceptionCount < MaxExceptionCount)
         {
-            OnNewStatus("Získávám seznam souborů ze složky" + " " + PathSelector.ActualPath + " " + "příkazem NLST");
+            OnNewStatus("Getting file list from folder" + " " + PathSelector.ActualPath + " " + "using NLST command");
             var result = new StringBuilder();
             FtpWebRequest reqFTP = null;
             StreamReader reader = null;
@@ -28,7 +26,7 @@ public partial class FtpNet : FtpBase
             {
                 reqFTP = (FtpWebRequest)WebRequest.Create(new Uri(GetActualPath()));
                 reqFTP.UseBinary = true;
-                reqFTP.Credentials = new NetworkCredential(remoteUser, remotePass);
+                reqFTP.Credentials = new NetworkCredential(RemoteUser, RemotePass);
                 reqFTP.Method = WebRequestMethods.Ftp.ListDirectory;
                 response = reqFTP.GetResponse();
                 reader = new StreamReader(response.GetResponseStream(), Encoding.GetEncoding("windows-1250"));
@@ -58,7 +56,7 @@ public partial class FtpNet : FtpBase
                 }
                 else
                 {
-                    return getFileList(mask);
+                    return GetFileList(mask);
                 }
             }
             finally
@@ -80,7 +78,7 @@ public partial class FtpNet : FtpBase
     /// <summary>
     ///     OK
     ///     MKD
-    ///     Adresář vytvoří pokud nebude existovat
+    ///     Creates directory if it does not exist
     /// </summary>
     /// <param name = "dirName"></param>
     public override void CreateDirectoryIfNotExists(string dirName)
@@ -93,22 +91,22 @@ public partial class FtpNet : FtpBase
         }
         else
         {
-            OnNewStatus("Nemohl být vytvořen nový adresář, protože nebyl zadán jeho název");
+            OnNewStatus("Could not create new directory because no name was specified");
             return;
         }
 
-        var nalezenAdresar = false;
+        var directoryFound = false;
         List<string> ftpEntries = null;
-        var vseMa8 = false;
-        while (!vseMa8)
+        var allHaveEightTokens = false;
+        while (!allHaveEightTokens)
         {
-            vseMa8 = true;
+            allHaveEightTokens = true;
             ftpEntries = ListDirectoryDetails();
             foreach (var item in ftpEntries)
             {
                 var tokens = item.Split(' ').Length; //SHSplit.Split(item, "").Count;
                 if (tokens < 8)
-                    vseMa8 = false;
+                    allHaveEightTokens = false;
             }
         }
 
@@ -118,14 +116,14 @@ public partial class FtpNet : FtpBase
             if (FtpHelper.IsFile(item, out fn) == FileSystemType.Folder)
                 if (fn == dirName)
                 {
-                    nalezenAdresar = true;
+                    directoryFound = true;
                     break;
                 }
         }
 
-        if (!nalezenAdresar)
+        if (!directoryFound)
         {
-            if (mkdir(dirName))
+            if (Mkdir(dirName))
             {
             }
         }
@@ -139,7 +137,7 @@ public partial class FtpNet : FtpBase
     /// Changes current directory on FTP server (lightweight version without full navigation)
     /// </summary>
     /// <param name="dirName">Directory name to change to</param>
-    public override void chdirLite(string dirName)
+    public override void ChdirLite(string dirName)
     {
         // Trim slash from end in dirName variable
         if (dirName != "")
@@ -152,18 +150,18 @@ public partial class FtpNet : FtpBase
             dirName = MainWindow.Www;
         }
 
-        var nalezenAdresar = false;
+        var directoryFound = false;
         List<string> ftpEntries = null;
-        var vseMa8 = false;
-        while (!vseMa8)
+        var allHaveEightTokens = false;
+        while (!allHaveEightTokens)
         {
-            vseMa8 = true;
+            allHaveEightTokens = true;
             ftpEntries = ListDirectoryDetails();
             foreach (var item in ftpEntries)
             {
                 var tokens = SHSplit.Split(item, " ").Count;
                 if (tokens < 8)
-                    vseMa8 = false;
+                    allHaveEightTokens = false;
             }
         }
 
@@ -173,14 +171,14 @@ public partial class FtpNet : FtpBase
             if (FtpHelper.IsFile(item, out fn) == FileSystemType.Folder)
                 if (fn == dirName)
                 {
-                    nalezenAdresar = true;
+                    directoryFound = true;
                     break;
                 }
         }
 
-        if (!nalezenAdresar)
+        if (!directoryFound)
         {
-            if (mkdir(dirName))
+            if (Mkdir(dirName))
             {
             //this.remotePath = dirName;
             }
@@ -200,12 +198,12 @@ public partial class FtpNet : FtpBase
     ///     Vytvoří v akt. složce A1 adresář A1 příkazem MKD
     /// </summary>
     /// <param name = "dirName"></param>
-    public override bool mkdir(string dirName)
+    public override bool Mkdir(string dirName)
     {
         if (ExceptionCount < MaxExceptionCount)
         {
             var adr = UH.Combine(true, PathSelector.ActualPath, dirName);
-            OnNewStatus("Vytvářím adresář" + " " + adr);
+            OnNewStatus("Creating directory" + " " + adr);
             FtpWebRequest reqFTP = null;
             FtpWebResponse response = null;
             Stream ftpStream = null;
@@ -216,7 +214,7 @@ public partial class FtpNet : FtpBase
                 reqFTP = (FtpWebRequest)WebRequest.Create(uri);
                 reqFTP.Method = WebRequestMethods.Ftp.MakeDirectory;
                 reqFTP.UseBinary = true;
-                reqFTP.Credentials = new NetworkCredential(remoteUser, remotePass);
+                reqFTP.Credentials = new NetworkCredential(RemoteUser, RemotePass);
                 response = (FtpWebResponse)reqFTP.GetResponse();
                 ftpStream = response.GetResponseStream();
                 PathSelector.AddToken(dirName);
@@ -233,7 +231,7 @@ public partial class FtpNet : FtpBase
                     response.Dispose();
                 ExceptionCount++;
                 OnNewStatus("Error create new dir" + ": " + ex.Message);
-                return mkdir(dirName);
+                return Mkdir(dirName);
             }
             finally
             {

@@ -1,23 +1,20 @@
 namespace SunamoFtp.FtpClients;
 
-// EN: Variable names have been checked and replaced with self-descriptive names
-// CZ: Názvy proměnných byly zkontrolovány a nahrazeny samopopisnými názvy
-
 /// <summary>
 /// FTP client implementation using raw socket commands
 /// </summary>
 public partial class FTP : FtpBase
 {
     /// <summary>
-    /// Velikost bloku po které se čte.
+    /// Block size for reading.
     /// </summary>
     private static readonly int BLOCK_SIZE = 1024;
     /// <summary>
-    /// Konstanta obsahující ASCII kódování
+    /// Constant containing ASCII encoding
     /// </summary>
     private readonly Encoding ASCII = Encoding.ASCII;
     /// <summary>
-    /// Buffer je pouhý 1KB
+    /// Buffer is only 1KB
     /// </summary>
     private readonly byte[] buffer = new byte[BLOCK_SIZE];
     /// <summary>
@@ -29,28 +26,28 @@ public partial class FTP : FtpBase
     /// </summary>
     private Socket clientSocket;
     /// <summary>
-    /// Zda se vypisují příkazy na konzoli.
+    /// Indicates whether to output commands to console.
     /// </summary>
-    private bool debug;
+    private bool isDebug;
     private readonly IFtpClientExt ftpClient;
     private bool isUpload;
-    private string mes;
+    private string message;
     private string reply;
     /// <summary>
-    /// Hodnotu kterou ukládá třeba readReply, který volá třeba sendCommand
+    /// Value stored by ReadReply, which is called by SendCommand
     /// </summary>
     private int retValue;
-    private new bool startup = true;
+    // Removed unused field: isStartupPhase
     /// <summary>
-    /// Stream který se používá při downloadu.
+    /// Stream used for download.
     /// </summary>
     private Stream stream;
     /// <summary>
-    /// Stream který se používá při uploadu a to tak že do něho zapíšu jeho M Write
+    /// Stream used for upload by writing to it via Write method
     /// </summary>
     private Stream stream2;
     /// <summary>
-    /// Zda se používá PP stream(binární přenos) místo clientSocket(ascii převod)
+    /// Indicates whether to use stream (binary transfer) instead of clientSocket (ASCII conversion)
     /// </summary>
     private bool useStream;
     /// <summary>
@@ -59,11 +56,11 @@ public partial class FTP : FtpBase
     public FTP(IFtpClientExt ftpClient)
     {
         this.ftpClient = ftpClient;
-        debug = false;
+        isDebug = false;
     }
 
     /// <summary>
-    /// aktuální vzdálený adresář.
+    /// current remote directory.
     /// </summary>
      //string remotePath;
     private string remotePath
@@ -78,7 +75,7 @@ public partial class FTP : FtpBase
     /// Sets whether to use binary transfer mode
     /// </summary>
     /// <param name="value">True to enable binary transfer, false for ASCII</param>
-    public void setUseStream(bool value)
+    public void SetUseStream(bool value)
     {
         useStream = value;
     }
@@ -87,16 +84,16 @@ public partial class FTP : FtpBase
     /// Sets the remote FTP path and navigates to it
     /// </summary>
     /// <param name="remotePath">Remote FTP path to navigate to</param>
-    public void setRemotePath(string remotePath)
+    public void SetRemotePath(string remotePath)
     {
-        OnNewStatus("Byl nastavena cesta ftp na" + " " + remotePath);
+        OnNewStatus("FTP path set to" + " " + remotePath);
         if (remotePath == ftpClient.WwwSlash)
         {
             if (PathSelector.ActualPath != ftpClient.WwwSlash)
                 while (PathSelector.CanGoToUpFolder)
                     //PathSelector.RemoveLastToken();
-                    goToUpFolder();
-        //chdirLite("www");
+                    GoToUpFolder();
+        //ChdirLite("www");
         }
         else
         {
@@ -105,83 +102,79 @@ public partial class FTP : FtpBase
     }
 
     /// <summary>
-    /// G aktuální vzdálený adresář.
+    /// Gets current remote directory.
     /// </summary>
-    public string getRemotePath()
+    public string GetRemotePath()
     {
         return remotePath;
     }
 
-    public override void LoginIfIsNot(bool startup)
+    public override void LoginIfIsNot(bool isStartup)
     {
-        base.startup = startup;
-        if (!logined)
-            login();
+        base.IsStartup = isStartup;
+        if (!IsLoggedIn)
+            Login();
     }
 
     /// <summary>
-    /// Pokud nejsem přihlášený, přihlásím se M login
-    /// Vytvořím objekt Socket metodou createDataSocket ze které budu přidávat znaky
-    /// Zavolám příkaz NLST text A1,
-    /// Skrz objekt Socket získám bajty, které okamžitě přidávám do řetězce
-    /// Odpověď získám M readReply a G
+    /// Gets list of files matching the specified mask from current FTP directory
     /// </summary>
-    /// <param name = "mask"></param>
-    public List<string> getFileList(string mask)
+    /// <param name="mask">File mask pattern</param>
+    public List<string> GetFileList(string mask)
     {
-        OnNewStatus("Získávám seznam souborů ze složky" + " " + PathSelector.ActualPath + " " + "příkazem NLST");
+        OnNewStatus("Getting file list from folder" + " " + PathSelector.ActualPath + " " + "using NLST command");
 #region MyRegion
-        if (!logined)
-            login();
-        var cSocket = createDataSocket();
-        sendCommand("NLST" + " " + mask);
+        if (!IsLoggedIn)
+            Login();
+        var clientSocket = CreateDataSocket();
+        SendCommand("NLST" + " " + mask);
         if (!(retValue == 150 || retValue == 125))
             throw new Exception(reply.Substring(4));
-        mes = "";
+        message = "";
 #endregion
 #region MyRegion
         while (true)
         {
-            var bytes = cSocket.Receive(buffer, buffer.Length, 0);
-            mes += ASCII.GetString(buffer, 0, bytes);
+            var bytes = clientSocket.Receive(buffer, buffer.Length, 0);
+            message += ASCII.GetString(buffer, 0, bytes);
             if (bytes < buffer.Length)
                 break;
         }
 
         string[] seperator = ["\r\n"];
-        var mess = mes.Split(seperator, StringSplitOptions.RemoveEmptyEntries).ToList();
-        cSocket.Close();
+        var mess = message.Split(seperator, StringSplitOptions.RemoveEmptyEntries).ToList();
+        clientSocket.Close();
 #endregion
-        readReply();
+        ReadReply();
         if (retValue != 226)
             throw new Exception(reply.Substring(4));
         return mess;
     }
 
-    public override void goToUpFolderForce()
+    public override void GoToUpFolderForce()
     {
         if (FtpLogging.GoToUpFolder)
-            OnNewStatus("Přecházím do nadsložky" + " " + PathSelector.ActualPath);
-        sendCommand("CWD " + "..");
+            OnNewStatus("Navigating to parent folder" + " " + PathSelector.ActualPath);
+        SendCommand("CWD " + "..");
         PathSelector.RemoveLastTokenForce();
         NewStatusNewFolder();
     }
 
     private void NewStatusNewFolder()
     {
-        OnNewStatus("Nová složka je" + " " + PathSelector.ActualPath);
+        OnNewStatus("New folder is" + " " + PathSelector.ActualPath);
     }
 
-    public override void goToUpFolder()
+    public override void GoToUpFolder()
     {
         if (PathSelector.CanGoToUpFolder)
         {
-            sendCommand("CWD " + "..");
+            SendCommand("CWD " + "..");
             PathSelector.RemoveLastToken();
         }
         else
         {
-            OnNewStatus("Program nemohl přejít do nadsložky" + ".");
+            OnNewStatus("Could not navigate to parent folder" + ".");
         }
     }
 }

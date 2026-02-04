@@ -1,7 +1,5 @@
 namespace SunamoFtp.FtpClients;
 
-// EN: Variable names have been checked and replaced with self-descriptive names
-// CZ: Názvy proměnných byly zkontrolovány a nahrazeny samopopisnými názvy
 public partial class FTP : FtpBase
 {
     /// <summary>
@@ -9,31 +7,31 @@ public partial class FTP : FtpBase
     /// Logs in if not authenticated, sends PASV command, and creates data socket.
     /// If resuming, sets binary mode and gets remote file size to determine offset.
     /// Sends REST command with offset if resuming, then STOR command with file name.
-    /// Reads bytes from file and sends them via socket, then closes socket and verifies server response.
+    /// Reads bytes from file and sends them via socket, then Closes socket and verifies server response.
     /// </summary>
     /// <param name="fileName">The name of the file to upload</param>
     /// <param name="resume">Whether to resume a previous upload from the last position</param>
     /// <param name="buffer">The byte buffer to use for reading the file</param>
-    public void upload(string fileName, bool resume, byte[] buffer)
+    public void Upload(string fileName, bool resume, byte[] buffer)
     {
-        OnNewStatus("Uploaduji" + " " + UH.Combine(false, PathSelector.ActualPath, fileName));
+        OnNewStatus("Uploading" + " " + UH.Combine(false, PathSelector.ActualPath, fileName));
 #region Tento kód mi nedovolil často nauploadovat ani jeden soubor, takže ho nahradím speciálními třídami .net
 #region Pokud nejsem nalogovaný, přihlásím se.
-        if (!logined)
-            login();
-        sendCommand("PASV");
+        if (!IsLoggedIn)
+            Login();
+        SendCommand("PASV");
 #endregion
 #region Pokud mám navazovat, zjistím si veliksot vzdáleného souboru.
-        var cSocket = createDataSocket();
+        var clientSocket = CreateDataSocket();
         long offset = 0;
         isUpload = true;
         if (resume)
             try
             {
-                setBinaryMode(true);
-                offset = getFileSize(fileName);
+                SetBinaryMode(true);
+                offset = GetFileSize(fileName);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 offset = 0;
             }
@@ -42,34 +40,34 @@ public partial class FTP : FtpBase
 #region Pošlu příkaz REST text offsetem a poté už STOR
         if (offset > 0)
         {
-            sendCommand("REST" + " " + offset);
+            SendCommand("REST" + " " + offset);
             if (retValue != 350)
                 offset = 0;
         }
 
-        sendCommand("STOR" + " " + Path.GetFileName(fileName));
+        SendCommand("STOR" + " " + Path.GetFileName(fileName));
         if (!(retValue == 125 || retValue == 150))
             throw new Exception(reply.Substring(4));
 #endregion
-#region Pokud byl offset, seeknu se v souboru a čtu bajty a zapisuji je na server metodou cSocket.Send
+#region Pokud byl offset, seeknu se v souboru a čtu bajty a zapisuji je to server metodou clientSocket.Send
         // open input stream to read source file
         var input = new FileStream(fileName, FileMode.Open);
         if (offset != 0)
         {
-            if (debug)
+            if (isDebug)
                 OnNewStatus("seeking to" + " " + offset);
             input.Seek(offset, SeekOrigin.Begin);
         }
 
         OnNewStatus("Uploading file" + " " + fileName + " to " + remotePath);
         while ((bytes = input.Read(buffer, 0, buffer.Length)) > 0)
-            cSocket.Send(buffer, bytes, 0);
+            clientSocket.Send(buffer, bytes, 0);
         input.Close();
 #endregion
-#region Pokud jsem připojený, zavřu objekt cSocket a zavřu návratovou hodnotu
-        if (cSocket.Connected)
-            cSocket.Close();
-        readReply();
+#region Pokud jsem připojený, zavřu objekt clientSocket a zavřu návratovou hodnotu
+        if (clientSocket.Connected)
+            clientSocket.Close();
+        ReadReply();
         if (!(retValue == 226 || retValue == 250))
             throw new Exception(reply.Substring(4));
 #endregion
@@ -85,14 +83,14 @@ public partial class FTP : FtpBase
     /// </summary>
     /// <param name="fileName">The name of the file to delete</param>
     /// <returns>Always returns true (throws exception on failure)</returns>
-    public override bool deleteRemoteFile(string fileName)
+    public override bool DeleteRemoteFile(string fileName)
     {
-        OnNewStatus("Odstraňuji ze ftp serveru soubor" + " " + UH.Combine(false, PathSelector.ActualPath, fileName));
-        if (!logined)
-            login();
-        sendCommand("DELE" + " " + fileName);
+        OnNewStatus("Deleting file from FTP server" + " " + UH.Combine(false, PathSelector.ActualPath, fileName));
+        if (!IsLoggedIn)
+            Login();
+        SendCommand("DELE" + " " + fileName);
         if (retValue != 250)
-            sendCommand("DELE" + " " + WebUtility.UrlDecode(fileName));
+            SendCommand("DELE" + " " + WebUtility.UrlDecode(fileName));
         return true;
     }
 
@@ -103,15 +101,15 @@ public partial class FTP : FtpBase
     /// </summary>
     /// <param name="oldFileName">The current name of the file</param>
     /// <param name="newFileName">The new name for the file</param>
-    public override void renameRemoteFile(string oldFileName, string newFileName)
+    public override void RenameRemoteFile(string oldFileName, string newFileName)
     {
-        OnNewStatus("Ve složce" + " " + PathSelector.ActualPath + " " + "přejmenovávám soubor" + " " + oldFileName + " na " + newFileName);
-        if (!logined)
-            login();
-        sendCommand("RNFR" + " " + oldFileName);
+        OnNewStatus("In folder" + " " + PathSelector.ActualPath + " " + "renaming file" + " " + oldFileName + " to " + newFileName);
+        if (!IsLoggedIn)
+            Login();
+        SendCommand("RNFR" + " " + oldFileName);
         if (retValue != 350)
             throw new Exception(reply.Substring(4));
-        sendCommand("RNTO" + " " + newFileName);
+        SendCommand("RNTO" + " " + newFileName);
         if (retValue != 250)
             throw new Exception(reply.Substring(4));
     }
@@ -123,15 +121,15 @@ public partial class FTP : FtpBase
     /// </summary>
     /// <param name="dirName">The name of the directory to create</param>
     /// <returns>Always returns true (throws exception on failure)</returns>
-    public override bool mkdir(string dirName)
+    public override bool Mkdir(string dirName)
     {
-        OnNewStatus("Vytvářím adresář" + " " + UH.Combine(true, PathSelector.ActualPath, dirName));
-        if (!logined)
-            login();
-        sendCommand("MKD " + dirName);
+        OnNewStatus("Creating directory" + " " + UH.Combine(true, PathSelector.ActualPath, dirName));
+        if (!IsLoggedIn)
+            Login();
+        SendCommand("MKD " + dirName);
         if (retValue != 250 && retValue != 257)
             throw new Exception(reply.Substring(4));
-        chdirLite(dirName);
+        ChdirLite(dirName);
         return true;
     }
 
@@ -143,12 +141,12 @@ public partial class FTP : FtpBase
     /// <param name="foldersToSkip">List of folder names to skip during recursive deletion</param>
     /// <param name="dirName">The name of the directory to remove</param>
     /// <returns>Always returns true (throws exception on failure)</returns>
-    public override bool rmdir(List<string> foldersToSkip, string dirName)
+    public override bool Rmdir(List<string> foldersToSkip, string dirName)
     {
-        OnNewStatus("Mažu adresář" + " " + UH.Combine(true, PathSelector.ActualPath, dirName));
-        if (!logined)
-            login();
-        sendCommand("RMD " + dirName);
+        OnNewStatus("Deleting directory" + " " + UH.Combine(true, PathSelector.ActualPath, dirName));
+        if (!IsLoggedIn)
+            Login();
+        SendCommand("RMD " + dirName);
         if (retValue != 250)
         {
             if (retValue == 550)
@@ -163,7 +161,7 @@ public partial class FTP : FtpBase
     /// <summary>
     /// Changes to the specified directory, creating it if it doesn't exist.
     /// Skips "." and ".." directory references.
-    /// If the directory doesn't exist, creates it with mkdir, otherwise changes to it with chdirLite.
+    /// If the directory doesn't exist, creates it with mkdir, otherwise changes to it with ChdirLite.
     /// </summary>
     /// <param name="dirName">The name of the directory to change to or create</param>
     public override void CreateDirectoryIfNotExists(string dirName)
@@ -171,9 +169,9 @@ public partial class FTP : FtpBase
         if (dirName == "." || dirName == "..")
             return;
         if (!ExistsFolder(dirName))
-            mkdir(dirName);
+            Mkdir(dirName);
         else
-            chdirLite(dirName);
+            ChdirLite(dirName);
     //PathSelector.AddToken(dirName);
     }
 
@@ -185,10 +183,10 @@ public partial class FTP : FtpBase
     /// Updates the PathSelector when changing directories.
     /// </summary>
     /// <param name="dirName">The name of the directory to change to. Empty string changes to www root.</param>
-    public override void chdirLite(string dirName)
+    public override void ChdirLite(string dirName)
     {
-        if (!logined)
-            login();
+        if (!IsLoggedIn)
+            Login();
         if (dirName != "")
         {
             if (dirName[dirName.Length - 1] == "/"[0])
@@ -199,42 +197,42 @@ public partial class FTP : FtpBase
             dirName = ftpClient.Www;
         }
 
-        var nalezenAdresar = false;
+        var directoryFound = false;
         List<string> ftpEntries = null;
-        var vseMa8 = false;
-        while (!vseMa8)
+        var allHaveEightTokens = false;
+        while (!allHaveEightTokens)
         {
-            vseMa8 = true;
+            allHaveEightTokens = true;
             ftpEntries = ListDirectoryDetails();
             foreach (var item in ftpEntries)
             {
                 var tokens = item.Split(' ').Length; //SHSplit.Split(item, "").Count;
                 if (tokens < 8)
-                    vseMa8 = false;
+                    allHaveEightTokens = false;
             }
         }
 
         foreach (var item in ftpEntries)
         {
-            string fn = null;
-            if (FtpHelper.IsFile(item, out fn) == FileSystemType.Folder)
-                if (fn == dirName)
+            string fileName = null;
+            if (FtpHelper.IsFile(item, out fileName) == FileSystemType.Folder)
+                if (fileName == dirName)
                 {
-                    nalezenAdresar = true;
+                    directoryFound = true;
                     break;
                 }
         }
 
-        if (!nalezenAdresar)
+        if (!directoryFound)
         {
-            if (mkdir(dirName))
+            if (Mkdir(dirName))
             {
             //this.remotePath = dirName;
             }
         }
         else
         {
-            sendCommand("CWD " + dirName);
+            SendCommand("CWD " + dirName);
             if (retValue != 250)
                 throw new Exception(reply.Substring(4));
             if (dirName == "..")
@@ -247,31 +245,31 @@ public partial class FTP : FtpBase
     /// <summary>
     /// Closes the FTP connection and cleans up resources.
     /// Sends QUIT command if client socket is not null.
-    /// Closes and nullifies the client socket, and sets logined to false.
+    /// Closes and nullifies the client socket, and sets IsLoggedIn to false.
     /// </summary>
-    public void close()
+    public void Close()
     {
-        OnNewStatus("Uzavírám ftp relaci");
+        OnNewStatus("Closing FTP session");
         if (clientSocket != null)
-            sendCommand("QUIT");
-        cleanup();
+            SendCommand("QUIT");
+        Cleanup();
         OnNewStatus("Closing" + "." + "..");
     }
 
     /// <summary>
-    /// Sets the debug mode for the FTP client.
+    /// Sets the isDebug mode for the FTP client.
     /// When enabled, outputs detailed command and response information.
     /// </summary>
-    /// <param name="debug">True to enable debug mode, false to disable</param>
-    public void setDebug(bool debug)
+    /// <param name="isDebug">True to enable isDebug mode, false to disable</param>
+    public void SetDebug(bool isDebug)
     {
-        this.debug = debug;
+        this.isDebug = isDebug;
     }
 
     /// <summary>
-    /// Přečtu do PP reply M ResponseMsg když používám Stream nebo readLine
+    /// Reads reply using ResponseMsg when using Stream or ReadLine
     /// </summary>
-    private void readReply()
+    private void ReadReply()
     {
         if (useStream)
         {
@@ -279,16 +277,16 @@ public partial class FTP : FtpBase
         }
         else
         {
-            mes = "";
-            reply = readLine();
+            message = "";
+            reply = ReadLine();
             retValue = int.Parse(reply.Substring(0, 3));
         }
     }
 
     /// <summary>
-    /// Zavřu, nulluji clientSocket a nastavím logined na false.
+    /// Zavřu, nulluji clientSocket a nastavím IsLoggedIn to false.
     /// </summary>
-    private void cleanup()
+    private void Cleanup()
     {
         if (clientSocket != null)
         {
@@ -296,6 +294,6 @@ public partial class FTP : FtpBase
             clientSocket = null;
         }
 
-        logined = false;
+        IsLoggedIn = false;
     }
 }

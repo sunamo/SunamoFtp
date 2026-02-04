@@ -1,7 +1,5 @@
 namespace SunamoFtp.FtpClients;
 
-// EN: Variable names have been checked and replaced with self-descriptive names
-// CZ: Názvy proměnných byly zkontrolovány a nahrazeny samopopisnými názvy
 public partial class FTP : FtpBase
 {
     /// <summary>
@@ -11,9 +9,9 @@ public partial class FTP : FtpBase
     /// If the character at position 3 is not a space, recursively calls this method again.
     /// </summary>
     /// <returns>The response line from the FTP server</returns>
-    private string readLine()
+    private string ReadLine()
     {
-        // Zjistím si bajty z O clientSocket nebo stream a převedu je na ASCII string
+        // Zjistím si bajty z O clientSocket nebo stream a převedu je to ASCII string
         while (true)
         {
             // Zjistím si bajty
@@ -22,24 +20,24 @@ public partial class FTP : FtpBase
             else
                 // TODO: Tento řádek způsobuje chybu při ukončení po dlouhé nečinnosti
                 bytes = clientSocket.Receive(buffer, buffer.Length, 0);
-            // Ty převedu na string metodou ASCII.GetString. Pokud bylo načteno bajtů méně než je velikost bufferu, breaknu to
-            mes += ASCII.GetString(buffer, 0, bytes);
+            // Ty převedu to string metodou ASCII.GetString. Pokud bylo načteno bajtů méně než je velikost bufferu, breaknu to
+            message += ASCII.GetString(buffer, 0, bytes);
             if (bytes < buffer.Length)
                 break;
         }
 
-        var mess = SHSplit.SplitChar(mes, '\n');
+        var mess = SHSplit.SplitChar(message, '\n');
         // Rozdělím získaný string \n a vezmu předposlední prvek, nebo první, který pak vrátím
-        if (mes.Length > 2)
-            mes = mess[mess.Count - 2];
+        if (message.Length > 2)
+            message = mess[mess.Count - 2];
         else
-            mes = mess[0];
-        //Když na 3. straně není mezera, zavolám tuto M znovu
-        if (!mes.Substring(3, 1).Equals(""))
-            return readLine();
-        if (debug)
+            message = mess[0];
+        //Když to 3. straně není mezera, zavolám tuto M znovu
+        if (!message.Substring(3, 1).Equals(""))
+            return ReadLine();
+        if (isDebug)
             for (var k = 0; k < mess.Count - 1; k++)
                 OnNewStatus(mess[k]);
-        return mes;
+        return message;
     }
 }

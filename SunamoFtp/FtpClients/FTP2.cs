@@ -1,7 +1,5 @@
 namespace SunamoFtp.FtpClients;
 
-// EN: Variable names have been checked and replaced with self-descriptive names
-// CZ: Názvy proměnných byly zkontrolovány a nahrazeny samopopisnými názvy
 public partial class FTP : FtpBase
 {
     /// <summary>
@@ -9,10 +7,10 @@ public partial class FTP : FtpBase
     /// </summary>
     /// <param name="serverName">The name of the server being connected to</param>
     /// <param name="sslStream">The SSL stream to retrieve information from</param>
-    /// <param name="verbose">Whether to display verbose certificate information</param>
-    private void showSslInfo(string serverName, SslStream sslStream, bool verbose)
+    /// <param name="isVerbose">Whether to display verbose certificate information</param>
+    private void ShowSslInfo(string serverName, SslStream sslStream, bool isVerbose)
     {
-        showCertificateInfo(sslStream.RemoteCertificate, verbose);
+        ShowCertificateInfo(sslStream.RemoteCertificate, isVerbose);
         OnNewStatus("\n\nSSL Connect Report for : {0}\n", serverName);
         OnNewStatus("Is Authenticated: {0}", sslStream.IsAuthenticated);
         OnNewStatus("Is Encrypted: {0}", sslStream.IsEncrypted);
@@ -28,11 +26,11 @@ public partial class FTP : FtpBase
     }
 
     /// <summary>
-    /// Gets an SSL stream on the client socket. This is a convenience method that calls getSslStream(Socket) with the clientSocket.
+    /// Gets an SSL stream on the client socket. This is a convenience method that calls GetSslStream(Socket) with the clientSocket.
     /// </summary>
-    public void getSslStream()
+    public void GetSslStream()
     {
-        getSslStream(clientSocket);
+        GetSslStream(clientSocket);
     }
 
     /// <summary>
@@ -40,44 +38,44 @@ public partial class FTP : FtpBase
     /// If authentication succeeds, assigns the SSL stream to stream2 (for upload) or stream (for download).
     /// Catches and re-throws exceptions with message details.
     /// </summary>
-    /// <param name="Csocket">The socket to create the SSL stream from</param>
-    public void getSslStream(Socket Csocket)
+    /// <param name="clientSocket">The socket to create the SSL stream from</param>
+    public void GetSslStream(Socket clientSocket)
     {
         RemoteCertificateValidationCallback callback = OnCertificateValidation;
-        var _sslStream = new SslStream(new NetworkStream(Csocket)); //,new RemoteCertificateValidationCallback(ValidateServerCertificate), null);
+        var sslStream = new SslStream(new NetworkStream(clientSocket)); //,new RemoteCertificateValidationCallback(ValidateServerCertificate), null);
         try
         {
-            _sslStream.AuthenticateAsClient(remoteHost, null, SslProtocols.Ssl3 | SslProtocols.Tls, true);
-            if (_sslStream.IsAuthenticated)
+            sslStream.AuthenticateAsClient(RemoteHost, null, SslProtocols.Ssl3 | SslProtocols.Tls, true);
+            if (sslStream.IsAuthenticated)
                 if (isUpload)
-                    stream2 = _sslStream;
+                    stream2 = sslStream;
                 else
-                    stream = _sslStream;
+                    stream = sslStream;
         }
         catch (Exception ex)
         {
             throw new Exception(ex.Message);
         }
 
-        showSslInfo(remoteHost, _sslStream, true);
+        ShowSslInfo(RemoteHost, sslStream, true);
     }
 
     /// <summary>
     /// Sets the file transfer mode on the FTP server.
     /// Sends TYPE I command for binary mode or TYPE A command for ASCII mode.
     /// </summary>
-    /// <param name="mode">True for binary mode, false for ASCII mode</param>
-    public void setBinaryMode(bool mode)
+    /// <param name="isBinary">True for binary mode, false for ASCII mode</param>
+    public void SetBinaryMode(bool isBinary)
     {
-        if (mode)
+        if (isBinary)
         {
-            OnNewStatus("Nastavuji binární mód přenosu");
-            sendCommand("TYPE" + " ");
+            OnNewStatus("Setting binary transfer mode");
+            SendCommand("TYPE" + " ");
         }
         else
         {
-            OnNewStatus("Nastavuji ASCII mód přenosu");
-            sendCommand("TYPE" + " ");
+            OnNewStatus("Setting ASCII transfer mode");
+            SendCommand("TYPE" + " ");
         }
 
         if (retValue != 200)
@@ -93,9 +91,9 @@ public partial class FTP : FtpBase
     /// <param name="locFileName">The local file path to save to. Throws exception if null.</param>
     /// <param name="deleteLocalIfExists">Whether to delete the local file if it already exists</param>
     /// <returns>True if download succeeded, false if file couldn't be deleted or already exists</returns>
-    public override bool download(string remFileName, string locFileName, bool deleteLocalIfExists)
+    public override bool Download(string remFileName, string locFileName, bool deleteLocalIfExists)
     {
-        OnNewStatus("Stahuji" + " " + UH.Combine(false, PathSelector.ActualPath, remFileName));
+        OnNewStatus("Downloading" + " " + UH.Combine(false, PathSelector.ActualPath, remFileName));
         if (File.Exists(locFileName))
         {
             if (deleteLocalIfExists)
@@ -106,27 +104,27 @@ public partial class FTP : FtpBase
                 }
                 catch (Exception ex)
                 {
-                    OnNewStatus("Soubor" + " " + remFileName + " " + "nemohl být stažen, protože soubor" + " " + locFileName + " " + "nešel toDelete");
+                    OnNewStatus("File " + remFileName + " could not be downloaded because file " + locFileName + " could not be deleted");
                     return false;
                 }
             }
             else
             {
-                OnNewStatus("Soubor" + " " + remFileName + " " + "nemohl být stažen, protože soubor" + " " + locFileName + " " + "existoval již na disku a nebylo povoleno jeho smazání");
+                OnNewStatus("Soubor" + " " + remFileName + " " + "nemohl být stažen, protože soubor" + " " + locFileName + " " + "existoval již to disku a nebylo povoleno jeho smazání");
                 return false;
             }
         }
 
         var resume = false;
-#region Pokud nejsem přihlášený, přihlásím se na nastavím binární mód
+#region Pokud nejsem přihlášený, přihlásím se to nastavím binární mód
         if (string.IsNullOrEmpty(locFileName))
-            throw new Exception("Musíte zadat jméno souboru do kterého chcete stáhnout");
-        if (!logined)
-            login();
-        setBinaryMode(true);
+            throw new Exception("You must specify a file name to download to");
+        if (!IsLoggedIn)
+            Login();
+        SetBinaryMode(true);
 #endregion
 #region Pokud neexistuje, vytvořím jej a hned zavřu. Načtu jej do FS text FileMode Open
-        OnNewStatus("Downloading file" + " " + remFileName + " " + "from" + " " + remoteHost + "/" + remotePath);
+        OnNewStatus("Downloading file" + " " + remFileName + " " + "from" + " " + RemoteHost + "/" + remotePath);
         if (!File.Exists(locFileName))
         {
             Stream st = File.Create(locFileName);
@@ -135,7 +133,7 @@ public partial class FTP : FtpBase
 
         var output = new FileStream(locFileName, FileMode.Open);
 #endregion
-        var cSocket = createDataSocket();
+        var clientSocket = CreateDataSocket();
         long offset = 0;
         if (resume)
         {
@@ -143,16 +141,16 @@ public partial class FTP : FtpBase
             offset = output.Length;
             if (offset > 0)
             {
-                sendCommand("REST" + " " + offset);
+                SendCommand("REST" + " " + offset);
                 if (retValue != 350)
                     offset = 0;
             }
 
 #endregion
-#region Pokud budeme navazovat, posunu v otevřeném souboru na konec
+#region Pokud budeme navazovat, posunu v otevřeném souboru to konec
             if (offset > 0)
             {
-                if (debug)
+                if (isDebug)
                     OnNewStatus("seeking to" + " " + offset);
                 var npos = output.Seek(offset, SeekOrigin.Begin);
                 OnNewStatus("new pos=" + npos);
@@ -161,22 +159,22 @@ public partial class FTP : FtpBase
         }
 
 #region Pošlu příkaz RETR a všechny přijaté bajty zapíšu
-        sendCommand("RETR" + " " + UH.GetFileName(remFileName));
+        SendCommand("RETR" + " " + UH.GetFileName(remFileName));
         if (!(retValue == 150 || retValue == 125))
             throw new Exception(reply.Substring(4));
         while (true)
         {
-            bytes = cSocket.Receive(buffer, buffer.Length, 0);
+            bytes = clientSocket.Receive(buffer, buffer.Length, 0);
             output.Write(buffer, 0, bytes);
             if (bytes <= 0)
                 break;
         }
 
         output.Close();
-        if (cSocket.Connected)
-            cSocket.Close();
+        if (clientSocket.Connected)
+            clientSocket.Close();
         OnNewStatus("");
-        readReply();
+        ReadReply();
         if (!(retValue == 226 || retValue == 250))
             throw new Exception(reply.Substring(4));
 #endregion
@@ -191,30 +189,30 @@ public partial class FTP : FtpBase
     /// Closes socket and stream after upload and verifies server response.
     /// </summary>
     /// <param name="fileName">The name of the file to upload</param>
-    /// <param name="resume">Whether to resume a previous upload from the last position</param>
-    public void uploadSecure(string fileName, bool resume)
+    /// <param name="isResume">Whether to resume a previous upload from the last position</param>
+    public void UploadSecure(string fileName, bool isResume)
     {
         var path = UH.Combine(false, PathSelector.ActualPath, fileName);
         OnUploadingNewStatus(path);
 #region Pošlu příkaz PASV a příhlásím se pokud nejsem
-        sendCommand("PASV");
+        SendCommand("PASV");
         if (retValue != 227)
             throw new Exception(reply.Substring(4));
-        if (!logined)
-            login();
+        if (!IsLoggedIn)
+            Login();
 #endregion
-#region Získám socket, z něho stream a pokud navazuzuji, pokusím se nastavit binární mód a offset podle toho kolik dat už na serveru bylo.
-        var cSocket = createDataSocket();
+#region Získám socket, z něho stream a pokud navazuzuji, pokusím se nastavit binární mód a offset podle toho kolik dat už to serveru bylo.
+        var clientSocket = CreateDataSocket();
         isUpload = true;
-        getSslStream(cSocket);
+        GetSslStream(clientSocket);
         long offset = 0;
-        if (resume)
+        if (isResume)
             try
             {
-                setBinaryMode(true);
-                offset = getFileSize(fileName);
+                SetBinaryMode(true);
+                offset = GetFileSize(fileName);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 offset = 0;
             }
@@ -223,14 +221,14 @@ public partial class FTP : FtpBase
 #region Pokud je tam nějaký offset, pošlu opět příkaz rest text offsetem, abych nastavil od čeho budu uploadovat
         if (offset > 0)
         {
-            sendCommand("REST" + " " + offset);
+            SendCommand("REST" + " " + offset);
             if (retValue != 350)
                 offset = 0;
         }
 
 #endregion
 #region Pošlu příkaz STOR text jménem souboru a zapíšu všechny bajty z souboru do bufferu byte[]
-        sendCommand("STOR" + " " + Path.GetFileName(fileName));
+        SendCommand("STOR" + " " + Path.GetFileName(fileName));
         if (!(retValue == 125 || retValue == 150))
             throw new Exception(reply.Substring(4));
         var input = File.OpenRead(fileName);
@@ -241,22 +239,22 @@ public partial class FTP : FtpBase
 #region Nastavím offset v lokálním souboru.  I když nevím prož když pak uploaduji M stream2.Write text offsetem 0. Zavřu socket i proud a přečtu odpověď serveru. Pokud nebyla 226 nebo 250, VV
         if (offset != 0)
         {
-            if (debug)
+            if (isDebug)
                 OnNewStatus("seeking to" + " " + offset);
             input.Seek(offset, SeekOrigin.Begin);
         }
 
         OnNewStatus("Uploading file" + " " + fileName + " to " + remotePath);
-        if (cSocket.Connected)
+        if (clientSocket.Connected)
         {
             stream2.Write(bufferFile, 0, bufferFile.Length);
             OnNewStatus("File Upload");
         }
 
         stream2.Close();
-        if (cSocket.Connected)
-            cSocket.Close();
-        readReply();
+        if (clientSocket.Connected)
+            clientSocket.Close();
+        ReadReply();
         if (!(retValue == 226 || retValue == 250))
             throw new Exception(reply.Substring(4));
 #endregion
@@ -270,12 +268,12 @@ public partial class FTP : FtpBase
     public override List<string> ListDirectoryDetails()
     {
         var result = new List<string>();
-        var _Path = UH.Combine(true, remoteHost, PathSelector.ActualPath);
+        var path = UH.Combine(true, RemoteHost, PathSelector.ActualPath);
         // Get the object used to communicate with the server.
-        var request = (FtpWebRequest)WebRequest.Create(_Path);
+        var request = (FtpWebRequest)WebRequest.Create(path);
         request.Method = WebRequestMethods.Ftp.ListDirectoryDetails;
         // This example assumes the FTP site uses anonymous logon.
-        request.Credentials = new NetworkCredential(remoteUser, remotePass);
+        request.Credentials = new NetworkCredential(RemoteUser, RemotePass);
         var response = (FtpWebResponse)request.GetResponse();
         var responseStream = response.GetResponseStream();
         var reader = new StreamReader(responseStream);

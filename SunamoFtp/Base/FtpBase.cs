@@ -1,7 +1,5 @@
 namespace SunamoFtp.Base;
 
-// EN: Variable names have been checked and replaced with self-descriptive names
-// CZ: Názvy proměnných byly zkontrolovány a nahrazeny samopopisnými názvy
 public abstract partial class FtpBase : FtpAbstract
 {
     /// <summary>
@@ -10,93 +8,93 @@ public abstract partial class FtpBase : FtpAbstract
     public FtpBase()
     {
         PathSelector = new PathSelector("");
-        remoteHost = string.Empty;
+        RemoteHost = string.Empty;
         //remotePath = ".";
-        remoteUser = string.Empty;
-        remotePass = string.Empty;
-        remotePort = 21;
-        logined = false;
+        RemoteUser = string.Empty;
+        RemotePass = string.Empty;
+        RemotePort = 21;
+        IsLoggedIn = false;
     }
 
-    //public abstract void DeleteRecursively(List<string> foldersToSkip, string dirName, int i, List<DirectoriesToDelete> td);
+    //public abstract void DeleteRecursively(List<string> foldersToSkip, string dirName, int i, List<DirectoriesToDelete> directoriesToDelete);
     /// <summary>
     /// Triggers status update notification for new folder navigation
     /// </summary>
     public void OnNewStatusNewFolder()
     {
-        NewStatus("Nová složka je" + " " + PathSelector.ActualPath, []);
+        NewStatus("New folder is" + " " + PathSelector.ActualPath, []);
     }
 
     /// <summary>
     ///     Upload file by FtpWebRequest
     ///     OK
     ///     STOR
-    ///     Pokud chceš uploadovat soubor do aktuální složky a zvlolit pouze název souboru na disku, použij metodu UploadFile.
+    ///     To upload a file to current folder and specify only file name on disk, use UploadFile method.
     /// </summary>
     /// <param name = "local"></param>
-    /// <param name = "_UploadPath"></param>
-    public virtual bool UploadFileMain(string local, string _UploadPath)
+    /// <param name = "uploadPath"></param>
+    public virtual bool UploadFileMain(string local, string uploadPath)
     {
         if (ExceptionCount < MaxExceptionCount)
         {
-            OnNewStatus("Uploaduji" + " " + _UploadPath);
-            var _FileInfo = new FileInfo(local);
-            Stream _Stream = null;
-            FileStream _FileStream = null;
+            OnNewStatus("Uploading" + " " + uploadPath);
+            var fileInfo = new FileInfo(local);
+            Stream ftpStream = null;
+            FileStream fileStream = null;
             try
             {
                 // Create FtpWebRequest object from the Uri provided
-                var _FtpWebRequest = (FtpWebRequest)WebRequest.Create(new Uri(_UploadPath));
+                var ftpWebRequest = (FtpWebRequest)WebRequest.Create(new Uri(uploadPath));
                 // Provide the WebPermission Credintials
-                _FtpWebRequest.Credentials = new NetworkCredential(remoteUser, remotePass);
-                _FtpWebRequest.KeepAlive = false;
+                ftpWebRequest.Credentials = new NetworkCredential(RemoteUser, RemotePass);
+                ftpWebRequest.KeepAlive = false;
                 // set timeout for 20 seconds
-                _FtpWebRequest.Timeout = 20000;
+                ftpWebRequest.Timeout = 20000;
                 // Specify the command to be executed.
-                _FtpWebRequest.Method = WebRequestMethods.Ftp.UploadFile;
+                ftpWebRequest.Method = WebRequestMethods.Ftp.UploadFile;
                 // Specify the data transfer type.
-                _FtpWebRequest.UseBinary = true;
+                ftpWebRequest.UseBinary = true;
                 // Notify the server about the size of the uploaded file
-                _FtpWebRequest.ContentLength = _FileInfo.Length;
+                ftpWebRequest.ContentLength = fileInfo.Length;
                 // The buffer size is set to 2kb
                 var buffLength = 2048;
-                var buff = new byte[buffLength];
+                var buffer = new byte[buffLength];
                 // Opens a file stream (System.IO.FileStream) to read the file to be uploaded
-                _FileStream = _FileInfo.OpenRead();
+                fileStream = fileInfo.OpenRead();
                 // Stream to which the file to be upload is written
-                _Stream = _FtpWebRequest.GetRequestStream();
+                ftpStream = ftpWebRequest.GetRequestStream();
                 // Read from the file stream 2kb at a time
-                var contentLen = _FileStream.Read(buff, 0, buffLength);
+                var contentLen = fileStream.Read(buffer, 0, buffLength);
                 // Till Stream content ends
                 while (contentLen != 0)
                 {
                     // Write Content from the file stream to the FTP Upload Stream
-                    _Stream.Write(buff, 0, contentLen);
-                    contentLen = _FileStream.Read(buff, 0, buffLength);
+                    ftpStream.Write(buffer, 0, contentLen);
+                    contentLen = fileStream.Read(buffer, 0, buffLength);
                 }
 
                 // Close the file stream and the Request Stream
-                _Stream.Close();
-                _Stream.Dispose();
-                _FileStream.Close();
-                _FileStream.Dispose();
+                ftpStream.Close();
+                ftpStream.Dispose();
+                fileStream.Close();
+                fileStream.Dispose();
                 ExceptionCount = 0;
             // Close the file stream and the Request Stream
             }
             catch (Exception ex)
             {
                 ExceptionCount++;
-                //CleanUp.Streams(_Stream, _FileStream);
-                _Stream.Dispose();
-                _FileStream.Dispose();
+                //CleanUp.Streams(ftpStream, fileStream);
+                ftpStream.Dispose();
+                fileStream.Dispose();
                 OnNewStatus("Upload file error" + ": " + ex.Message);
-                return UploadFileMain(local, _UploadPath);
+                return UploadFileMain(local, uploadPath);
             }
             finally
             {
-                //CleanUp.Streams(_Stream, _FileStream);
-                _Stream.Dispose();
-                _FileStream.Dispose();
+                //CleanUp.Streams(ftpStream, fileStream);
+                ftpStream.Dispose();
+                fileStream.Dispose();
             }
 
             ExceptionCount = 0;
@@ -113,7 +111,7 @@ public abstract partial class FtpBase : FtpAbstract
     /// <param name="path">Path being uploaded</param>
     public void OnUploadingNewStatus(string path)
     {
-        OnNewStatus("Uploaduji" + " " + path + " " + "bezpečnou metodou");
+        OnNewStatus("Uploading" + " " + path + " " + "using safe method");
     }
 
     /// <summary>
@@ -125,10 +123,10 @@ public abstract partial class FtpBase : FtpAbstract
     /// Raises the NewStatus event with specified message and parameters
     /// </summary>
     /// <param name="text">Status message</param>
-    /// <param name="p">Additional parameters</param>
-    public static void OnNewStatus(string text, params object[] p)
+    /// <param name="args">Additional parameters</param>
+    public static void OnNewStatus(string text, params object[] args)
     {
-        NewStatus(text, p);
+        NewStatus(text, args);
     }
 
     /// <summary>
@@ -156,7 +154,7 @@ public abstract partial class FtpBase : FtpAbstract
     /// <returns>Full FTP path</returns>
     public string GetActualPath()
     {
-        return UH.Combine(true, remoteHost + ":" + remotePort, PathSelector.ActualPath);
+        return UH.Combine(true, RemoteHost + ":" + RemotePort, PathSelector.ActualPath);
     }
 
     /// <summary>
@@ -166,23 +164,23 @@ public abstract partial class FtpBase : FtpAbstract
     /// <returns>Full FTP path including the specified name</returns>
     public string GetActualPath(string dirName)
     {
-        var text = /*UH.Combine(true,*/ remoteHost + ":" + remotePort + PathSelector.ActualPath + dirName;
+        var text = /*UH.Combine(true,*/ RemoteHost + ":" + RemotePort + PathSelector.ActualPath + dirName;
         return text.TrimEnd('/');
     }
 
     /// <summary>
-    /// Uploads a local folder to FTP server. After calling this method in FTP class, you must call goToUpFolder to return to previous directory.
+    /// Uploads a local folder to FTP server. After calling this method in FTP class, you must call GoToUpFolder to return to previous directory.
     /// </summary>
     /// <param name="sourceFolder">Local source folder path</param>
-    /// <param name="FTPclass">Indicates if called from FTP class (requires goToPath to restore)</param>
+    /// <param name="isFtpClass">Indicates if called from FTP class (requires GoToPath to restore)</param>
     /// <param name="working">Working state tracker to allow cancellation</param>
     /// <returns>True if folder was uploaded successfully</returns>
-    public bool uploadFolder(string sourceFolder, bool FTPclass, IWorking working)
+    public bool UploadFolder(string sourceFolder, bool isFtpClass, IWorking working)
     {
         var actPath = PathSelector.ActualPath;
-        var result = uploadFolderShared(sourceFolder, false, working);
-        if (FTPclass)
-            goToPath(actPath);
+        var result = UploadFolderShared(sourceFolder, false, working);
+        if (isFtpClass)
+            GoToPath(actPath);
         return result;
     }
 
@@ -192,17 +190,17 @@ public abstract partial class FtpBase : FtpAbstract
     /// <param name="localFolder">Local folder path to upload</param>
     /// <param name="remoteFolder">Remote FTP folder path to upload to</param>
     /// <returns>True if all files and folders were uploaded successfully</returns>
-    public bool uploadFolderRek(string localFolder, string remoteFolder)
+    public bool UploadFolderRek(string localFolder, string remoteFolder)
     {
-        // Musí to tu být právě kvůli předchozímu řádku List<string> ftpEntries = getFSEntriesList(); kdy získávám seznam souborů na FTP serveru
-        goToPath(remoteFolder);
+        // This is required due to previous line where we get file list from FTP server
+        GoToPath(remoteFolder);
         var directories = Directory.GetDirectories(localFolder);
         var files = Directory.GetFiles(localFolder).ToList();
-        OnNewStatus("Uploaduji všechny files" + " " + files.Count() + " " + "do složky ftp serveru" + " " + PathSelector.ActualPath);
+        OnNewStatus("Uploading all files" + " " + files.Count() + " " + "to FTP server folder" + " " + PathSelector.ActualPath);
         if (!UploadFiles(files))
             return false;
         foreach (var item in directories)
-            if (!uploadFolderRek(item, UH.Combine(false, remoteFolder, Path.GetFileName(item))))
+            if (!UploadFolderRek(item, UH.Combine(false, remoteFolder, Path.GetFileName(item))))
                 return false;
         return true;
     }
@@ -213,8 +211,8 @@ public abstract partial class FtpBase : FtpAbstract
     /// <param name="localFolder">Local folder path to upload</param>
     /// <param name="iw">Working state tracker to allow cancellation</param>
     /// <returns>True if all files and folders were uploaded successfully</returns>
-    public bool uploadFolderRek(string localFolder, IWorking iw)
+    public bool UploadFolderRek(string localFolder, IWorking iw)
     {
-        return uploadFolderShared(localFolder, true, iw);
+        return UploadFolderShared(localFolder, true, iw);
     }
 }

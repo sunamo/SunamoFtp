@@ -1,0 +1,17 @@
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  SunamoFtp -> E:\vs\Projects\PlatformIndependentNuGetPackages\SunamoFtp\SunamoFtp\bin\Debug\net9.0\SunamoFtp.dll
+  SunamoFtp -> E:\vs\Projects\PlatformIndependentNuGetPackages\SunamoFtp\SunamoFtp\bin\Debug\net8.0\SunamoFtp.dll
+  SunamoFtp -> E:\vs\Projects\PlatformIndependentNuGetPackages\SunamoFtp\SunamoFtp\bin\Debug\net10.0\SunamoFtp.dll
+  SunamoFtp.Tests -> E:\vs\Projects\PlatformIndependentNuGetPackages\SunamoFtp\SunamoFtp.Tests\bin\Debug\net9.0\SunamoFtp.Tests.dll
+  SunamoFtp.Tests -> E:\vs\Projects\PlatformIndependentNuGetPackages\SunamoFtp\SunamoFtp.Tests\bin\Debug\net10.0\SunamoFtp.Tests.dll
+  RunnerFtp -> E:\vs\Projects\PlatformIndependentNuGetPackages\SunamoFtp\RunnerFtp\bin\Debug\net10.0\RunnerFtp.dll
+  RunnerFtp -> E:\vs\Projects\PlatformIndependentNuGetPackages\SunamoFtp\RunnerFtp\bin\Debug\net9.0\RunnerFtp.dll
+  SunamoFtp.Tests -> E:\vs\Projects\PlatformIndependentNuGetPackages\SunamoFtp\SunamoFtp.Tests\bin\Debug\net8.0\SunamoFtp.Tests.dll
+  RunnerFtp -> E:\vs\Projects\PlatformIndependentNuGetPackages\SunamoFtp\RunnerFtp\bin\Debug\net8.0\RunnerFtp.dll
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:14.43

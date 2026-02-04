@@ -1,3 +1,4 @@
+// variables names: ok
 using Limilabs.FTP.Client;
 using SunamoFtp.FtpClients;
 using SunamoFtp.Other;
@@ -18,8 +19,8 @@ public class MyClass
         FtpTest.SetConnectionInfo(ftpDll, username, password);
         var ftp = ftpDll.Client;
 
-        ftp.Connect(ftpDll.remoteHost);
-        ftp.Login(ftpDll.remoteUser, ftpDll.remotePass);
+        ftp.Connect(ftpDll.RemoteHost);
+        ftp.Login(ftpDll.RemoteUser, ftpDll.RemotePass);
 
         var folder = "a";
         ftpDll.DebugActualFolder();

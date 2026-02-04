@@ -16,8 +16,8 @@ public class FtpTest
     public static void SetConnectionInfo(FtpAbstract ftpBase, string username, string password)
     {
         // Wedos server configuration
-        ftpBase.setRemoteHost("185.8.239.101");
-        ftpBase.setRemoteUser(username);
-        ftpBase.setRemotePass(password);
+        ftpBase.SetRemoteHost("185.8.239.101");
+        ftpBase.SetRemoteUser(username);
+        ftpBase.SetRemotePass(password);
     }
 }

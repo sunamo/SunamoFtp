@@ -1,7 +1,5 @@
 namespace SunamoFtp.FtpClients;
 
-// EN: Variable names have been checked and replaced with self-descriptive names
-// CZ: Názvy proměnných byly zkontrolovány a nahrazeny samopopisnými názvy
 public partial class FTP : FtpBase
 {
     /// <summary>
@@ -11,9 +9,9 @@ public partial class FTP : FtpBase
     /// <param name="message">The message to write to the stream</param>
     private void WriteMsg(string message)
     {
-        var en = new ASCIIEncoding();
+        var encoding = new ASCIIEncoding();
         var WriteBuffer = new byte[1024];
-        WriteBuffer = en.GetBytes(message);
+        WriteBuffer = encoding.GetBytes(message);
         stream.Write(WriteBuffer, 0, WriteBuffer.Length);
     //NewStatus(" WRITE:" + message);
     }
@@ -26,18 +24,18 @@ public partial class FTP : FtpBase
     /// <returns>The complete response message from the server</returns>
     private string ResponseMsg()
     {
-        var enc = new ASCIIEncoding();
+        var encoding = new ASCIIEncoding();
         var serverbuff = new byte[1024];
         var count = 0;
         while (true)
         {
-            var buff = new byte[2];
-            var bytes = stream.Read(buff, 0, 1);
+            var buffer = new byte[2];
+            var bytes = stream.Read(buffer, 0, 1);
             if (bytes == 1)
             {
-                serverbuff[count] = buff[0];
+                serverbuff[count] = buffer[0];
                 count++;
-                if (buff[0] == '\n')
+                if (buffer[0] == '\n')
                     break;
             }
             else
@@ -45,7 +43,7 @@ public partial class FTP : FtpBase
                 break;
             };
         };
-        var retval = enc.GetString(serverbuff, 0, count);
+        var retval = encoding.GetString(serverbuff, 0, count);
         //NewStatus(" READ:" + retval);
         retValue = int.Parse(retval.Substring(0, 3));
         return retval;
@@ -57,33 +55,33 @@ public partial class FTP : FtpBase
     /// Stores the response in reply and retValue properties.
     /// </summary>
     /// <param name="command">The FTP command to send (without CRLF terminator)</param>
-    public void sendCommand(string command)
+    public void SendCommand(string command)
     {
-#region Původní metoda sendCommand
+#region Original SendCommand method
         var cmdBytes = Encoding.ASCII.GetBytes((command + "\r\n").ToCharArray());
         if (useStream)
             WriteMsg(command + "\r\n");
         else
             clientSocket.Send(cmdBytes, cmdBytes.Length, 0);
-        readReply();
+        ReadReply();
 #endregion
     }
 
     /// <summary>
     /// Sends a command to the FTP server (alternate implementation).
-    /// Identical to sendCommand - converts command to ASCII bytes, sends via stream or socket, and reads reply.
+    /// Identical to SendCommand - converts command to ASCII bytes, sends via stream or socket, and reads reply.
     /// Stores the response in reply and retValue properties.
     /// </summary>
     /// <param name="command">The FTP command to send (without CRLF terminator)</param>
-    private void sendCommand2(string command)
+    private void SendCommand2(string command)
     {
-#region Původní metoda sendCommand
+#region Original SendCommand method
         var cmdBytes = Encoding.ASCII.GetBytes((command + "\r\n").ToCharArray());
         if (useStream)
             WriteMsg(command + "\r\n");
         else
             clientSocket.Send(cmdBytes, cmdBytes.Length, 0);
-        readReply();
+        ReadReply();
 #endregion
     }
 
@@ -95,36 +93,36 @@ public partial class FTP : FtpBase
     /// Creates a Socket, IPEndPoint and attempts to connect to the server.
     /// </summary>
     /// <returns>A connected socket ready for data transfer</returns>
-    public Socket createDataSocket()
+    public Socket CreateDataSocket()
     {
-#region Nastavím pasivní způsob přenosu(příkaz PASV)
-        sendCommand("PASV");
+#region Sets passive transfer mode (PASV command)
+        SendCommand("PASV");
         if (retValue != 227)
             throw new Exception(reply.Substring(4));
 #endregion
-#region Získám IP adresu v řetězci z reply
+#region Gets IP address as string from reply
         var index1 = reply.IndexOf('(');
         var index2 = reply.IndexOf(')');
         var ipData = reply.Substring(index1 + 1, index2 - index1 - 1);
         var parts = new int[6];
         var len = ipData.Length;
         var partCount = 0;
-        var buf = "";
+        var buffer = "";
 #endregion
-#region Získám do pole intů jednotlivé části IP adresy a spojím je do řetězce text tečkama
+#region Gets individual IP address parts into int array and joins them with dots
         for (var i = 0; i < len && partCount <= 6; i++)
         {
-            var ch = char.Parse(ipData.Substring(i, 1));
-            if (char.IsDigit(ch))
-                buf += ch;
-            else if (ch != ',')
+            var character = char.Parse(ipData.Substring(i, 1));
+            if (char.IsDigit(character))
+                buffer += character;
+            else if (character != ',')
                 throw new Exception("Malformed PASV reply" + ": " + reply);
-#region Pokud je poslední znak čárka,
-            if (ch == ',' || i + 1 == len)
+#region If last character is comma,
+            if (character == ',' || i + 1 == len)
                 try
                 {
-                    parts[partCount++] = int.Parse(buf);
-                    buf = "";
+                    parts[partCount++] = int.Parse(buffer);
+                    buffer = "";
                 }
                 catch (Exception ex)
                 {
@@ -135,20 +133,20 @@ public partial class FTP : FtpBase
 
         var ipAddress = parts[0] + "." + parts[1] + "." + parts[2] + "." + parts[3];
 #endregion
-#region Port získám tak čtvrtou část ip adresy bitově posunu o 8 a sečtu text pátou částí. Získám Socket, O IPEndPoint a pokusím se připojit na tento objekt.
+#region Gets port by bit-shifting fourth IP part by 8 and adding fifth part. Creates Socket, IPEndPoint and attempts to connect to this object.
         var port = (parts[4] << 8) + parts[5];
-        var text = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-        var ep = new IPEndPoint(Dns.Resolve(ipAddress).AddressList[0], port);
+        var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+        var endPoint = new IPEndPoint(Dns.Resolve(ipAddress).AddressList[0], port);
         try
         {
-            text.Connect(ep);
+            socket.Connect(endPoint);
         }
         catch (Exception ex)
         {
             throw new Exception("Can't connect to remoteserver");
         }
 
-        return text;
+        return socket;
 #endregion
     }
 
@@ -158,8 +156,8 @@ public partial class FTP : FtpBase
     /// </summary>
     public void uploadSecureFolder()
     {
-        OnNewStatus("Byla volána metoda uploadSecureFolder která je prázdná");
-    // Zkontrolovat zda se první nauploadoval _.txt
+        OnNewStatus("Method uploadSecureFolder was called but is empty");
+    // Check if _.txt was uploaded first
     }
 
     /// <summary>
@@ -171,26 +169,26 @@ public partial class FTP : FtpBase
     /// <param name="dirName">The name of the directory to delete</param>
     /// <param name="i">Recursion depth level (currently unused)</param>
     /// <param name="td">List of directories to delete (currently unused)</param>
-    public override void DeleteRecursively(List<string> foldersToSkip, string dirName, int i, List<DirectoriesToDeleteFtp> td)
+    public override void DeleteRecursively(List<string> foldersToSkip, string dirName, int i, List<DirectoriesToDeleteFtp> directoriesToDelete)
     {
-        chdirLite(dirName);
+        ChdirLite(dirName);
         var toDelete = ListDirectoryDetails();
         foreach (var item2 in toDelete)
         {
             var fst = FtpHelper.IsFile(item2, out var fn);
             if (fst == FileSystemType.File)
-                deleteRemoteFile(fn);
+                DeleteRemoteFile(fn);
             else if (fst == FileSystemType.Folder)
-                DeleteRecursively(foldersToSkip, fn, i, td);
+                DeleteRecursively(foldersToSkip, fn, i, directoriesToDelete);
         //////DebugLogger.Instance.WriteLine(item2);
         }
 
-        goToUpFolderForce();
-        rmdir(foldersToSkip, dirName);
+        GoToUpFolderForce();
+        Rmdir(foldersToSkip, dirName);
     }
 
     /// <summary>
-    /// Outputs debug information about the current folder.
+    /// Outputs isDebug information about the current folder.
     /// Not implemented - throws NotImplementedMethod exception.
     /// </summary>
     public override void DebugActualFolder()
@@ -199,13 +197,13 @@ public partial class FTP : FtpBase
     }
 
     /// <summary>
-    /// Debug output method.
+    /// isDebug output method.
     /// Not implemented - throws NotImplementedMethod exception.
     /// </summary>
-    /// <param name="what">What to debug</param>
+    /// <param name="context">What to isDebug</param>
     /// <param name="text">Format string for output</param>
     /// <param name="args">Arguments for the format string</param>
-    public override void D(string what, string text, params object[] args)
+    public override void WriteDebugLog(string context, string text, params object[] args)
     {
         ThrowEx.NotImplementedMethod();
     }

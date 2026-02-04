@@ -1,7 +1,5 @@
 namespace SunamoFtp.FtpClients;
 
-// EN: Variable names have been checked and replaced with self-descriptive names
-// CZ: Názvy proměnných byly zkontrolovány a nahrazeny samopopisnými názvy
 public partial class FTP : FtpBase
 {
     /// <summary>
@@ -9,20 +7,20 @@ public partial class FTP : FtpBase
     /// </summary>
     /// <param name="foldersToSkip">List of folder names to skip during traversal</param>
     /// <returns>Dictionary mapping folder paths to lists of entry details</returns>
-    public override Dictionary<string, List<string>> getFSEntriesListRecursively(List<string> foldersToSkip)
+    public override Dictionary<string, List<string>> GetFSEntriesListRecursively(List<string> foldersToSkip)
     {
-        if (!logined)
-            login();
-        // Musí se do ní ukládat cesta k celé složce, nikoliv jen název aktuální složky
+        if (!IsLoggedIn)
+            Login();
+        // Must store path to entire folder, not just current folder name
         var visitedFolders = new List<string>();
         var result = new Dictionary<string, List<string>>();
         var ftpEntries = ListDirectoryDetails();
         var actualPath = PathSelector.ActualPath;
-        OnNewStatus("Získávám rekurzivní seznam souborů ze složky" + " " + actualPath);
+        OnNewStatus("Getting recursive file list from folder" + " " + actualPath);
         foreach (var item in ftpEntries)
         {
-            var fz = item[0];
-            if (fz == '-')
+            var firstChar = item[0];
+            if (firstChar == '-')
             {
                 if (result.ContainsKey(actualPath))
                 {
@@ -35,7 +33,7 @@ public partial class FTP : FtpBase
                     result.Add(actualPath, entries);
                 }
             }
-            else if (fz == 'd')
+            else if (firstChar == 'd')
             {
                 var folderName = SHJoin.JoinFromIndex(8, ' ', item.Split(new[] { " " }, StringSplitOptions.RemoveEmptyEntries).ToList());
                 ////DebugLogger.Instance.WriteLine("Název alba22: " + folderName);
@@ -51,31 +49,31 @@ public partial class FTP : FtpBase
                         entries.Add(item + "/");
                         result.Add(actualPath, entries);
                     }
-                //getFSEntriesListRecursively(foldersToSkip, visitedFolders, result, PathSelector.ActualPath, folderName);
+                //GetFSEntriesListRecursively(foldersToSkip, visitedFolders, result, PathSelector.ActualPath, folderName);
                 }
             }
             else
             {
-                throw new Exception("Nepodporovaný typ objektu");
+                throw new Exception("Unsupported object type");
             }
         }
 
-        if (PathSelector.indexZero > 0)
+        if (PathSelector.IndexZero > 0)
         {
-            setRemotePath(ftpClient.WwwSlash);
+            SetRemotePath(ftpClient.WwwSlash);
             // TODO: Zatím mi to bude stačit jen o 1 úrověň výše
-            if (PathSelector.indexZero == 1)
+            if (PathSelector.IndexZero == 1)
             {
-                goToUpFolderForce();
+                GoToUpFolderForce();
                 ftpEntries = ListDirectoryDetails();
                 actualPath = PathSelector.ActualPath;
                 foreach (var item in ftpEntries)
                 {
-                    var fz = item[0];
-                    if (fz == '-')
+                    var firstChar = item[0];
+                    if (firstChar == '-')
                     {
                     }
-                    else if (fz == 'd')
+                    else if (firstChar == 'd')
                     {
                         var folderName = SHJoin.JoinFromIndex(8, ' ', item.Split(' '));
                         if (!FtpHelper.IsThisOrUp(folderName))
@@ -94,7 +92,7 @@ public partial class FTP : FtpBase
                     }
                     else
                     {
-                        throw new Exception("Nepodporovaný typ objektu");
+                        throw new Exception("Unsupported object type");
                     }
                 }
             }
@@ -111,7 +109,7 @@ public partial class FTP : FtpBase
     /// Navigates to the specified remote folder path on the FTP server, creating directories if needed.
     /// </summary>
     /// <param name="remoteFolder">The full path to the remote folder to navigate to</param>
-    public override void goToPath(string remoteFolder)
+    public override void GoToPath(string remoteFolder)
     {
         if (remoteFolder.Contains("/" + "Kocicky" + "/"))
         {
@@ -119,17 +117,17 @@ public partial class FTP : FtpBase
             var ii = i;
         }
 
-        if (!logined)
-            login();
+        if (!IsLoggedIn)
+            Login();
         if (FtpLogging.GoToFolder)
-            OnNewStatus("Přecházím do složky" + " " + remoteFolder);
+            OnNewStatus("Navigating to folder" + " " + remoteFolder);
         var actualPath = PathSelector.ActualPath;
-        var dd = remoteFolder.Length - 1;
+        var lastCharIndex = remoteFolder.Length - 1;
         if (actualPath == remoteFolder)
             return;
-        setRemotePath(ftpClient.WwwSlash);
+        SetRemotePath(ftpClient.WwwSlash);
         actualPath = PathSelector.ActualPath;
-        // Vzdálená složka začíná text aktuální cestou == vzdálená složka je delší. Pouze přejdi hloubš
+        // Remote folder starts with current path == remote folder is longer. Just go deeper
         if (remoteFolder.StartsWith(actualPath))
         {
             remoteFolder = remoteFolder.Substring(actualPath.Length);
@@ -137,12 +135,12 @@ public partial class FTP : FtpBase
             foreach (var item in tokens)
                 CreateDirectoryIfNotExists(item);
         }
-        // Vzdálená složka nezačíná aktuální cestou,
+        // Remote folder does not start with current path,
         else
         {
-            setRemotePath(ftpClient.WwwSlash);
+            SetRemotePath(ftpClient.WwwSlash);
             var tokens = remoteFolder.Split(new[] { PathSelector.Delimiter }, StringSplitOptions.RemoveEmptyEntries).ToList();
-            for (var i = PathSelector.indexZero; i < tokens.Count; i++)
+            for (var i = PathSelector.IndexZero; i < tokens.Count; i++)
                 CreateDirectoryIfNotExists(tokens[i]);
         }
     }
@@ -152,12 +150,12 @@ public partial class FTP : FtpBase
     /// </summary>
     /// <param name="fileName">The name of the file to get the size of</param>
     /// <returns>The size of the file in bytes</returns>
-    public override long getFileSize(string fileName)
+    public override long GetFileSize(string fileName)
     {
-        OnNewStatus("Pokouším se získat velikost souboru" + " " + UH.Combine(false, PathSelector.ActualPath, fileName));
-        if (!logined)
-            login();
-        sendCommand("SIZE" + " " + fileName);
+        OnNewStatus("Getting file size" + " " + UH.Combine(false, PathSelector.ActualPath, fileName));
+        if (!IsLoggedIn)
+            Login();
+        SendCommand("SIZE" + " " + fileName);
         long size = 0;
         if (retValue == 213)
             size = long.Parse(reply.Substring(4));
@@ -172,15 +170,15 @@ public partial class FTP : FtpBase
     /// If not connected, connects to the server first, then sends USER command, and PASS command if required.
     /// Response code 230 means login successful without password, otherwise sends password with PASS command.
     /// </summary>
-    public void login()
+    public void Login()
     {
         //SslStream sslStream = new SslStream(client.GetStream(), false);
-        OnNewStatus("Přihlašuji se na FTP Server");
-#region Pokud nejsem připojený, přihlásím se na server bez uživatele
+        OnNewStatus("Logging in to FTP Server");
+#region If not connected, přihlásím se to server bez uživatele
         try
         {
             if (clientSocket == null || clientSocket.Connected == false)
-                loginWithoutUser();
+                LoginWithoutUser();
         }
         catch (Exception ex)
         {
@@ -190,13 +188,13 @@ public partial class FTP : FtpBase
         }
 
 #endregion
-#region Poté se přihlásím příkazem remoteUser
-        if (debug)
-            OnNewStatus("USER" + " " + remoteUser);
-        sendCommand2("USER" + " " + remoteUser);
+#region Then login with RemoteUser command
+        if (isDebug)
+            OnNewStatus("USER" + " " + RemoteUser);
+        SendCommand2("USER" + " " + RemoteUser);
         if (!(retValue == 331 || retValue == 230))
         {
-            cleanup();
+            Cleanup();
             throw new Exception(reply.Substring(4));
         }
 
@@ -205,23 +203,23 @@ public partial class FTP : FtpBase
         var bad = false;
         if (retValue != 230)
         {
-            if (debug)
+            if (isDebug)
                 OnNewStatus("PASS xxx");
-            sendCommand2("PASS" + " " + remotePass);
+            SendCommand2("PASS" + " " + RemotePass);
             if (!(retValue == 230 || retValue == 202))
             {
-                cleanup();
+                Cleanup();
                 bad = true;
             //throw new Exception(reply.Substring(4));
             }
         }
 
 #endregion
-        logined = !bad;
-        if (logined)
-            OnNewStatus("Logined to" + " " + remoteHost);
+        IsLoggedIn = !bad;
+        if (IsLoggedIn)
+            OnNewStatus("IsLoggedIn to" + " " + RemoteHost);
         else
-            OnNewStatus("Not logined to" + " " + remoteHost);
+            OnNewStatus("Not IsLoggedIn to" + " " + RemoteHost);
     }
 
     /// <summary>
@@ -230,21 +228,21 @@ public partial class FTP : FtpBase
     /// Throws IOException if the response code is not 220.
     /// This method must always be called before authenticating with user credentials.
     /// </summary>
-    public void loginWithoutUser()
+    public void LoginWithoutUser()
     {
-        OnNewStatus("Přihlašuji se na FTP Server bez uživatele");
+        OnNewStatus("Connecting to FTP Server without user");
         clientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-        IPAddress v4 = null;
-        var remoteHost2 = remoteHost;
-        if (FtpHelper.IsSchemaFtp(remoteHost))
+        IPAddress ipv4Address = null;
+        var remoteHost2 = RemoteHost;
+        if (FtpHelper.IsSchemaFtp(RemoteHost))
             remoteHost2 = FtpHelper.ReplaceSchemaFtp(remoteHost2);
-        if (!IPAddress.TryParse(remoteHost2, out v4))
-            v4 = Dns.GetHostEntry(remoteHost).AddressList[0].MapToIPv4();
-        var data = v4.ToString();
-        var ep = new IPEndPoint(v4, remotePort);
+        if (!IPAddress.TryParse(remoteHost2, out ipv4Address))
+            ipv4Address = Dns.GetHostEntry(RemoteHost).AddressList[0].MapToIPv4();
+        var data = ipv4Address.ToString();
+        var endPoint = new IPEndPoint(ipv4Address, RemotePort);
         try
         {
-            clientSocket.Connect(ep);
+            clientSocket.Connect(endPoint);
         }
         catch (Exception ex)
         {
@@ -252,16 +250,16 @@ public partial class FTP : FtpBase
             throw new Exception("Couldn't connect to remote server");
         }
 
-        readReply();
+        ReadReply();
         if (retValue != 220)
         {
-            close();
+            Close();
             throw new Exception(reply.Substring(4));
         }
     }
 
     /// <summary>
-    /// Vypíše chyby na K z A4
+    /// Outputs errors from certificate validation
     /// </summary>
     /// <param name = "sender"></param>
     /// <param name = "certificate"></param>
@@ -283,18 +281,18 @@ public partial class FTP : FtpBase
     }
 
     /// <summary>
-    /// Vypíšu na K info o certifikátu A1. A2 zda vypsat podrobně.
+    /// Outputs certificate information. Parameter indicates whether to output verbose info.
     /// </summary>
     /// <param name = "remoteCertificate"></param>
     /// <param name = "verbose"></param>
-    private void showCertificateInfo(X509Certificate remoteCertificate, bool verbose)
+    private void ShowCertificateInfo(X509Certificate remoteCertificate, bool isVerbose)
     {
         OnNewStatus("Certficate Information for:\n{0}\n", remoteCertificate.GetName());
         OnNewStatus("Valid From: \n{0}", remoteCertificate.GetEffectiveDateString());
         OnNewStatus("Valid To: \n{0}", remoteCertificate.GetExpirationDateString());
         OnNewStatus("Certificate Format: \n{0}\n", remoteCertificate.GetFormat());
         OnNewStatus("Issuer Name: \n{0}", remoteCertificate.GetIssuerName());
-        if (verbose)
+        if (isVerbose)
         {
             OnNewStatus("Serial Number: \n{0}", remoteCertificate.GetSerialNumberString());
             OnNewStatus("Hash: \n{0}", remoteCertificate.GetCertHashString());

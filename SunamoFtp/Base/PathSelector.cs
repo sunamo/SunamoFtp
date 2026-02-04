@@ -10,12 +10,12 @@ public class PathSelector
     /// <summary>
     /// Index of the first valid token (0 for relative paths, 1 for absolute paths)
     /// </summary>
-    public int indexZero;
+    public int IndexZero;
 
     /// <summary>
-    /// List of path tokens split by delimiter
+    /// List of path Tokens split by delimiter
     /// </summary>
-    public List<string> tokens = new();
+    public List<string> Tokens = new();
 
     /// <summary>
     /// Initializes path selector with initial directory. Works with both \ and / delimiters.
@@ -45,7 +45,7 @@ public class PathSelector
             }
         }
 
-        if (firstTokenMustExists) indexZero = 1;
+        if (firstTokenMustExists) IndexZero = 1;
         ActualPath = initialDirectory;
     }
 
@@ -59,12 +59,12 @@ public class PathSelector
     /// </summary>
     public string FirstToken { get; } = "";
 
-    private int Count => tokens.Count;
+    private int Count => Tokens.Count;
 
     /// <summary>
     /// Indicates whether it's possible to navigate to parent folder
     /// </summary>
-    public bool CanGoToUpFolder => Count > indexZero;
+    public bool CanGoToUpFolder => Count > IndexZero;
 
     /// <summary>
     /// Gets or sets the current path as a delimited string
@@ -74,14 +74,14 @@ public class PathSelector
     {
         get
         {
-            if (tokens.Count != 0)
-                return string.Join(Delimiter, tokens.ToArray()) + Delimiter;
+            if (Tokens.Count != 0)
+                return string.Join(Delimiter, Tokens.ToArray()) + Delimiter;
             return "/";
         }
         set
         {
-            tokens.Clear();
-            tokens.AddRange(value.Split(new[] { Delimiter },
+            Tokens.Clear();
+            Tokens.AddRange(value.Split(new[] { Delimiter },
                 StringSplitOptions.RemoveEmptyEntries)); //SHSplit.Split(value, delimiter));
         }
     }
@@ -89,11 +89,11 @@ public class PathSelector
     /// <summary>
     /// Splits a path string into individual tokens using the configured delimiter
     /// </summary>
-    /// <param name="r">Path string to divide</param>
+    /// <param name="path">Path string to divide</param>
     /// <returns>List of path tokens</returns>
-    public List<string> DivideToTokens(string r)
+    public List<string> DivideToTokens(string path)
     {
-        return r.Split(new[] { Delimiter }, StringSplitOptions.RemoveEmptyEntries).ToList();
+        return path.Split(new[] { Delimiter }, StringSplitOptions.RemoveEmptyEntries).ToList();
     }
 
     /// <summary>
@@ -101,7 +101,7 @@ public class PathSelector
     /// </summary>
     public void RemoveLastTokenForce()
     {
-        tokens.RemoveAt(Count - 1);
+        Tokens.RemoveAt(Count - 1);
     }
 
     /// <summary>
@@ -111,7 +111,7 @@ public class PathSelector
     public void RemoveLastToken()
     {
         if (CanGoToUpFolder)
-            tokens.RemoveAt(Count - 1);
+            Tokens.RemoveAt(Count - 1);
         else
             throw new Exception("Is not possible go to up folder");
     }
@@ -122,7 +122,7 @@ public class PathSelector
     /// <returns>Last path token</returns>
     public string GetLastToken()
     {
-        return tokens[Count - 1];
+        return Tokens[Count - 1];
     }
 
     /// <summary>
@@ -131,6 +131,6 @@ public class PathSelector
     /// <param name="token">Token to add</param>
     public void AddToken(string token)
     {
-        tokens.Add(token);
+        Tokens.Add(token);
     }
 }

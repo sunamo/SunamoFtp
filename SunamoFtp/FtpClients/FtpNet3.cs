@@ -1,28 +1,26 @@
 namespace SunamoFtp.FtpClients;
 
-// EN: Variable names have been checked and replaced with self-descriptive names
-// CZ: Názvy proměnných byly zkontrolovány a nahrazeny samopopisnými názvy
 public partial class FtpNet : FtpBase
 {
     /// <summary>
     ///     OK
     ///     LIST
-    ///     Toto je vstupní metoda, metodu getFSEntriesListRecursively s 5ti parametry nevolej, ač má stejný název
-    ///     Vrátí files i složky, ale pozor, složky jsou vždycky až po souborech
+    ///     This is entry method, do not call GetFSEntriesListRecursively with 5 parameters even though it has same name
+    ///     Returns files and folders, but note that folders are always after files
     /// </summary>
     /// <param name = "foldersToSkip"></param>
-    public override Dictionary<string, List<string>> getFSEntriesListRecursively(List<string> foldersToSkip)
+    public override Dictionary<string, List<string>> GetFSEntriesListRecursively(List<string> foldersToSkip)
     {
-        // Musí se do ní ukládat cesta k celé složce, nikoliv jen název aktuální složky
+        // Must store path to entire folder, not just current folder name
         var visitedFolders = new List<string>();
         var result = new Dictionary<string, List<string>>();
         var ftpEntries = ListDirectoryDetails();
         var actualPath = PathSelector.ActualPath;
-        OnNewStatus("Získávám rekurzivní seznam souborů ze složky" + " " + actualPath);
+        OnNewStatus("Getting recursive file list from folder" + " " + actualPath);
         foreach (var item in ftpEntries)
         {
-            var fz = item[0];
-            if (fz == '-')
+            var firstChar = item[0];
+            if (firstChar == '-')
             {
                 if (result.ContainsKey(actualPath))
                 {
@@ -35,7 +33,7 @@ public partial class FtpNet : FtpBase
                     result.Add(actualPath, entries);
                 }
             }
-            else if (fz == 'd')
+            else if (firstChar == 'd')
             {
                 var folderName = SHJoin.JoinFromIndex(8, ' ', SHSplit.Split(item, ""));
                 if (!FtpHelper.IsThisOrUp(folderName))
@@ -50,12 +48,12 @@ public partial class FtpNet : FtpBase
                         entries.Add(item + "/");
                         result.Add(actualPath, entries);
                     }
-                //getFSEntriesListRecursively(foldersToSkip, visitedFolders, result, PathSelector.ActualPath, folderName);
+                //GetFSEntriesListRecursively(foldersToSkip, visitedFolders, result, PathSelector.ActualPath, folderName);
                 }
             }
             else
             {
-                throw new Exception("Nepodporovaný typ objektu");
+                throw new Exception("Unsupported object type");
             }
         }
 
@@ -67,10 +65,10 @@ public partial class FtpNet : FtpBase
     ///     Tuto metodu nepoužívej, protože fakticky způsobuje neošetřenou výjimku, pokud již cesta bude skutečně / a a nebude
     ///     moci se přesunout nikde výš
     /// </summary>
-    public override void goToUpFolderForce()
+    public override void GoToUpFolderForce()
     {
         if (FtpLogging.GoToUpFolder)
-            OnNewStatus("Přecházím do nadsložky" + " " + PathSelector.ActualPath);
+            OnNewStatus("Navigating to parent folder" + " " + PathSelector.ActualPath);
         PathSelector.RemoveLastTokenForce();
         OnNewStatusNewFolder();
     }
@@ -78,7 +76,7 @@ public partial class FtpNet : FtpBase
     /// <summary>
     ///     OK
     /// </summary>
-    public override void goToUpFolder()
+    public override void GoToUpFolder()
     {
         if (PathSelector.CanGoToUpFolder)
         {
@@ -87,12 +85,12 @@ public partial class FtpNet : FtpBase
         }
         else
         {
-            OnNewStatus("Nemohl jsem přejít do nadsložky" + ".");
+            OnNewStatus("Could not navigate to parent folder" + ".");
         }
     }
 
     /// <summary>
-    /// Debug output for current folder path (not implemented)
+    /// isDebug output for current folder path (not implemented)
     /// </summary>
     public override void DebugActualFolder()
     {
@@ -100,12 +98,12 @@ public partial class FtpNet : FtpBase
     }
 
     /// <summary>
-    /// Debug output method for logging FTP operations (not implemented)
+    /// isDebug output method for logging FTP operations (not implemented)
     /// </summary>
-    /// <param name="what">Operation or context identifier</param>
+    /// <param name="context">Operation or context identifier</param>
     /// <param name="text">Message format string</param>
     /// <param name="args">Format arguments</param>
-    public override void D(string what, string text, params object[] args)
+    public override void WriteDebugLog(string context, string text, params object[] args)
     {
         ThrowEx.NotImplementedMethod();
     }

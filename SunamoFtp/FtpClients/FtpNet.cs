@@ -1,8 +1,5 @@
 namespace SunamoFtp.FtpClients;
 
-// EN: Variable names have been checked and replaced with self-descriptive names
-// CZ: Názvy proměnných byly zkontrolovány a nahrazeny samopopisnými názvy
-
 /// <summary>
 /// FTP client implementation using FtpWebRequest
 /// </summary>
@@ -14,7 +11,7 @@ public partial class FtpNet : FtpBase
     /// <param name="startup">Indicates if this is initial startup login</param>
     public override void LoginIfIsNot(bool startup)
     {
-        this.startup = startup;
+        this.IsStartup = startup;
     // Není potřeba se přihlašovat, přihlašovácí údaje posílám při každém příkazu
     }
 
@@ -22,15 +19,15 @@ public partial class FtpNet : FtpBase
     /// Navigates to specified path on FTP server, creating directories as needed
     /// </summary>
     /// <param name="remoteFolder">Remote folder path to navigate to</param>
-    public override void goToPath(string remoteFolder)
+    public override void GoToPath(string remoteFolder)
     {
         if (FtpLogging.GoToFolder)
-            OnNewStatus("Přecházím do složky" + " " + remoteFolder);
+            OnNewStatus("Navigating to folder" + " " + remoteFolder);
         var actualPath = PathSelector.ActualPath;
         var dd = remoteFolder.Length - 1;
         if (actualPath == remoteFolder)
             return;
-        // Vzdálená složka začíná s aktuální cestou == vzdálená složka je delší. Pouze přejdi hloubš
+        // Remote folder starts with current path == remote folder is longer. Just go deeper
         if (remoteFolder.StartsWith(actualPath))
         {
             remoteFolder = remoteFolder.Substring(actualPath.Length);
@@ -38,7 +35,7 @@ public partial class FtpNet : FtpBase
             foreach (var item in tokens)
                 CreateDirectoryIfNotExists(item);
         }
-        // Vzdálená složka nezačíná aktuální cestou,
+        // Remote folder does not start with current path,
         else
         {
             PathSelector.ActualPath = "";
@@ -55,9 +52,9 @@ public partial class FtpNet : FtpBase
     /// </summary>
     /// <param name = "oldFileName"></param>
     /// <param name = "newFileName"></param>
-    public override void renameRemoteFile(string oldFileName, string newFileName)
+    public override void RenameRemoteFile(string oldFileName, string newFileName)
     {
-        OnNewStatus("Ve složce" + " " + PathSelector.ActualPath + " " + "přejmenovávám soubor" + " " + oldFileName + " na " + newFileName);
+        OnNewStatus("In folder" + " " + PathSelector.ActualPath + " " + "renaming file" + " " + oldFileName + " to " + newFileName);
         if (ExceptionCount < MaxExceptionCount)
         {
             FtpWebRequest reqFTP = null;
@@ -69,7 +66,7 @@ public partial class FtpNet : FtpBase
                 reqFTP.Method = WebRequestMethods.Ftp.Rename;
                 reqFTP.RenameTo = newFileName;
                 reqFTP.UseBinary = true;
-                reqFTP.Credentials = new NetworkCredential(remoteUser, remotePass);
+                reqFTP.Credentials = new NetworkCredential(RemoteUser, RemotePass);
                 response = (FtpWebResponse)reqFTP.GetResponse();
                 ftpStream = response.GetResponseStream();
             }
@@ -77,7 +74,7 @@ public partial class FtpNet : FtpBase
             {
                 OnNewStatus("Error rename file" + ": " + ex.Message);
                 ExceptionCount++;
-                renameRemoteFile(oldFileName, newFileName);
+                RenameRemoteFile(oldFileName, newFileName);
             }
             finally
             {
@@ -97,12 +94,12 @@ public partial class FtpNet : FtpBase
     /// <param name="foldersToSkip">List of folder names to skip during deletion</param>
     /// <param name="dirName">Directory name to remove</param>
     /// <returns>True if directory was removed successfully</returns>
-    public override bool rmdir(List<string> foldersToSkip, string dirName)
+    public override bool Rmdir(List<string> foldersToSkip, string dirName)
     {
         if (ExceptionCount < MaxExceptionCount)
         {
             var ma = GetActualPath(dirName).TrimEnd('/');
-            OnNewStatus("Mažu adresář" + " " + ma);
+            OnNewStatus("Deleting directory" + " " + ma);
             FtpWebRequest clsRequest = null;
             StreamReader sr = null;
             Stream datastream = null;
@@ -110,7 +107,7 @@ public partial class FtpNet : FtpBase
             try
             {
                 clsRequest = (FtpWebRequest)WebRequest.Create(new Uri(ma));
-                clsRequest.Credentials = new NetworkCredential(remoteUser, remotePass);
+                clsRequest.Credentials = new NetworkCredential(RemoteUser, RemotePass);
                 clsRequest.Method = WebRequestMethods.Ftp.RemoveDirectory;
                 var result = string.Empty;
                 response = (FtpWebResponse)clsRequest.GetResponse();
@@ -129,7 +126,7 @@ public partial class FtpNet : FtpBase
                 if (response != null)
                     response.Dispose();
                 OnNewStatus("Error delete folder" + ": " + ex.Message);
-                return rmdir(foldersToSkip, dirName);
+                return Rmdir(foldersToSkip, dirName);
             }
             finally
             {
@@ -156,14 +153,14 @@ public partial class FtpNet : FtpBase
     /// <param name="dirName">Root directory name to start deletion from</param>
     /// <param name="i">Current recursion depth level</param>
     /// <param name="td">List to collect directories marked for deletion</param>
-    public override void DeleteRecursively(List<string> foldersToSkip, string dirName, int i, List<DirectoriesToDeleteFtp> td)
+    public override void DeleteRecursively(List<string> foldersToSkip, string dirName, int i, List<DirectoriesToDeleteFtp> directoriesToDelete)
     {
         i++;
         var toDelete = ListDirectoryDetails();
         //bool pridano = false;
-        td.Add(new DirectoriesToDeleteFtp { Depth = i });
-        Dictionary<string, List<string>> ds = null;
-        foreach (var item in td)
+        directoriesToDelete.Add(new DirectoriesToDeleteFtp { Depth = i });
+        Dictionary<string, List<string>> directoryMap = null;
+        foreach (var item in directoriesToDelete)
             if (item.Depth == i)
             {
                 if (item.Directories.Count != 0)
@@ -171,72 +168,72 @@ public partial class FtpNet : FtpBase
                     foreach (var item2 in item.Directories)
                         foreach (var item3 in item2)
                             if (item3.Key == PathSelector.ActualPath)
-                                ds = item2;
+                                directoryMap = item2;
                 }
                 else
                 {
-                    ds = new Dictionary<string, List<string>>();
+                    directoryMap = new Dictionary<string, List<string>>();
                 }
-            //ds = ;
+            //directoryMap = ;
             }
 
-        for (var itemIndex = 0; itemIndex < td.Count; itemIndex++)
+        for (var itemIndex = 0; itemIndex < directoriesToDelete.Count; itemIndex++)
         {
-            var item = td[itemIndex];
+            var item = directoriesToDelete[itemIndex];
             if (item.Depth == i)
-                //ds.Add(PathSelector.ActualPath, new List<string>());
+                //directoryMap.Add(PathSelector.ActualPath, new List<string>());
                 foreach (var item2 in toDelete)
                 {
                     var fn = "";
                     var fst = FtpHelper.IsFile(item2, out fn);
                     if (fst == FileSystemType.File)
                     {
-                        if (ds.ContainsKey(PathSelector.ActualPath))
+                        if (directoryMap.ContainsKey(PathSelector.ActualPath))
                         {
                         }
                         else
                         {
-                            ds.Add(PathSelector.ActualPath, new List<string>());
+                            directoryMap.Add(PathSelector.ActualPath, new List<string>());
                         }
 
-                        var f = ds[PathSelector.ActualPath];
+                        var f = directoryMap[PathSelector.ActualPath];
                         f.Add(fn);
                     }
                     else if (fst == FileSystemType.Folder)
                     {
                         PathSelector.AddToken(fn);
-                        ds.Add(PathSelector.ActualPath, new List<string>());
+                        directoryMap.Add(PathSelector.ActualPath, new List<string>());
                         //pridano = true;
-                        DeleteRecursively(foldersToSkip, fn, i, td);
+                        DeleteRecursively(foldersToSkip, fn, i, directoriesToDelete);
                     }
                 ////DebugLogger.Instance.WriteLine(item2);
                 }
-        //item.Directories.Add(ds);
+        //item.Directories.Add(directoryMap);
         }
 
         if (true)
-            foreach (var item in td)
+            foreach (var item in directoriesToDelete)
                 if (item.Depth == i)
-                    item.Directories.Add(ds);
+                    item.Directories.Add(directoryMap);
         if (i == 1)
         {
-            var smazaneAdresare = new List<string>();
-            for (var yValue = td.Count - 1; yValue >= 0; yValue--)
-                foreach (var item in td[yValue].Directories)
+            var deletedDirectories = new List<string>();
+            for (var depthIndex = directoriesToDelete.Count - 1; depthIndex >= 0; depthIndex--)
+                foreach (var item in directoriesToDelete[depthIndex].Directories)
                     foreach (var item2 in item)
                     {
                         PathSelector.ActualPath = item2.Key;
-                        var sa = item2.Key;
-                        if (!smazaneAdresare.Contains(sa))
+                        var deletedDirectoryPath = item2.Key;
+                        if (!deletedDirectories.Contains(deletedDirectoryPath))
                         {
-                            smazaneAdresare.Add(sa);
+                            deletedDirectories.Add(deletedDirectoryPath);
                             foreach (var item3 in item2.Value)
-                                while (!deleteRemoteFile(item3))
+                                while (!DeleteRemoteFile(item3))
                                 {
                                 }
 
-                            goToUpFolderForce();
-                            rmdir(new List<string>(), Path.GetFileName(item2.Key.TrimEnd('/')));
+                            GoToUpFolderForce();
+                            Rmdir(new List<string>(), Path.GetFileName(item2.Key.TrimEnd('/')));
                         }
                     }
         }

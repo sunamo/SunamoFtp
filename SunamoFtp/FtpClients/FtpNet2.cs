@@ -1,13 +1,11 @@
 namespace SunamoFtp.FtpClients;
 
-// EN: Variable names have been checked and replaced with self-descriptive names
-// CZ: Názvy proměnných byly zkontrolovány a nahrazeny samopopisnými názvy
 public partial class FtpNet : FtpBase
 {
     /// <summary>
     ///     OK
     ///     LIST
-    ///     Vrátí složky, files i Linky
+    ///     Returns folders, files and links
     /// </summary>
     public override List<string> ListDirectoryDetails()
     {
@@ -16,14 +14,14 @@ public partial class FtpNet : FtpBase
         {
             StreamReader reader = null;
             FtpWebResponse response = null;
-            var _Path = UH.Combine(true, remoteHost + ":" + remotePort, PathSelector.ActualPath);
+            var path = UH.Combine(true, RemoteHost + ":" + RemotePort, PathSelector.ActualPath);
             try
             {
                 // Get the object used to communicate with the server.
-                var request = (FtpWebRequest)WebRequest.Create(_Path);
+                var request = (FtpWebRequest)WebRequest.Create(path);
                 request.Method = WebRequestMethods.Ftp.ListDirectoryDetails;
                 // This example assumes the FTP site uses anonymous logon.
-                request.Credentials = new NetworkCredential(remoteUser, remotePass);
+                request.Credentials = new NetworkCredential(RemoteUser, RemotePass);
                 response = (FtpWebResponse)request.GetResponse();
                 var responseStream = response.GetResponseStream();
                 reader = new StreamReader(responseStream, Encoding.GetEncoding("windows-1250"));
@@ -63,15 +61,15 @@ public partial class FtpNet : FtpBase
     /// <summary>
     ///     OK
     ///     DELE
-    ///     Odstraním vzdálený soubor jména A1.
+    ///     Deletes remote file with specified name.
     /// </summary>
     /// <param name = "fileName"></param>
-    public override bool deleteRemoteFile(string fileName)
+    public override bool DeleteRemoteFile(string fileName)
     {
         var result = true;
         if (ExceptionCount < MaxExceptionCount)
         {
-            OnNewStatus("Odstraňuji ze ftp serveru soubor" + " " + UH.Combine(false, PathSelector.ActualPath, fileName));
+            OnNewStatus("Deleting file from FTP server" + " " + UH.Combine(false, PathSelector.ActualPath, fileName));
             FtpWebRequest reqFTP = null;
             StreamReader sr = null;
             Stream datastream = null;
@@ -79,7 +77,7 @@ public partial class FtpNet : FtpBase
             try
             {
                 reqFTP = (FtpWebRequest)WebRequest.Create(new Uri(GetActualPath(fileName)));
-                reqFTP.Credentials = new NetworkCredential(remoteUser, remotePass);
+                reqFTP.Credentials = new NetworkCredential(RemoteUser, RemotePass);
                 reqFTP.KeepAlive = false;
                 reqFTP.Method = WebRequestMethods.Ftp.DeleteFile;
                 var responseText = string.Empty;
@@ -103,7 +101,7 @@ public partial class FtpNet : FtpBase
                     datastream.Dispose();
                 if (response != null)
                     response.Dispose();
-                return deleteRemoteFile(fileName);
+                return DeleteRemoteFile(fileName);
             }
             finally
             {
@@ -126,15 +124,15 @@ public partial class FtpNet : FtpBase
     /// <summary>
     ///     OK
     ///     SIZE
-    ///     Posílám příkaz SIZE. Pokud nejsem nalogovaný, přihlásím se.
+    ///     Sends SIZE command. If not logged in, logs in.
     /// </summary>
     /// <param name = "fileName"></param>
-    public override long getFileSize(string fileName)
+    public override long GetFileSize(string fileName)
     {
         long fileSize = 0;
         if (ExceptionCount < MaxExceptionCount)
         {
-            OnNewStatus("Pokouším se získat velikost souboru" + " " + UH.Combine(false, PathSelector.ActualPath, fileName));
+            OnNewStatus("Getting file size" + " " + UH.Combine(false, PathSelector.ActualPath, fileName));
             FtpWebRequest reqFTP = null;
             Stream ftpStream = null;
             FtpWebResponse response = null;
@@ -143,7 +141,7 @@ public partial class FtpNet : FtpBase
                 reqFTP = (FtpWebRequest)WebRequest.Create(new Uri(GetActualPath(fileName)));
                 reqFTP.Method = WebRequestMethods.Ftp.GetFileSize;
                 reqFTP.UseBinary = true;
-                reqFTP.Credentials = new NetworkCredential(remoteUser, remotePass);
+                reqFTP.Credentials = new NetworkCredential(RemoteUser, RemotePass);
                 response = (FtpWebResponse)reqFTP.GetResponse();
                 ftpStream = response.GetResponseStream();
                 fileSize = response.ContentLength;
@@ -156,7 +154,7 @@ public partial class FtpNet : FtpBase
                 if (response != null)
                     response.Dispose();
                 ExceptionCount++;
-                return getFileSize(fileName);
+                return GetFileSize(fileName);
             }
             finally
             {
@@ -181,17 +179,17 @@ public partial class FtpNet : FtpBase
     /// <param name="locFileName">Local file path to save to</param>
     /// <param name="deleteLocalIfExists">Whether to delete local file if it already exists</param>
     /// <returns>True if download was successful</returns>
-    public override bool download(string remFileName, string locFileName, bool deleteLocalIfExists)
+    public override bool Download(string remFileName, string locFileName, bool deleteLocalIfExists)
     {
         if (!FtpHelper.IsSchemaFtp(remFileName))
             remFileName = GetActualPath(remFileName);
         if (string.IsNullOrEmpty(locFileName))
         {
-            OnNewStatus("Do metody download byl předán prázdný parametr locFileName");
+            OnNewStatus("Empty locFileName parameter was passed to download method");
             return false;
         }
 
-        OnNewStatus("Stahuji" + " " + remFileName);
+        OnNewStatus("Downloading" + " " + remFileName);
         if (File.Exists(locFileName))
         {
             if (deleteLocalIfExists)
@@ -202,13 +200,13 @@ public partial class FtpNet : FtpBase
                 }
                 catch (Exception ex)
                 {
-                    OnNewStatus("Soubor" + " " + remFileName + " " + "nemohl být stažen, protože soubor" + " " + locFileName + " " + "nešel toDelete");
+                    OnNewStatus("File " + remFileName + " could not be downloaded because file " + locFileName + " could not be deleted");
                     return false;
                 }
             }
             else
             {
-                OnNewStatus("Soubor" + " " + remFileName + " " + "nemohl být stažen, protože soubor" + " " + locFileName + " " + "existoval již na disku a nebylo povoleno jeho smazání");
+                OnNewStatus("Soubor" + " " + remFileName + " " + "nemohl být stažen, protože soubor" + " " + locFileName + " " + "existoval již to disku a nebylo povoleno jeho smazání");
                 return false;
             }
         }
@@ -225,7 +223,7 @@ public partial class FtpNet : FtpBase
                 reqFTP = (FtpWebRequest)WebRequest.Create(new Uri(remFileName));
                 reqFTP.Method = WebRequestMethods.Ftp.DownloadFile;
                 reqFTP.UseBinary = true;
-                reqFTP.Credentials = new NetworkCredential(remoteUser, remotePass);
+                reqFTP.Credentials = new NetworkCredential(RemoteUser, RemotePass);
                 response = (FtpWebResponse)reqFTP.GetResponse();
                 ftpStream = response.GetResponseStream();
                 var cl = response.ContentLength;
@@ -249,7 +247,7 @@ public partial class FtpNet : FtpBase
                 if (response != null)
                     response.Dispose();
                 ExceptionCount++;
-                return download(remFileName, locFileName, deleteLocalIfExists);
+                return Download(remFileName, locFileName, deleteLocalIfExists);
             }
             finally
             {

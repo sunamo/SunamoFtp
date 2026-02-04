@@ -1,3 +1,4 @@
+// variables names: ok
 namespace SunamoFtp._public.SunamoInterfaces.Interfaces;
 
 /// <summary>

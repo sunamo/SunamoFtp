@@ -19,7 +19,7 @@ public class FtpDllWrapper : FtpBaseNew
         Client = ftp;
     }
 
-    public override void chdirLite(string dirName)
+    public override void ChdirLite(string dirName)
     {
         ThrowEx.NotImplementedMethod();
     }
@@ -29,7 +29,7 @@ public class FtpDllWrapper : FtpBaseNew
         ThrowEx.NotImplementedMethod();
     }
 
-    public override void D(string what, string text, params object[] args)
+    public override void WriteDebugLog(string context, string text, params object[] args)
     {
         ThrowEx.NotImplementedMethod();
     }
@@ -51,46 +51,46 @@ public class FtpDllWrapper : FtpBaseNew
     }
 
     public override void DeleteRecursively(List<string> foldersToSkip, string dirName, int i,
-        List<DirectoriesToDeleteFtp> td)
+        List<DirectoriesToDeleteFtp> directoriesToDelete)
     {
         ThrowEx.NotImplementedMethod();
     }
 
-    public override bool deleteRemoteFile(string fileName)
-    {
-        ThrowEx.NotImplementedMethod();
-        return false;
-    }
-
-    public override bool download(string remFileName, string locFileName, bool deleteLocalIfExists)
+    public override bool DeleteRemoteFile(string fileName)
     {
         ThrowEx.NotImplementedMethod();
         return false;
     }
 
-    public override long getFileSize(string filename)
+    public override bool Download(string remFileName, string locFileName, bool deleteLocalIfExists)
+    {
+        ThrowEx.NotImplementedMethod();
+        return false;
+    }
+
+    public override long GetFileSize(string filename)
     {
         ThrowEx.NotImplementedMethod();
         return 0;
     }
 
-    public override Dictionary<string, List<string>> getFSEntriesListRecursively(List<string> foldersToSkip)
+    public override Dictionary<string, List<string>> GetFSEntriesListRecursively(List<string> foldersToSkip)
     {
         ThrowEx.NotImplementedMethod();
         return null;
     }
 
-    public override void goToPath(string remoteFolder)
+    public override void GoToPath(string remoteFolder)
     {
         ThrowEx.NotImplementedMethod();
     }
 
-    public override void goToUpFolder()
+    public override void GoToUpFolder()
     {
         ThrowEx.NotImplementedMethod();
     }
 
-    public override void goToUpFolderForce()
+    public override void GoToUpFolderForce()
     {
         ThrowEx.NotImplementedMethod();
     }
@@ -106,18 +106,18 @@ public class FtpDllWrapper : FtpBaseNew
         ThrowEx.NotImplementedMethod();
     }
 
-    public override bool mkdir(string dirName)
+    public override bool Mkdir(string dirName)
     {
         ThrowEx.NotImplementedMethod();
         return false;
     }
 
-    public override void renameRemoteFile(string oldFileName, string newFileName)
+    public override void RenameRemoteFile(string oldFileName, string newFileName)
     {
         ThrowEx.NotImplementedMethod();
     }
 
-    public override bool rmdir(List<string> foldersToSkip, string dirName)
+    public override bool Rmdir(List<string> foldersToSkip, string dirName)
     {
         ThrowEx.NotImplementedMethod();
         return false;
