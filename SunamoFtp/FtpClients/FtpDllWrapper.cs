@@ -19,12 +19,12 @@ public class FtpDllWrapper : FtpBaseNew
         Client = ftp;
     }
 
-    public override void ChdirLite(string dirName)
+    public override void ChdirLite(string directoryName)
     {
         ThrowEx.NotImplementedMethod();
     }
 
-    public override void CreateDirectoryIfNotExists(string dirName)
+    public override void CreateDirectoryIfNotExists(string directoryName)
     {
         ThrowEx.NotImplementedMethod();
     }
@@ -36,7 +36,7 @@ public class FtpDllWrapper : FtpBaseNew
 
     public override void DebugActualFolder()
     {
-        //InitApp.Logger.WriteLine("Actual dir" + ":", Client.GetCurrentFolder());
+        //InitApp.Logger.WriteLine("Actual directory" + ":", Client.GetCurrentFolder());
     }
 
     public override void DebugAllEntries()
@@ -45,12 +45,12 @@ public class FtpDllWrapper : FtpBaseNew
         //Client.GetList().ForEach(d => InitApp.Logger.WriteLine(d.Name));
     }
 
-    public override void DebugDirChmod(string dir)
+    public override void DebugDirChmod(string directoryName)
     {
         ThrowEx.NotImplementedMethod();
     }
 
-    public override void DeleteRecursively(List<string> foldersToSkip, string dirName, int i,
+    public override void DeleteRecursively(List<string> foldersToSkip, string directoryName, int i,
         List<DirectoriesToDeleteFtp> directoriesToDelete)
     {
         ThrowEx.NotImplementedMethod();
@@ -101,12 +101,12 @@ public class FtpDllWrapper : FtpBaseNew
         return null;
     }
 
-    public override void LoginIfIsNot(bool startup)
+    public override void LoginIfIsNot(bool isInitialLogin)
     {
         ThrowEx.NotImplementedMethod();
     }
 
-    public override bool Mkdir(string dirName)
+    public override bool Mkdir(string directoryName)
     {
         ThrowEx.NotImplementedMethod();
         return false;
@@ -117,7 +117,7 @@ public class FtpDllWrapper : FtpBaseNew
         ThrowEx.NotImplementedMethod();
     }
 
-    public override bool Rmdir(List<string> foldersToSkip, string dirName)
+    public override bool Rmdir(List<string> foldersToSkip, string directoryName)
     {
         ThrowEx.NotImplementedMethod();
         return false;

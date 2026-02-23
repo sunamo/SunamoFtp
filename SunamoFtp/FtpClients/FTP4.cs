@@ -166,12 +166,12 @@ public partial class FTP : FtpBase
     /// After all contents are deleted, goes to parent folder and removes the now-empty directory.
     /// </summary>
     /// <param name="foldersToSkip">List of folder names to skip during deletion</param>
-    /// <param name="dirName">The name of the directory to delete</param>
+    /// <param name="directoryName">The name of the directory to delete</param>
     /// <param name="i">Recursion depth level (currently unused)</param>
     /// <param name="td">List of directories to delete (currently unused)</param>
-    public override void DeleteRecursively(List<string> foldersToSkip, string dirName, int i, List<DirectoriesToDeleteFtp> directoriesToDelete)
+    public override void DeleteRecursively(List<string> foldersToSkip, string directoryName, int i, List<DirectoriesToDeleteFtp> directoriesToDelete)
     {
-        ChdirLite(dirName);
+        ChdirLite(directoryName);
         var toDelete = ListDirectoryDetails();
         foreach (var item2 in toDelete)
         {
@@ -184,7 +184,7 @@ public partial class FTP : FtpBase
         }
 
         GoToUpFolderForce();
-        Rmdir(foldersToSkip, dirName);
+        Rmdir(foldersToSkip, directoryName);
     }
 
     /// <summary>

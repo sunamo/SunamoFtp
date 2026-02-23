@@ -80,14 +80,14 @@ public partial class FtpNet : FtpBase
     ///     MKD
     ///     Creates directory if it does not exist
     /// </summary>
-    /// <param name = "dirName"></param>
-    public override void CreateDirectoryIfNotExists(string dirName)
+    /// <param name = "directoryName"></param>
+    public override void CreateDirectoryIfNotExists(string directoryName)
     {
-        if (dirName != "")
+        if (directoryName != "")
         {
-            dirName = Path.GetFileName(dirName.TrimEnd('/'));
-            if (dirName[dirName.Length - 1] == "/"[0])
-                dirName = dirName.Substring(0, dirName.Length - 1);
+            directoryName = Path.GetFileName(directoryName.TrimEnd('/'));
+            if (directoryName[directoryName.Length - 1] == "/"[0])
+                directoryName = directoryName.Substring(0, directoryName.Length - 1);
         }
         else
         {
@@ -114,7 +114,7 @@ public partial class FtpNet : FtpBase
         {
             string fn = null;
             if (FtpHelper.IsFile(item, out fn) == FileSystemType.Folder)
-                if (fn == dirName)
+                if (fn == directoryName)
                 {
                     directoryFound = true;
                     break;
@@ -123,31 +123,31 @@ public partial class FtpNet : FtpBase
 
         if (!directoryFound)
         {
-            if (Mkdir(dirName))
+            if (Mkdir(directoryName))
             {
             }
         }
         else
         {
-            PathSelector.AddToken(dirName);
+            PathSelector.AddToken(directoryName);
         }
     }
 
     /// <summary>
     /// Changes current directory on FTP server (lightweight version without full navigation)
     /// </summary>
-    /// <param name="dirName">Directory name to change to</param>
-    public override void ChdirLite(string dirName)
+    /// <param name="directoryName">Directory name to change to</param>
+    public override void ChdirLite(string directoryName)
     {
-        // Trim slash from end in dirName variable
-        if (dirName != "")
+        // Trim slash from end in directoryName variable
+        if (directoryName != "")
         {
-            if (dirName[dirName.Length - 1] == "/"[0])
-                dirName = dirName.Substring(0, dirName.Length - 1);
+            if (directoryName[directoryName.Length - 1] == "/"[0])
+                directoryName = directoryName.Substring(0, directoryName.Length - 1);
         }
         else
         {
-            dirName = MainWindow.Www;
+            directoryName = MainWindow.Www;
         }
 
         var directoryFound = false;
@@ -169,7 +169,7 @@ public partial class FtpNet : FtpBase
         {
             string fn = null;
             if (FtpHelper.IsFile(item, out fn) == FileSystemType.Folder)
-                if (fn == dirName)
+                if (fn == directoryName)
                 {
                     directoryFound = true;
                     break;
@@ -178,17 +178,17 @@ public partial class FtpNet : FtpBase
 
         if (!directoryFound)
         {
-            if (Mkdir(dirName))
+            if (Mkdir(directoryName))
             {
-            //this.remotePath = dirName;
+            //this.remotePath = directoryName;
             }
         }
         else
         {
-            if (dirName == "..")
+            if (directoryName == "..")
                 PathSelector.RemoveLastToken();
             else
-                PathSelector.AddToken(dirName);
+                PathSelector.AddToken(directoryName);
         }
     }
 
@@ -197,27 +197,27 @@ public partial class FtpNet : FtpBase
     ///     MKD
     ///     Vytvoří v akt. složce A1 adresář A1 příkazem MKD
     /// </summary>
-    /// <param name = "dirName"></param>
-    public override bool Mkdir(string dirName)
+    /// <param name = "directoryName"></param>
+    public override bool Mkdir(string directoryName)
     {
         if (ExceptionCount < MaxExceptionCount)
         {
-            var adr = UH.Combine(true, PathSelector.ActualPath, dirName);
+            var adr = UH.Combine(true, PathSelector.ActualPath, directoryName);
             OnNewStatus("Creating directory" + " " + adr);
             FtpWebRequest reqFTP = null;
             FtpWebResponse response = null;
             Stream ftpStream = null;
             try
             {
-                // dirName = name of the directory to create.
-                var uri = new Uri(GetActualPath(dirName));
+                // directoryName = name of the directory to create.
+                var uri = new Uri(GetActualPath(directoryName));
                 reqFTP = (FtpWebRequest)WebRequest.Create(uri);
                 reqFTP.Method = WebRequestMethods.Ftp.MakeDirectory;
                 reqFTP.UseBinary = true;
                 reqFTP.Credentials = new NetworkCredential(RemoteUser, RemotePass);
                 response = (FtpWebResponse)reqFTP.GetResponse();
                 ftpStream = response.GetResponseStream();
-                PathSelector.AddToken(dirName);
+                PathSelector.AddToken(directoryName);
                 ftpStream.Dispose();
                 response.Dispose();
                 ExceptionCount = 0;
@@ -230,8 +230,8 @@ public partial class FtpNet : FtpBase
                 if (response != null)
                     response.Dispose();
                 ExceptionCount++;
-                OnNewStatus("Error create new dir" + ": " + ex.Message);
-                return Mkdir(dirName);
+                OnNewStatus("Error creating new directory" + ": " + ex.Message);
+                return Mkdir(directoryName);
             }
             finally
             {

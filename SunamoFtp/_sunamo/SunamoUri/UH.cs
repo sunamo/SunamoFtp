@@ -29,11 +29,11 @@ internal class UH
     /// Combines multiple path segments into single path
     /// </summary>
     /// <param name="isDirectory">If true, ensures trailing slash</param>
-    /// <param name="paths">Path segments to combine</param>
+    /// <param name="parts">Path segments to combine</param>
     /// <returns>Combined path</returns>
-    internal static string Combine(bool isDirectory, params string[] paths)
+    internal static string Combine(bool isDirectory, params string[] parts)
     {
-        var result = string.Join('/', paths).Replace("///", "/").Replace("//", "/")
+        var result = string.Join('/', parts).Replace("///", "/").Replace("//", "/")
             .TrimEnd('/').Replace(":/", "://");
         if (isDirectory) result += "/";
         return result;

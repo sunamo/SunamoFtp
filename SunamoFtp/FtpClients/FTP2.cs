@@ -127,18 +127,18 @@ public partial class FTP : FtpBase
         OnNewStatus("Downloading file" + " " + remFileName + " " + "from" + " " + RemoteHost + "/" + remotePath);
         if (!File.Exists(locFileName))
         {
-            Stream st = File.Create(locFileName);
-            st.Close();
+            Stream createdFileStream = File.Create(locFileName);
+            createdFileStream.Close();
         }
 
-        var output = new FileStream(locFileName, FileMode.Open);
+        var downloadStream = new FileStream(locFileName, FileMode.Open);
 #endregion
         var clientSocket = CreateDataSocket();
         long offset = 0;
         if (resume)
         {
 #region Pokud otevřený soubor nemá velikost 0, pošlu příkaz REST čímž nastavím offset
-            offset = output.Length;
+            offset = downloadStream.Length;
             if (offset > 0)
             {
                 SendCommand("REST" + " " + offset);
@@ -152,8 +152,8 @@ public partial class FTP : FtpBase
             {
                 if (isDebug)
                     OnNewStatus("seeking to" + " " + offset);
-                var npos = output.Seek(offset, SeekOrigin.Begin);
-                OnNewStatus("new pos=" + npos);
+                var newPosition = downloadStream.Seek(offset, SeekOrigin.Begin);
+                OnNewStatus("new pos=" + newPosition);
             }
 #endregion
         }
@@ -165,12 +165,12 @@ public partial class FTP : FtpBase
         while (true)
         {
             bytes = clientSocket.Receive(buffer, buffer.Length, 0);
-            output.Write(buffer, 0, bytes);
+            downloadStream.Write(buffer, 0, bytes);
             if (bytes <= 0)
                 break;
         }
 
-        output.Close();
+        downloadStream.Close();
         if (clientSocket.Connected)
             clientSocket.Close();
         OnNewStatus("");
@@ -188,11 +188,11 @@ public partial class FTP : FtpBase
     /// Sends STOR command with file name and writes all bytes from file to the secure stream.
     /// Closes socket and stream after upload and verifies server response.
     /// </summary>
-    /// <param name="fileName">The name of the file to upload</param>
+    /// <param name="filePath">The path to the file to upload</param>
     /// <param name="isResume">Whether to resume a previous upload from the last position</param>
-    public void UploadSecure(string fileName, bool isResume)
+    public void UploadSecure(string filePath, bool isResume)
     {
-        var path = UH.Combine(false, PathSelector.ActualPath, fileName);
+        var path = UH.Combine(false, PathSelector.ActualPath, filePath);
         OnUploadingNewStatus(path);
 #region Pošlu příkaz PASV a příhlásím se pokud nejsem
         SendCommand("PASV");
@@ -210,7 +210,7 @@ public partial class FTP : FtpBase
             try
             {
                 SetBinaryMode(true);
-                offset = GetFileSize(fileName);
+                offset = GetFileSize(filePath);
             }
             catch (Exception)
             {
@@ -228,12 +228,12 @@ public partial class FTP : FtpBase
 
 #endregion
 #region Pošlu příkaz STOR text jménem souboru a zapíšu všechny bajty z souboru do bufferu byte[]
-        SendCommand("STOR" + " " + Path.GetFileName(fileName));
+        SendCommand("STOR" + " " + Path.GetFileName(filePath));
         if (!(retValue == 125 || retValue == 150))
             throw new Exception(reply.Substring(4));
-        var input = File.OpenRead(fileName);
-        var bufferFile = new byte[input.Length];
-        input.Read(bufferFile, 0, bufferFile.Length);
+        var input = File.OpenRead(filePath);
+        var fileBuffer = new byte[input.Length];
+        input.Read(fileBuffer, 0, fileBuffer.Length);
         input.Close();
 #endregion
 #region Nastavím offset v lokálním souboru.  I když nevím prož když pak uploaduji M stream2.Write text offsetem 0. Zavřu socket i proud a přečtu odpověď serveru. Pokud nebyla 226 nebo 250, VV
@@ -244,10 +244,10 @@ public partial class FTP : FtpBase
             input.Seek(offset, SeekOrigin.Begin);
         }
 
-        OnNewStatus("Uploading file" + " " + fileName + " to " + remotePath);
+        OnNewStatus("Uploading file" + " " + filePath + " to " + remotePath);
         if (clientSocket.Connected)
         {
-            stream2.Write(bufferFile, 0, bufferFile.Length);
+            stream2.Write(fileBuffer, 0, fileBuffer.Length);
             OnNewStatus("File Upload");
         }
 

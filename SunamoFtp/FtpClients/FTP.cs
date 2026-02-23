@@ -74,10 +74,10 @@ public partial class FTP : FtpBase
     /// <summary>
     /// Sets whether to use binary transfer mode
     /// </summary>
-    /// <param name="value">True to enable binary transfer, false for ASCII</param>
-    public void SetUseStream(bool value)
+    /// <param name="useBinaryMode">True to enable binary transfer, false for ASCII</param>
+    public void SetUseStream(bool useBinaryMode)
     {
-        useStream = value;
+        useStream = useBinaryMode;
     }
 
     /// <summary>
@@ -109,9 +109,9 @@ public partial class FTP : FtpBase
         return remotePath;
     }
 
-    public override void LoginIfIsNot(bool isStartup)
+    public override void LoginIfIsNot(bool isInitialLogin)
     {
-        base.IsStartup = isStartup;
+        base.IsInitialLogin = isInitialLogin;
         if (!IsLoggedIn)
             Login();
     }

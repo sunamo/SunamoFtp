@@ -16,7 +16,7 @@ public abstract partial class FtpBase : FtpAbstract
         IsLoggedIn = false;
     }
 
-    //public abstract void DeleteRecursively(List<string> foldersToSkip, string dirName, int i, List<DirectoriesToDelete> directoriesToDelete);
+    //public abstract void DeleteRecursively(List<string> foldersToSkip, string directoryName, int i, List<DirectoriesToDelete> directoriesToDelete);
     /// <summary>
     /// Triggers status update notification for new folder navigation
     /// </summary>
@@ -31,14 +31,14 @@ public abstract partial class FtpBase : FtpAbstract
     ///     STOR
     ///     To upload a file to current folder and specify only file name on disk, use UploadFile method.
     /// </summary>
-    /// <param name = "local"></param>
-    /// <param name = "uploadPath"></param>
-    public virtual bool UploadFileMain(string local, string uploadPath)
+    /// <param name = "path">Local source file path to upload</param>
+    /// <param name = "uploadPath">Target FTP upload path</param>
+    public virtual bool UploadFileMain(string path, string uploadPath)
     {
         if (ExceptionCount < MaxExceptionCount)
         {
             OnNewStatus("Uploading" + " " + uploadPath);
-            var fileInfo = new FileInfo(local);
+            var fileInfo = new FileInfo(path);
             Stream ftpStream = null;
             FileStream fileStream = null;
             try
@@ -88,7 +88,7 @@ public abstract partial class FtpBase : FtpAbstract
                 ftpStream.Dispose();
                 fileStream.Dispose();
                 OnNewStatus("Upload file error" + ": " + ex.Message);
-                return UploadFileMain(local, uploadPath);
+                return UploadFileMain(path, uploadPath);
             }
             finally
             {
@@ -160,25 +160,25 @@ public abstract partial class FtpBase : FtpAbstract
     /// <summary>
     /// Gets the FTP path for specified directory/file name appended to current path
     /// </summary>
-    /// <param name="dirName">Directory or file name (not full path)</param>
+    /// <param name="directoryName">Directory or file name (not full path)</param>
     /// <returns>Full FTP path including the specified name</returns>
-    public string GetActualPath(string dirName)
+    public string GetActualPath(string directoryName)
     {
-        var text = /*UH.Combine(true,*/ RemoteHost + ":" + RemotePort + PathSelector.ActualPath + dirName;
+        var text = /*UH.Combine(true,*/ RemoteHost + ":" + RemotePort + PathSelector.ActualPath + directoryName;
         return text.TrimEnd('/');
     }
 
     /// <summary>
     /// Uploads a local folder to FTP server. After calling this method in FTP class, you must call GoToUpFolder to return to previous directory.
     /// </summary>
-    /// <param name="sourceFolder">Local source folder path</param>
+    /// <param name="localFolder">Local source folder path</param>
     /// <param name="isFtpClass">Indicates if called from FTP class (requires GoToPath to restore)</param>
     /// <param name="working">Working state tracker to allow cancellation</param>
     /// <returns>True if folder was uploaded successfully</returns>
-    public bool UploadFolder(string sourceFolder, bool isFtpClass, IWorking working)
+    public bool UploadFolder(string localFolder, bool isFtpClass, IWorking working)
     {
         var actPath = PathSelector.ActualPath;
-        var result = UploadFolderShared(sourceFolder, false, working);
+        var result = UploadFolderShared(localFolder, false, working);
         if (isFtpClass)
             GoToPath(actPath);
         return result;
@@ -209,10 +209,10 @@ public abstract partial class FtpBase : FtpAbstract
     /// Recursively uploads a local folder and all its contents to current FTP directory
     /// </summary>
     /// <param name="localFolder">Local folder path to upload</param>
-    /// <param name="iw">Working state tracker to allow cancellation</param>
+    /// <param name="working">Working state tracker to allow cancellation</param>
     /// <returns>True if all files and folders were uploaded successfully</returns>
-    public bool UploadFolderRek(string localFolder, IWorking iw)
+    public bool UploadFolderRek(string localFolder, IWorking working)
     {
-        return UploadFolderShared(localFolder, true, iw);
+        return UploadFolderShared(localFolder, true, working);
     }
 }

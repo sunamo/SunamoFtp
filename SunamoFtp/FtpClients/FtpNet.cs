@@ -8,10 +8,10 @@ public partial class FtpNet : FtpBase
     /// <summary>
     /// Performs login to FTP server if not already logged in
     /// </summary>
-    /// <param name="startup">Indicates if this is initial startup login</param>
-    public override void LoginIfIsNot(bool startup)
+    /// <param name="isInitialLogin">Indicates if this is initial startup login</param>
+    public override void LoginIfIsNot(bool isInitialLogin)
     {
-        this.IsStartup = startup;
+        this.IsInitialLogin = isInitialLogin;
     // Není potřeba se přihlašovat, přihlašovácí údaje posílám při každém příkazu
     }
 
@@ -92,13 +92,13 @@ public partial class FtpNet : FtpBase
     /// Removes empty directory from FTP server using RMD command. Can only be called when directory is known to be empty, otherwise returns error 550.
     /// </summary>
     /// <param name="foldersToSkip">List of folder names to skip during deletion</param>
-    /// <param name="dirName">Directory name to remove</param>
+    /// <param name="directoryName">Directory name to remove</param>
     /// <returns>True if directory was removed successfully</returns>
-    public override bool Rmdir(List<string> foldersToSkip, string dirName)
+    public override bool Rmdir(List<string> foldersToSkip, string directoryName)
     {
         if (ExceptionCount < MaxExceptionCount)
         {
-            var ma = GetActualPath(dirName).TrimEnd('/');
+            var ma = GetActualPath(directoryName).TrimEnd('/');
             OnNewStatus("Deleting directory" + " " + ma);
             FtpWebRequest clsRequest = null;
             StreamReader sr = null;
@@ -126,7 +126,7 @@ public partial class FtpNet : FtpBase
                 if (response != null)
                     response.Dispose();
                 OnNewStatus("Error delete folder" + ": " + ex.Message);
-                return Rmdir(foldersToSkip, dirName);
+                return Rmdir(foldersToSkip, directoryName);
             }
             finally
             {
@@ -150,10 +150,10 @@ public partial class FtpNet : FtpBase
     /// Recursively deletes directory and its contents using DELE and RMD commands
     /// </summary>
     /// <param name="foldersToSkip">List of folder names to skip during deletion</param>
-    /// <param name="dirName">Root directory name to start deletion from</param>
+    /// <param name="directoryName">Root directory name to start deletion from</param>
     /// <param name="i">Current recursion depth level</param>
     /// <param name="td">List to collect directories marked for deletion</param>
-    public override void DeleteRecursively(List<string> foldersToSkip, string dirName, int i, List<DirectoriesToDeleteFtp> directoriesToDelete)
+    public override void DeleteRecursively(List<string> foldersToSkip, string directoryName, int i, List<DirectoriesToDeleteFtp> directoriesToDelete)
     {
         i++;
         var toDelete = ListDirectoryDetails();

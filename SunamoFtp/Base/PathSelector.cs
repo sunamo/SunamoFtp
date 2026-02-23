@@ -69,8 +69,7 @@ public class PathSelector
     /// <summary>
     /// Gets or sets the current path as a delimited string
     /// </summary>
-    public string
-        ActualPath
+    public string ActualPath
     {
         get
         {

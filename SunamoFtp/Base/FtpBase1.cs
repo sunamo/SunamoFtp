@@ -11,7 +11,7 @@ public abstract partial class FtpBase : FtpAbstract
     /// <param name="folderName">Folder name to start traversal from</param>
     public void GetFSEntriesListRecursively(List<string> foldersToSkip, List<string> visitedFolders, Dictionary<string, List<string>> result, string folderName)
     {
-        LoginIfIsNot(IsStartup);
+        LoginIfIsNot(IsInitialLogin);
         var nextPath = UH.Combine(true, PathSelector.ActualPath, folderName);
         if (!visitedFolders.Contains(nextPath))
         {
@@ -41,10 +41,10 @@ public abstract partial class FtpBase : FtpAbstract
                 }
                 else if (firstChar == 'd')
                 {
-                    var folderName2 = SHJoin.JoinFromIndex(8, ' ', item.Split(' '));
-                    if (!FtpHelper.IsThisOrUp(folderName2))
+                    var extractedFolderName = SHJoin.JoinFromIndex(8, ' ', item.Split(' '));
+                    if (!FtpHelper.IsThisOrUp(extractedFolderName))
                     {
-                        if (foldersToSkip.Contains(folderName2) && PathSelector.ActualPath == MainWindow.WwwSlash)
+                        if (foldersToSkip.Contains(extractedFolderName) && PathSelector.ActualPath == MainWindow.WwwSlash)
                             continue;
                         if (result.ContainsKey(actualPath))
                         {
@@ -56,7 +56,7 @@ public abstract partial class FtpBase : FtpAbstract
                             entries.Add(item);
                             result.Add(actualPath, entries);
                         }
-                    //getFSEntriesListRecursively(foldersToSkip, visitedFolders, result, PathSelector.ActualPath,folderName2);
+                    //getFSEntriesListRecursively(foldersToSkip, visitedFolders, result, PathSelector.ActualPath,extractedFolderName);
                     }
                 }
                 else
@@ -89,27 +89,27 @@ public abstract partial class FtpBase : FtpAbstract
     /// <summary>
     /// Uploads file to current FTP directory. You must navigate to target folder before calling this method.
     /// </summary>
-    /// <param name="fileName">Local source file path</param>
-    public void UploadFile(string fileName)
+    /// <param name="filePath">Local source file path</param>
+    public void UploadFile(string filePath)
     {
-        var uploadPath = UH.Combine(false, RemoteHost + ":" + RemotePort + "/", UH.Combine(true, PathSelector.ActualPath, Path.GetFileName(fileName)));
+        var uploadPath = UH.Combine(false, RemoteHost + ":" + RemotePort + "/", UH.Combine(true, PathSelector.ActualPath, Path.GetFileName(filePath)));
         if (ReallyUpload)
-            UploadFileMain(fileName, uploadPath);
+            UploadFileMain(filePath, uploadPath);
     //MainWindow.FileUploaded(fileName);
     }
 
     /// <summary>
     /// Uploads file to specified FTP folder path (allows uploading to different folder than current)
     /// </summary>
-    /// <param name="fullFilePath">Local file path to upload</param>
+    /// <param name="filePath">Local file path to upload</param>
     /// <param name="actualFtpPath">Target FTP folder path</param>
     /// <returns>True if file was uploaded successfully</returns>
-    public bool UploadFile(string fullFilePath, string actualFtpPath)
+    public bool UploadFile(string filePath, string actualFtpPath)
     {
-        var uploadPath = UH.Combine(false, RemoteHost + ":" + RemotePort + "/" + "/", UH.Combine(false, actualFtpPath, Path.GetFileName(fullFilePath)));
+        var uploadPath = UH.Combine(false, RemoteHost + ":" + RemotePort + "/" + "/", UH.Combine(false, actualFtpPath, Path.GetFileName(filePath)));
         var result = true;
         if (ReallyUpload)
-            result = UploadFileMain(fullFilePath, uploadPath);
+            result = UploadFileMain(filePath, uploadPath);
         return result;
     }
 

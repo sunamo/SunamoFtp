@@ -63,7 +63,7 @@ public partial class FtpNet : FtpBase
     ///     DELE
     ///     Deletes remote file with specified name.
     /// </summary>
-    /// <param name = "fileName"></param>
+    /// <param name = "fileName"></param>@@
     public override bool DeleteRemoteFile(string fileName)
     {
         var result = true;
@@ -266,4 +266,4 @@ public partial class FtpNet : FtpBase
         ExceptionCount = 0;
         return false;
     }
-}
+    }

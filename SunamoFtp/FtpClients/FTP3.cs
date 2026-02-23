@@ -9,12 +9,12 @@ public partial class FTP : FtpBase
     /// Sends REST command with offset if resuming, then STOR command with file name.
     /// Reads bytes from file and sends them via socket, then Closes socket and verifies server response.
     /// </summary>
-    /// <param name="fileName">The name of the file to upload</param>
+    /// <param name="filePath">The path to the file to upload</param>
     /// <param name="resume">Whether to resume a previous upload from the last position</param>
     /// <param name="buffer">The byte buffer to use for reading the file</param>
-    public void Upload(string fileName, bool resume, byte[] buffer)
+    public void Upload(string filePath, bool resume, byte[] buffer)
     {
-        OnNewStatus("Uploading" + " " + UH.Combine(false, PathSelector.ActualPath, fileName));
+        OnNewStatus("Uploading" + " " + UH.Combine(false, PathSelector.ActualPath, filePath));
 #region Tento kód mi nedovolil často nauploadovat ani jeden soubor, takže ho nahradím speciálními třídami .net
 #region Pokud nejsem nalogovaný, přihlásím se.
         if (!IsLoggedIn)
@@ -29,7 +29,7 @@ public partial class FTP : FtpBase
             try
             {
                 SetBinaryMode(true);
-                offset = GetFileSize(fileName);
+                offset = GetFileSize(filePath);
             }
             catch (Exception)
             {
@@ -45,13 +45,13 @@ public partial class FTP : FtpBase
                 offset = 0;
         }
 
-        SendCommand("STOR" + " " + Path.GetFileName(fileName));
+        SendCommand("STOR" + " " + Path.GetFileName(filePath));
         if (!(retValue == 125 || retValue == 150))
             throw new Exception(reply.Substring(4));
 #endregion
 #region Pokud byl offset, seeknu se v souboru a čtu bajty a zapisuji je to server metodou clientSocket.Send
         // open input stream to read source file
-        var input = new FileStream(fileName, FileMode.Open);
+        var input = new FileStream(filePath, FileMode.Open);
         if (offset != 0)
         {
             if (isDebug)
@@ -59,7 +59,7 @@ public partial class FTP : FtpBase
             input.Seek(offset, SeekOrigin.Begin);
         }
 
-        OnNewStatus("Uploading file" + " " + fileName + " to " + remotePath);
+        OnNewStatus("Uploading file" + " " + filePath + " to " + remotePath);
         while ((bytes = input.Read(buffer, 0, buffer.Length)) > 0)
             clientSocket.Send(buffer, bytes, 0);
         input.Close();
@@ -119,17 +119,17 @@ public partial class FTP : FtpBase
     /// Sends MKD command with directory name, then changes to the new directory.
     /// Logs in if not authenticated before creating the directory.
     /// </summary>
-    /// <param name="dirName">The name of the directory to create</param>
+    /// <param name="directoryName">The name of the directory to create</param>
     /// <returns>Always returns true (throws exception on failure)</returns>
-    public override bool Mkdir(string dirName)
+    public override bool Mkdir(string directoryName)
     {
-        OnNewStatus("Creating directory" + " " + UH.Combine(true, PathSelector.ActualPath, dirName));
+        OnNewStatus("Creating directory" + " " + UH.Combine(true, PathSelector.ActualPath, directoryName));
         if (!IsLoggedIn)
             Login();
-        SendCommand("MKD " + dirName);
+        SendCommand("MKD " + directoryName);
         if (retValue != 250 && retValue != 257)
             throw new Exception(reply.Substring(4));
-        ChdirLite(dirName);
+        ChdirLite(directoryName);
         return true;
     }
 
@@ -139,18 +139,18 @@ public partial class FTP : FtpBase
     /// Logs in if not authenticated before removing the directory.
     /// </summary>
     /// <param name="foldersToSkip">List of folder names to skip during recursive deletion</param>
-    /// <param name="dirName">The name of the directory to remove</param>
+    /// <param name="directoryName">The name of the directory to remove</param>
     /// <returns>Always returns true (throws exception on failure)</returns>
-    public override bool Rmdir(List<string> foldersToSkip, string dirName)
+    public override bool Rmdir(List<string> foldersToSkip, string directoryName)
     {
-        OnNewStatus("Deleting directory" + " " + UH.Combine(true, PathSelector.ActualPath, dirName));
+        OnNewStatus("Deleting directory" + " " + UH.Combine(true, PathSelector.ActualPath, directoryName));
         if (!IsLoggedIn)
             Login();
-        SendCommand("RMD " + dirName);
+        SendCommand("RMD " + directoryName);
         if (retValue != 250)
         {
             if (retValue == 550)
-                DeleteRecursively(foldersToSkip, dirName, 0, new List<DirectoriesToDeleteFtp>());
+                DeleteRecursively(foldersToSkip, directoryName, 0, new List<DirectoriesToDeleteFtp>());
             else
                 throw new Exception(reply.Substring(4));
         }
@@ -163,16 +163,16 @@ public partial class FTP : FtpBase
     /// Skips "." and ".." directory references.
     /// If the directory doesn't exist, creates it with mkdir, otherwise changes to it with ChdirLite.
     /// </summary>
-    /// <param name="dirName">The name of the directory to change to or create</param>
-    public override void CreateDirectoryIfNotExists(string dirName)
+    /// <param name="directoryName">The name of the directory to change to or create</param>
+    public override void CreateDirectoryIfNotExists(string directoryName)
     {
-        if (dirName == "." || dirName == "..")
+        if (directoryName == "." || directoryName == "..")
             return;
-        if (!ExistsFolder(dirName))
-            Mkdir(dirName);
+        if (!ExistsFolder(directoryName))
+            Mkdir(directoryName);
         else
-            ChdirLite(dirName);
-    //PathSelector.AddToken(dirName);
+            ChdirLite(directoryName);
+    //PathSelector.AddToken(directoryName);
     }
 
     /// <summary>
@@ -182,19 +182,19 @@ public partial class FTP : FtpBase
     /// If directory doesn't exist, creates it with mkdir.
     /// Updates the PathSelector when changing directories.
     /// </summary>
-    /// <param name="dirName">The name of the directory to change to. Empty string changes to www root.</param>
-    public override void ChdirLite(string dirName)
+    /// <param name="directoryName">The name of the directory to change to. Empty string changes to www root.</param>
+    public override void ChdirLite(string directoryName)
     {
         if (!IsLoggedIn)
             Login();
-        if (dirName != "")
+        if (directoryName != "")
         {
-            if (dirName[dirName.Length - 1] == "/"[0])
-                dirName = dirName.Substring(0, dirName.Length - 1);
+            if (directoryName[directoryName.Length - 1] == "/"[0])
+                directoryName = directoryName.Substring(0, directoryName.Length - 1);
         }
         else
         {
-            dirName = ftpClient.Www;
+            directoryName = ftpClient.Www;
         }
 
         var directoryFound = false;
@@ -216,7 +216,7 @@ public partial class FTP : FtpBase
         {
             string fileName = null;
             if (FtpHelper.IsFile(item, out fileName) == FileSystemType.Folder)
-                if (fileName == dirName)
+                if (fileName == directoryName)
                 {
                     directoryFound = true;
                     break;
@@ -225,20 +225,20 @@ public partial class FTP : FtpBase
 
         if (!directoryFound)
         {
-            if (Mkdir(dirName))
+            if (Mkdir(directoryName))
             {
-            //this.remotePath = dirName;
+            //this.remotePath = directoryName;
             }
         }
         else
         {
-            SendCommand("CWD " + dirName);
+            SendCommand("CWD " + directoryName);
             if (retValue != 250)
                 throw new Exception(reply.Substring(4));
-            if (dirName == "..")
+            if (directoryName == "..")
                 PathSelector.RemoveLastToken();
             else
-                PathSelector.AddToken(dirName);
+                PathSelector.AddToken(directoryName);
         }
     }
 

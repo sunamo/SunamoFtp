@@ -78,7 +78,7 @@ public abstract class FtpAbstract
     /// <summary>
     /// Indicates if this is startup phase
     /// </summary>
-    protected bool IsStartup { get; set; } = true;
+    protected bool IsInitialLogin { get; set; } = true;
 
     /// <summary>
     /// Total folder size calculated recursively
@@ -150,9 +150,9 @@ public abstract class FtpAbstract
     /// <summary>
     /// Creates a directory on the FTP server
     /// </summary>
-    /// <param name="dirName">Directory name to create</param>
+    /// <param name="directoryName">Directory name to create</param>
     /// <returns>True if directory was created successfully</returns>
-    public abstract bool Mkdir(string dirName);
+    public abstract bool Mkdir(string directoryName);
 
     /// <summary>
     /// Downloads a file from FTP server to local filesystem
@@ -181,25 +181,25 @@ public abstract class FtpAbstract
     /// Removes a directory from the FTP server
     /// </summary>
     /// <param name="foldersToSkip">List of folder names to skip during deletion</param>
-    /// <param name="dirName">Directory name to remove</param>
+    /// <param name="directoryName">Directory name to remove</param>
     /// <returns>True if directory was removed successfully</returns>
-    public abstract bool Rmdir(List<string> foldersToSkip, string dirName);
+    public abstract bool Rmdir(List<string> foldersToSkip, string directoryName);
 
     /// <summary>
     /// Recursively deletes directories and their contents from FTP server
     /// </summary>
     /// <param name="foldersToSkip">List of folder names to skip during deletion</param>
-    /// <param name="dirName">Root directory name to start deletion from</param>
+    /// <param name="directoryName">Root directory name to start deletion from</param>
     /// <param name="depth">Current recursion depth level</param>
     /// <param name="directoriesToDelete">List to collect directories marked for deletion</param>
-    public abstract void DeleteRecursively(List<string> foldersToSkip, string dirName, int depth,
+    public abstract void DeleteRecursively(List<string> foldersToSkip, string directoryName, int depth,
         List<DirectoriesToDeleteFtp> directoriesToDelete);
 
     /// <summary>
     /// Creates a directory on FTP server if it doesn't already exist
     /// </summary>
-    /// <param name="dirName">Directory name to create</param>
-    public abstract void CreateDirectoryIfNotExists(string dirName);
+    /// <param name="directoryName">Directory name to create</param>
+    public abstract void CreateDirectoryIfNotExists(string directoryName);
 
     /// <summary>
     /// Lists all entries (files and directories) in current FTP directory with details
@@ -217,8 +217,8 @@ public abstract class FtpAbstract
     /// <summary>
     /// Changes current directory on FTP server (lightweight version)
     /// </summary>
-    /// <param name="dirName">Directory name to change to</param>
-    public abstract void ChdirLite(string dirName);
+    /// <param name="directoryName">Directory name to change to</param>
+    public abstract void ChdirLite(string directoryName);
 
     /// <summary>
     /// Navigates to parent folder on FTP server (forced, no validation)
@@ -233,8 +233,8 @@ public abstract class FtpAbstract
     /// <summary>
     /// Performs login to FTP server if not already logged in
     /// </summary>
-    /// <param name="isStartup">Indicates if this is initial startup login</param>
-    public abstract void LoginIfIsNot(bool isStartup);
+    /// <param name="isInitialLogin">Indicates if this is initial startup login</param>
+    public abstract void LoginIfIsNot(bool isInitialLogin);
 
     /// <summary>
     /// Gets the size of a file on the FTP server
