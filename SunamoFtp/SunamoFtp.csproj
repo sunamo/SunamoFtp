@@ -3,17 +3,17 @@
     <TargetFrameworks>net10.0;net9.0;net8.0</TargetFrameworks>
     <OutputType>Library</OutputType>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <Version>26.3.28.3</Version>
+    <Version>26.5.18.3</Version>
     <Description>Base classes and infrastructure for FTP clients</Description>
     <Authors>www.sunamo.cz</Authors>
     <Copyright>www.sunamo.cz</Copyright>
-    <PackageProjectUrl>https://sunamo.cz/</PackageProjectUrl>
+    <PackageProjectUrl>https://sunamo.github.io/PlatformIndependentNuGetPackages/SunamoFtp/</PackageProjectUrl>
     <RepositoryUrl>https://github.com/sunamo/SunamoFtp.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageReadmeFile>readme.md</PackageReadmeFile>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <PackageReleaseNotes>feat: Improved names of variables</PackageReleaseNotes>
+    <PackageReleaseNotes>y</PackageReleaseNotes>
     <Nullable>enable</Nullable>
     <IsPackable>true</IsPackable>
     <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
