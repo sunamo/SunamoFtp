@@ -1,16 +1,7 @@
 namespace SunamoFtp._sunamo.SunamoUri;
 
-/// <summary>
-/// Helper class for URI and path operations
-/// </summary>
 internal class UH
 {
-    /// <summary>
-    /// Extracts file name from URL or path
-    /// </summary>
-    /// <param name="path">URL or file path</param>
-    /// <param name="isWholeUrl">If true, preserves query strings</param>
-    /// <returns>File name extracted from path</returns>
     internal static string GetFileName(string path, bool isWholeUrl = false)
     {
         if (isWholeUrl)
@@ -25,15 +16,9 @@ internal class UH
         return path.Substring(lastSlashIndex + 1);
     }
 
-    /// <summary>
-    /// Combines multiple path segments into single path
-    /// </summary>
-    /// <param name="isDirectory">If true, ensures trailing slash</param>
-    /// <param name="parts">Path segments to combine</param>
-    /// <returns>Combined path</returns>
     internal static string Combine(bool isDirectory, params string[] parts)
     {
-        var result = string.Join('/', parts).Replace("///", "/").Replace("//", "/")
+        var result = string.Join("/", parts).Replace("///", "/").Replace("//", "/")
             .TrimEnd('/').Replace(":/", "://");
         if (isDirectory) result += "/";
         return result;

@@ -2,16 +2,6 @@ namespace SunamoFtp.FtpClients;
 
 public partial class FTP : FtpBase
 {
-    /// <summary>
-    /// Uploads a file to the FTP server, with optional resume capability.
-    /// Logs in if not authenticated, sends PASV command, and creates data socket.
-    /// If resuming, sets binary mode and gets remote file size to determine offset.
-    /// Sends REST command with offset if resuming, then STOR command with file name.
-    /// Reads bytes from file and sends them via socket, then Closes socket and verifies server response.
-    /// </summary>
-    /// <param name="filePath">The path to the file to upload</param>
-    /// <param name="resume">Whether to resume a previous upload from the last position</param>
-    /// <param name="buffer">The byte buffer to use for reading the file</param>
     public void Upload(string filePath, bool resume, byte[] buffer)
     {
         OnNewStatus("Uploading" + " " + UH.Combine(false, PathSelector.ActualPath, filePath));
@@ -76,13 +66,6 @@ public partial class FTP : FtpBase
 #endregion
     }
 
-    /// <summary>
-    /// Deletes a remote file from the FTP server.
-    /// Logs in if not authenticated, then sends DELE command with the file name.
-    /// If the first attempt fails, tries again with URL-decoded file name.
-    /// </summary>
-    /// <param name="fileName">The name of the file to delete</param>
-    /// <returns>Always returns true (throws exception on failure)</returns>
     public override bool DeleteRemoteFile(string fileName)
     {
         OnNewStatus("Deleting file from FTP server" + " " + UH.Combine(false, PathSelector.ActualPath, fileName));
@@ -94,13 +77,6 @@ public partial class FTP : FtpBase
         return true;
     }
 
-    /// <summary>
-    /// Renames a file on the FTP server.
-    /// Sends RNFR command with old file name, waits for 350 response, then sends RNTO command with new file name.
-    /// Logs in if not authenticated before executing the rename operation.
-    /// </summary>
-    /// <param name="oldFileName">The current name of the file</param>
-    /// <param name="newFileName">The new name for the file</param>
     public override void RenameRemoteFile(string oldFileName, string newFileName)
     {
         OnNewStatus("In folder" + " " + PathSelector.ActualPath + " " + "renaming file" + " " + oldFileName + " to " + newFileName);
@@ -114,13 +90,6 @@ public partial class FTP : FtpBase
             throw new Exception(reply.Substring(4));
     }
 
-    /// <summary>
-    /// Creates a directory in the current folder on the FTP server.
-    /// Sends MKD command with directory name, then changes to the new directory.
-    /// Logs in if not authenticated before creating the directory.
-    /// </summary>
-    /// <param name="directoryName">The name of the directory to create</param>
-    /// <returns>Always returns true (throws exception on failure)</returns>
     public override bool Mkdir(string directoryName)
     {
         OnNewStatus("Creating directory" + " " + UH.Combine(true, PathSelector.ActualPath, directoryName));
@@ -133,14 +102,6 @@ public partial class FTP : FtpBase
         return true;
     }
 
-    /// <summary>
-    /// Removes a directory from the current folder on the FTP server.
-    /// Sends RMD command with directory name. If the directory is not empty (error 550), deletes it recursively.
-    /// Logs in if not authenticated before removing the directory.
-    /// </summary>
-    /// <param name="foldersToSkip">List of folder names to skip during recursive deletion</param>
-    /// <param name="directoryName">The name of the directory to remove</param>
-    /// <returns>Always returns true (throws exception on failure)</returns>
     public override bool Rmdir(List<string> foldersToSkip, string directoryName)
     {
         OnNewStatus("Deleting directory" + " " + UH.Combine(true, PathSelector.ActualPath, directoryName));
@@ -158,12 +119,6 @@ public partial class FTP : FtpBase
         return true;
     }
 
-    /// <summary>
-    /// Changes to the specified directory, creating it if it doesn't exist.
-    /// Skips "." and ".." directory references.
-    /// If the directory doesn't exist, creates it with mkdir, otherwise changes to it with ChdirLite.
-    /// </summary>
-    /// <param name="directoryName">The name of the directory to change to or create</param>
     public override void CreateDirectoryIfNotExists(string directoryName)
     {
         if (directoryName == "." || directoryName == "..")
@@ -175,14 +130,6 @@ public partial class FTP : FtpBase
     //PathSelector.AddToken(directoryName);
     }
 
-    /// <summary>
-    /// Changes the current directory on the FTP server, creating it if necessary.
-    /// Removes trailing slash from directory name if present.
-    /// Lists directory contents to verify the directory exists before changing to it.
-    /// If directory doesn't exist, creates it with mkdir.
-    /// Updates the PathSelector when changing directories.
-    /// </summary>
-    /// <param name="directoryName">The name of the directory to change to. Empty string changes to www root.</param>
     public override void ChdirLite(string directoryName)
     {
         if (!IsLoggedIn)
@@ -214,8 +161,7 @@ public partial class FTP : FtpBase
 
         foreach (var item in ftpEntries)
         {
-            string fileName = null;
-            if (FtpHelper.IsFile(item, out fileName) == FileSystemType.Folder)
+            if (FtpHelper.IsFile(item, out var fileName) == FileSystemType.Folder)
                 if (fileName == directoryName)
                 {
                     directoryFound = true;
@@ -242,11 +188,6 @@ public partial class FTP : FtpBase
         }
     }
 
-    /// <summary>
-    /// Closes the FTP connection and cleans up resources.
-    /// Sends QUIT command if client socket is not null.
-    /// Closes and nullifies the client socket, and sets IsLoggedIn to false.
-    /// </summary>
     public void Close()
     {
         OnNewStatus("Closing FTP session");
@@ -256,19 +197,11 @@ public partial class FTP : FtpBase
         OnNewStatus("Closing" + "." + "..");
     }
 
-    /// <summary>
-    /// Sets the isDebug mode for the FTP client.
-    /// When enabled, outputs detailed command and response information.
-    /// </summary>
-    /// <param name="isDebug">True to enable isDebug mode, false to disable</param>
     public void SetDebug(bool isDebug)
     {
         this.isDebug = isDebug;
     }
 
-    /// <summary>
-    /// Reads reply using ResponseMsg when using Stream or ReadLine
-    /// </summary>
     private void ReadReply()
     {
         if (useStream)
@@ -283,9 +216,7 @@ public partial class FTP : FtpBase
         }
     }
 
-    /// <summary>
-    /// Zavřu, nulluji clientSocket a nastavím IsLoggedIn to false.
-    /// </summary>
+    // Zavřu, nulluji clientSocket a nastavím IsLoggedIn to false.
     private void Cleanup()
     {
         if (clientSocket != null)

@@ -89,28 +89,16 @@ public partial class FtpNet : FtpBase
         }
     }
 
-    /// <summary>
-    /// isDebug output for current folder path (not implemented)
-    /// </summary>
     public override void DebugActualFolder()
     {
         ThrowEx.NotImplementedMethod();
     }
 
-    /// <summary>
-    /// isDebug output method for logging FTP operations (not implemented)
-    /// </summary>
-    /// <param name="context">Operation or context identifier</param>
-    /// <param name="text">Message format string</param>
-    /// <param name="args">Format arguments</param>
     public override void WriteDebugLog(string context, string text, params object[] args)
     {
         ThrowEx.NotImplementedMethod();
     }
 
-    /// <summary>
-    /// Establishes connection to the FTP server (not implemented)
-    /// </summary>
     public override void Connect()
     {
         ThrowEx.NotImplementedMethod();

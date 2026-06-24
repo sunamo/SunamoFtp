@@ -2,11 +2,6 @@ namespace SunamoFtp.FtpClients;
 
 public partial class FTP : FtpBase
 {
-    /// <summary>
-    /// Recursively retrieves all file system entries (files and folders) from the FTP server starting at the current path.
-    /// </summary>
-    /// <param name="foldersToSkip">List of folder names to skip during traversal</param>
-    /// <returns>Dictionary mapping folder paths to lists of entry details</returns>
     public override Dictionary<string, List<string>> GetFSEntriesListRecursively(List<string> foldersToSkip)
     {
         if (!IsLoggedIn)
@@ -105,10 +100,6 @@ public partial class FTP : FtpBase
         return result;
     }
 
-    /// <summary>
-    /// Navigates to the specified remote folder path on the FTP server, creating directories if needed.
-    /// </summary>
-    /// <param name="remoteFolder">The full path to the remote folder to navigate to</param>
     public override void GoToPath(string remoteFolder)
     {
         if (remoteFolder.Contains("/" + "Kocicky" + "/"))
@@ -145,11 +136,6 @@ public partial class FTP : FtpBase
         }
     }
 
-    /// <summary>
-    /// Gets the size of a remote file by sending the SIZE command. Logs in if not already authenticated.
-    /// </summary>
-    /// <param name="fileName">The name of the file to get the size of</param>
-    /// <returns>The size of the file in bytes</returns>
     public override long GetFileSize(string fileName)
     {
         OnNewStatus("Getting file size" + " " + UH.Combine(false, PathSelector.ActualPath, fileName));
@@ -164,12 +150,6 @@ public partial class FTP : FtpBase
         return size;
     }
 
-    /// <summary>
-    /// Logs in to the FTP server using the configured credentials.
-    /// This method should be called immediately after setting the connection variables.
-    /// If not connected, connects to the server first, then sends USER command, and PASS command if required.
-    /// Response code 230 means login successful without password, otherwise sends password with PASS command.
-    /// </summary>
     public void Login()
     {
         //SslStream sslStream = new SslStream(client.GetStream(), false);
@@ -222,12 +202,8 @@ public partial class FTP : FtpBase
             OnNewStatus("Not IsLoggedIn to" + " " + RemoteHost);
     }
 
-    /// <summary>
-    /// Establishes a TCP socket connection to the FTP server without user authentication.
-    /// Creates a Stream-type TCP socket and connects to the remote server.
-    /// Throws IOException if the response code is not 220.
-    /// This method must always be called before authenticating with user credentials.
-    /// </summary>
+    // This method must always be called before authenticating with user credentials.
+    // Throws IOException if the response code is not 220.
     public void LoginWithoutUser()
     {
         OnNewStatus("Connecting to FTP Server without user");
@@ -244,7 +220,7 @@ public partial class FTP : FtpBase
         {
             clientSocket.Connect(endPoint);
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             // During first attemp to connect to sunamo.cz Message = "A connection attempt failed because the connected party did not properly respond after a period of time, or established connection failed because connected host has failed to respond 185.8.239.101:21"
             throw new Exception("Couldn't connect to remote server");
@@ -258,13 +234,6 @@ public partial class FTP : FtpBase
         }
     }
 
-    /// <summary>
-    /// Outputs errors from certificate validation
-    /// </summary>
-    /// <param name = "sender"></param>
-    /// <param name = "certificate"></param>
-    /// <param name = "chain"></param>
-    /// <param name = "errors"></param>
     private bool OnCertificateValidation(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors errors)
     {
         OnNewStatus("Server Certificate Issued To: {0}", certificate.GetName());
@@ -280,11 +249,6 @@ public partial class FTP : FtpBase
         return true;
     }
 
-    /// <summary>
-    /// Outputs certificate information. Parameter indicates whether to output verbose info.
-    /// </summary>
-    /// <param name = "remoteCertificate"></param>
-    /// <param name = "verbose"></param>
     private void ShowCertificateInfo(X509Certificate remoteCertificate, bool isVerbose)
     {
         OnNewStatus("Certficate Information for:\n{0}\n", remoteCertificate.GetName());

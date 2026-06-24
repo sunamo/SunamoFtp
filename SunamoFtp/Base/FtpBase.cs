@@ -2,9 +2,6 @@ namespace SunamoFtp.Base;
 
 public abstract partial class FtpBase : FtpAbstract
 {
-    /// <summary>
-    ///     IK, OOP.
-    /// </summary>
     public FtpBase()
     {
         PathSelector = new PathSelector("");
@@ -17,22 +14,11 @@ public abstract partial class FtpBase : FtpAbstract
     }
 
     //public abstract void DeleteRecursively(List<string> foldersToSkip, string directoryName, int i, List<DirectoriesToDelete> directoriesToDelete);
-    /// <summary>
-    /// Triggers status update notification for new folder navigation
-    /// </summary>
     public void OnNewStatusNewFolder()
     {
         NewStatus("New folder is" + " " + PathSelector.ActualPath, []);
     }
 
-    /// <summary>
-    ///     Upload file by FtpWebRequest
-    ///     OK
-    ///     STOR
-    ///     To upload a file to current folder and specify only file name on disk, use UploadFile method.
-    /// </summary>
-    /// <param name = "path">Local source file path to upload</param>
-    /// <param name = "uploadPath">Target FTP upload path</param>
     public virtual bool UploadFileMain(string path, string uploadPath)
     {
         if (ExceptionCount < MaxExceptionCount)
@@ -105,35 +91,18 @@ public abstract partial class FtpBase : FtpAbstract
         return false;
     }
 
-    /// <summary>
-    /// Triggers status update notification for file upload using safe method
-    /// </summary>
-    /// <param name="path">Path being uploaded</param>
     public void OnUploadingNewStatus(string path)
     {
         OnNewStatus("Uploading" + " " + path + " " + "using safe method");
     }
 
-    /// <summary>
-    /// Event raised when FTP operation status changes
-    /// </summary>
     public static event Action<object, object[]> NewStatus;
 
-    /// <summary>
-    /// Raises the NewStatus event with specified message and parameters
-    /// </summary>
-    /// <param name="text">Status message</param>
-    /// <param name="args">Additional parameters</param>
     public static void OnNewStatus(string text, params object[] args)
     {
         NewStatus(text, args);
     }
 
-    /// <summary>
-    /// Uploads only files that don't already exist in the current directory on FTP server
-    /// </summary>
-    /// <param name="files">List of local file paths to upload</param>
-    /// <returns>True if all files were uploaded successfully</returns>
     public bool UploadFiles(List<string> files)
     {
         var ftpEntries = ListDirectoryDetails();
@@ -148,33 +117,14 @@ public abstract partial class FtpBase : FtpAbstract
         return true;
     }
 
-    /// <summary>
-    /// Gets the current FTP path including host and port
-    /// </summary>
-    /// <returns>Full FTP path</returns>
-    public string GetActualPath()
-    {
-        return UH.Combine(true, RemoteHost + ":" + RemotePort, PathSelector.ActualPath);
-    }
+    public string GetActualPath() => UH.Combine(true, RemoteHost + ":" + RemotePort, PathSelector.ActualPath);
 
-    /// <summary>
-    /// Gets the FTP path for specified directory/file name appended to current path
-    /// </summary>
-    /// <param name="directoryName">Directory or file name (not full path)</param>
-    /// <returns>Full FTP path including the specified name</returns>
     public string GetActualPath(string directoryName)
     {
         var text = /*UH.Combine(true,*/ RemoteHost + ":" + RemotePort + PathSelector.ActualPath + directoryName;
         return text.TrimEnd('/');
     }
 
-    /// <summary>
-    /// Uploads a local folder to FTP server. After calling this method in FTP class, you must call GoToUpFolder to return to previous directory.
-    /// </summary>
-    /// <param name="localFolder">Local source folder path</param>
-    /// <param name="isFtpClass">Indicates if called from FTP class (requires GoToPath to restore)</param>
-    /// <param name="working">Working state tracker to allow cancellation</param>
-    /// <returns>True if folder was uploaded successfully</returns>
     public bool UploadFolder(string localFolder, bool isFtpClass, IWorking working)
     {
         var actPath = PathSelector.ActualPath;
@@ -184,12 +134,6 @@ public abstract partial class FtpBase : FtpAbstract
         return result;
     }
 
-    /// <summary>
-    /// Recursively uploads a local folder and all its contents to specified remote folder
-    /// </summary>
-    /// <param name="localFolder">Local folder path to upload</param>
-    /// <param name="remoteFolder">Remote FTP folder path to upload to</param>
-    /// <returns>True if all files and folders were uploaded successfully</returns>
     public bool UploadFolderRek(string localFolder, string remoteFolder)
     {
         // This is required due to previous line where we get file list from FTP server
@@ -205,14 +149,5 @@ public abstract partial class FtpBase : FtpAbstract
         return true;
     }
 
-    /// <summary>
-    /// Recursively uploads a local folder and all its contents to current FTP directory
-    /// </summary>
-    /// <param name="localFolder">Local folder path to upload</param>
-    /// <param name="working">Working state tracker to allow cancellation</param>
-    /// <returns>True if all files and folders were uploaded successfully</returns>
-    public bool UploadFolderRek(string localFolder, IWorking working)
-    {
-        return UploadFolderShared(localFolder, true, working);
-    }
+    public bool UploadFolderRek(string localFolder, IWorking working) => UploadFolderShared(localFolder, true, working);
 }

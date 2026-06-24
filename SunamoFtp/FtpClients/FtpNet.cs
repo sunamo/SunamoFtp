@@ -1,24 +1,13 @@
 namespace SunamoFtp.FtpClients;
 
-/// <summary>
-/// FTP client implementation using FtpWebRequest
-/// </summary>
 public partial class FtpNet : FtpBase
 {
-    /// <summary>
-    /// Performs login to FTP server if not already logged in
-    /// </summary>
-    /// <param name="isInitialLogin">Indicates if this is initial startup login</param>
     public override void LoginIfIsNot(bool isInitialLogin)
     {
         this.IsInitialLogin = isInitialLogin;
     // Není potřeba se přihlašovat, přihlašovácí údaje posílám při každém příkazu
     }
 
-    /// <summary>
-    /// Navigates to specified path on FTP server, creating directories as needed
-    /// </summary>
-    /// <param name="remoteFolder">Remote folder path to navigate to</param>
     public override void GoToPath(string remoteFolder)
     {
         if (FtpLogging.GoToFolder)
@@ -78,22 +67,14 @@ public partial class FtpNet : FtpBase
             }
             finally
             {
-                if (ftpStream != null)
-                    ftpStream.Dispose();
-                if (response != null)
-                    response.Dispose();
+                ftpStream?.Dispose();
+                response?.Dispose();
             }
         }
 
         ExceptionCount = 0;
     }
 
-    /// <summary>
-    /// Removes empty directory from FTP server using RMD command. Can only be called when directory is known to be empty, otherwise returns error 550.
-    /// </summary>
-    /// <param name="foldersToSkip">List of folder names to skip during deletion</param>
-    /// <param name="directoryName">Directory name to remove</param>
-    /// <returns>True if directory was removed successfully</returns>
     public override bool Rmdir(List<string> foldersToSkip, string directoryName)
     {
         if (ExceptionCount < MaxExceptionCount)
@@ -119,23 +100,17 @@ public partial class FtpNet : FtpBase
             catch (Exception ex)
             {
                 ExceptionCount++;
-                if (sr != null)
-                    sr.Dispose();
-                if (datastream != null)
-                    datastream.Dispose();
-                if (response != null)
-                    response.Dispose();
+                sr?.Dispose();
+                datastream?.Dispose();
+                response?.Dispose();
                 OnNewStatus("Error delete folder" + ": " + ex.Message);
                 return Rmdir(foldersToSkip, directoryName);
             }
             finally
             {
-                if (sr != null)
-                    sr.Dispose();
-                if (datastream != null)
-                    datastream.Dispose();
-                if (response != null)
-                    response.Dispose();
+                sr?.Dispose();
+                datastream?.Dispose();
+                response?.Dispose();
             }
 
             ExceptionCount = 0;
@@ -146,13 +121,6 @@ public partial class FtpNet : FtpBase
         return false;
     }
 
-    /// <summary>
-    /// Recursively deletes directory and its contents using DELE and RMD commands
-    /// </summary>
-    /// <param name="foldersToSkip">List of folder names to skip during deletion</param>
-    /// <param name="directoryName">Root directory name to start deletion from</param>
-    /// <param name="i">Current recursion depth level</param>
-    /// <param name="td">List to collect directories marked for deletion</param>
     public override void DeleteRecursively(List<string> foldersToSkip, string directoryName, int i, List<DirectoriesToDeleteFtp> directoriesToDelete)
     {
         i++;
