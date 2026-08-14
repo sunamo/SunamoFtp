@@ -124,7 +124,7 @@ public partial class FTP : FtpBase
                     parts[partCount++] = int.Parse(buffer);
                     buffer = "";
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     throw new Exception("Malformed PASV reply" + ": " + reply);
                 }
@@ -136,12 +136,12 @@ public partial class FTP : FtpBase
 #region Gets port by bit-shifting fourth IP part by 8 and adding fifth part. Creates Socket, IPEndPoint and attempts to connect to this object.
         var port = (parts[4] << 8) + parts[5];
         var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-        var endPoint = new IPEndPoint(Dns.Resolve(ipAddress).AddressList[0], port);
+        var endPoint = new IPEndPoint(Dns.GetHostEntry(ipAddress).AddressList[0], port);
         try
         {
             socket.Connect(endPoint);
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             throw new Exception("Can't connect to remoteserver");
         }
@@ -168,7 +168,7 @@ public partial class FTP : FtpBase
     /// <param name="foldersToSkip">List of folder names to skip during deletion</param>
     /// <param name="directoryName">The name of the directory to delete</param>
     /// <param name="i">Recursion depth level (currently unused)</param>
-    /// <param name="td">List of directories to delete (currently unused)</param>
+    /// <param name="directoriesToDelete">List of directories to delete (currently unused)</param>
     public override void DeleteRecursively(List<string> foldersToSkip, string directoryName, int i, List<DirectoriesToDeleteFtp> directoriesToDelete)
     {
         ChdirLite(directoryName);

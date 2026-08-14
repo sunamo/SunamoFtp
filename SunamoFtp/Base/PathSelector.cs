@@ -36,8 +36,6 @@ public class PathSelector
                 if (initialDirectory.StartsWith("/"))
                 {
                     throw new Exception("Initial directory cannot start with a leading slash");
-                    var secondSlashIndex = initialDirectory.IndexOf('/', 1);
-                    FirstToken = initialDirectory.Substring(0, secondSlashIndex);
                 }
 
                 var firstSlashIndex = initialDirectory.IndexOf('/');

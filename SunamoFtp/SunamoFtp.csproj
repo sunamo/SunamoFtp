@@ -31,7 +31,8 @@
   <ItemGroup>
     <PackageReference Include="Ftp.dll" Version="2.0.25239.1915">
     </PackageReference>
-    <PackageReference Include="System.Formats.Asn1" Version="10.0.2" />
+    <PackageReference Include="System.Formats.Asn1" Version="10.0.11" />
+    <PackageReference Include="System.Security.Cryptography.Xml" Version="10.0.11" />
     <PackageReference Include="System.Text.Encodings.Web" Version="10.0.2" />
     <None Include="readme.md" Pack="True" PackagePath="." />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.2" Pack="True" />
@@ -39,10 +40,10 @@
   </ItemGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DefineConstants>$(DefineConstants);ASYNC</DefineConstants>
-    <NoWarn />
+    <NoWarn>CS8600;CS8602;CS8625;CA2022;CS8604;CS8618;CS8622;SYSLIB0014;SYSLIB0039;CS0618;CS8603;SYSLIB0058</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <DefineConstants>$(DefineConstants);ASYNC</DefineConstants>
-    <NoWarn />
+    <NoWarn>CS8600;CS8602;CS8625;CA2022;CS8604;CS8618;CS8622;SYSLIB0014;SYSLIB0039;CS0618;CS8603;SYSLIB0058</NoWarn>
   </PropertyGroup>
 </Project>
