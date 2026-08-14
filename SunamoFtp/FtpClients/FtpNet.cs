@@ -152,7 +152,7 @@ public partial class FtpNet : FtpBase
     /// <param name="foldersToSkip">List of folder names to skip during deletion</param>
     /// <param name="directoryName">Root directory name to start deletion from</param>
     /// <param name="i">Current recursion depth level</param>
-    /// <param name="td">List to collect directories marked for deletion</param>
+    /// <param name="directoriesToDelete">List to collect directories marked for deletion</param>
     public override void DeleteRecursively(List<string> foldersToSkip, string directoryName, int i, List<DirectoriesToDeleteFtp> directoriesToDelete)
     {
         i++;

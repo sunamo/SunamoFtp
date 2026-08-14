@@ -102,7 +102,7 @@ public partial class FTP : FtpBase
                 {
                     File.Delete(locFileName);
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     OnNewStatus("File " + remFileName + " could not be downloaded because file " + locFileName + " could not be deleted");
                     return false;

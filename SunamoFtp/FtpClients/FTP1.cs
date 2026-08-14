@@ -244,7 +244,7 @@ public partial class FTP : FtpBase
         {
             clientSocket.Connect(endPoint);
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             // During first attemp to connect to sunamo.cz Message = "A connection attempt failed because the connected party did not properly respond after a period of time, or established connection failed because connected host has failed to respond 185.8.239.101:21"
             throw new Exception("Couldn't connect to remote server");
@@ -284,7 +284,7 @@ public partial class FTP : FtpBase
     /// Outputs certificate information. Parameter indicates whether to output verbose info.
     /// </summary>
     /// <param name = "remoteCertificate"></param>
-    /// <param name = "verbose"></param>
+    /// <param name = "isVerbose"></param>
     private void ShowCertificateInfo(X509Certificate remoteCertificate, bool isVerbose)
     {
         OnNewStatus("Certficate Information for:\n{0}\n", remoteCertificate.GetName());
