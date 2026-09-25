@@ -1,9 +1,19 @@
 namespace SunamoFtp.FtpClients;
 
+/// <summary>
+/// Wrapper around Ftp.dll library FTP client
+/// </summary>
 public class FtpDllWrapper : FtpBaseNew
 {
+    /// <summary>
+    /// Underlying Ftp.dll client instance
+    /// </summary>
     public Ftp Client;
 
+    /// <summary>
+    /// Initializes wrapper with Ftp.dll client instance
+    /// </summary>
+    /// <param name="ftp">Ftp.dll client to wrap</param>
     public FtpDllWrapper(Ftp ftp)
     {
         Client = ftp;
@@ -113,6 +123,10 @@ public class FtpDllWrapper : FtpBaseNew
         return false;
     }
 
+    /// <summary>
+    /// Uploads file to FTP server (not implemented)
+    /// </summary>
+    /// <param name="path">File path to upload</param>
     public override
         async Task
         UploadFile(string path)
@@ -120,11 +134,17 @@ public class FtpDllWrapper : FtpBaseNew
         ThrowEx.NotImplementedMethod();
     }
 
+    /// <summary>
+    /// Disposes FTP client resources (not implemented)
+    /// </summary>
     public override void Dispose()
     {
         ThrowEx.NotImplementedMethod();
     }
 
+    /// <summary>
+    /// Connects to FTP server (not implemented)
+    /// </summary>
     public override void Connect()
     {
         ThrowEx.NotImplementedMethod();

@@ -2,7 +2,13 @@ namespace SunamoFtp.Base;
 
 public abstract partial class FtpBase : FtpAbstract
 {
-    // Internal method - call the 1-parameter overload instead.
+    /// <summary>
+    /// Recursively gets all filesystem entries from FTP server starting from specified folder. This is an internal method - call the 1-parameter overload instead.
+    /// </summary>
+    /// <param name="foldersToSkip">List of folder names to skip during traversal</param>
+    /// <param name="visitedFolders">List of already visited folder paths to avoid infinite loops</param>
+    /// <param name="result">Dictionary to collect filesystem entries mapped by directory path</param>
+    /// <param name="folderName">Folder name to start traversal from</param>
     public void GetFSEntriesListRecursively(List<string> foldersToSkip, List<string> visitedFolders, Dictionary<string, List<string>> result, string folderName)
     {
         LoginIfIsNot(IsInitialLogin);
@@ -70,12 +76,20 @@ public abstract partial class FtpBase : FtpAbstract
     //PathSelector.ActualPath = p;
     }
 
+    /// <summary>
+    /// Downloads a file from FTP server to local filesystem (deletes local file if exists)
+    /// </summary>
+    /// <param name="remFileName">Remote file name on FTP server</param>
+    /// <param name="locFileName">Local file path to save to</param>
     public void Download(string remFileName, string locFileName)
     {
         Download(remFileName, locFileName, true);
     }
 
-    // You must navigate to target folder before calling this method.
+    /// <summary>
+    /// Uploads file to current FTP directory. You must navigate to target folder before calling this method.
+    /// </summary>
+    /// <param name="filePath">Local source file path</param>
     public void UploadFile(string filePath)
     {
         var uploadPath = UH.Combine(false, RemoteHost + ":" + RemotePort + "/", UH.Combine(true, PathSelector.ActualPath, Path.GetFileName(filePath)));
@@ -84,6 +98,12 @@ public abstract partial class FtpBase : FtpAbstract
     //MainWindow.FileUploaded(fileName);
     }
 
+    /// <summary>
+    /// Uploads file to specified FTP folder path (allows uploading to different folder than current)
+    /// </summary>
+    /// <param name="filePath">Local file path to upload</param>
+    /// <param name="actualFtpPath">Target FTP folder path</param>
+    /// <returns>True if file was uploaded successfully</returns>
     public bool UploadFile(string filePath, string actualFtpPath)
     {
         var uploadPath = UH.Combine(false, RemoteHost + ":" + RemotePort + "/" + "/", UH.Combine(false, actualFtpPath, Path.GetFileName(filePath)));
@@ -93,6 +113,13 @@ public abstract partial class FtpBase : FtpAbstract
         return result;
     }
 
+    /// <summary>
+    /// Shared method for uploading folder to FTP server (used by both recursive and non-recursive variants)
+    /// </summary>
+    /// <param name="sourceFolder">Local source folder path</param>
+    /// <param name="isRecursive">Whether to recursively upload subfolders</param>
+    /// <param name="working">Working state tracker to allow cancellation</param>
+    /// <returns>True if folder was uploaded successfully</returns>
     public bool UploadFolderShared(string sourceFolder, bool isRecursive, IWorking working)
     {
         var folderName = Path.GetFileName(sourceFolder);
@@ -127,6 +154,11 @@ public abstract partial class FtpBase : FtpAbstract
         return true;
     }
 
+    /// <summary>
+    /// Checks if folder exists in current FTP directory
+    /// </summary>
+    /// <param name="folder">Folder name (without path)</param>
+    /// <returns>True if folder exists in current directory</returns>
     public bool ExistsFolder(string folder)
     {
         var ftpEntries = ListDirectoryDetails();

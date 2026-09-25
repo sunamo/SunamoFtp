@@ -127,6 +127,10 @@ public partial class FtpNet : FtpBase
         }
     }
 
+    /// <summary>
+    /// Changes current directory on FTP server (lightweight version without full navigation)
+    /// </summary>
+    /// <param name="directoryName">Directory name to change to</param>
     public override void ChdirLite(string directoryName)
     {
         // Trim slash from end in directoryName variable

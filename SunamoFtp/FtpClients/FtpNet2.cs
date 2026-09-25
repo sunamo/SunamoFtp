@@ -160,6 +160,13 @@ public partial class FtpNet : FtpBase
         return fileSize;
     }
 
+    /// <summary>
+    /// Downloads file from FTP server using RETR command. If local file exists and deleteLocalIfExists is true, deletes it first.
+    /// </summary>
+    /// <param name="remFileName">Remote file name to download</param>
+    /// <param name="locFileName">Local file path to save to</param>
+    /// <param name="deleteLocalIfExists">Whether to delete local file if it already exists</param>
+    /// <returns>True if download was successful</returns>
     public override bool Download(string remFileName, string locFileName, bool deleteLocalIfExists)
     {
         if (!FtpHelper.IsSchemaFtp(remFileName))

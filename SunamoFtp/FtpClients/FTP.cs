@@ -1,36 +1,67 @@
 namespace SunamoFtp.FtpClients;
 
+/// <summary>
+/// FTP client implementation using raw socket commands
+/// </summary>
 public partial class FTP : FtpBase
 {
+    /// <summary>
+    /// Block size for reading.
+    /// </summary>
     private static readonly int BLOCK_SIZE = 1024;
+    /// <summary>
+    /// Constant containing ASCII encoding
+    /// </summary>
     private readonly Encoding ASCII = Encoding.ASCII;
-    // Buffer is only 1KB
+    /// <summary>
+    /// Buffer is only 1KB
+    /// </summary>
     private readonly byte[] buffer = new byte[BLOCK_SIZE];
+    /// <summary>
+    ///
+    /// </summary>
     private int bytes;
+    /// <summary>
+    ///
+    /// </summary>
     private Socket clientSocket;
-    // Indicates whether to output commands to console.
+    /// <summary>
+    /// Indicates whether to output commands to console.
+    /// </summary>
     private bool isDebug;
     private readonly IFtpClientExt ftpClient;
     private bool isUpload;
     private string message;
     private string reply;
-    // Value stored by ReadReply, which is called by SendCommand
+    /// <summary>
+    /// Value stored by ReadReply, which is called by SendCommand
+    /// </summary>
     private int retValue;
     // Removed unused field: isStartupPhase
-    // Stream used for download.
+    /// <summary>
+    /// Stream used for download.
+    /// </summary>
     private Stream stream;
-    // Stream used for upload by writing to it via Write method
+    /// <summary>
+    /// Stream used for upload by writing to it via Write method
+    /// </summary>
     private Stream stream2;
-    // Indicates whether to use stream (binary transfer) instead of clientSocket (ASCII conversion)
+    /// <summary>
+    /// Indicates whether to use stream (binary transfer) instead of clientSocket (ASCII conversion)
+    /// </summary>
     private bool useStream;
-
+    /// <summary>
+    /// IK, OOP.
+    /// </summary>
     public FTP(IFtpClientExt ftpClient)
     {
         this.ftpClient = ftpClient;
         isDebug = false;
     }
 
-    // current remote directory.
+    /// <summary>
+    /// current remote directory.
+    /// </summary>
      //string remotePath;
     private string remotePath
     {
@@ -40,11 +71,19 @@ public partial class FTP : FtpBase
         }
     }
 
+    /// <summary>
+    /// Sets whether to use binary transfer mode
+    /// </summary>
+    /// <param name="useBinaryMode">True to enable binary transfer, false for ASCII</param>
     public void SetUseStream(bool useBinaryMode)
     {
         useStream = useBinaryMode;
     }
 
+    /// <summary>
+    /// Sets the remote FTP path and navigates to it
+    /// </summary>
+    /// <param name="remotePath">Remote FTP path to navigate to</param>
     public void SetRemotePath(string remotePath)
     {
         OnNewStatus("FTP path set to" + " " + remotePath);
@@ -62,6 +101,9 @@ public partial class FTP : FtpBase
         }
     }
 
+    /// <summary>
+    /// Gets current remote directory.
+    /// </summary>
     public string GetRemotePath() => remotePath;
 
     public override void LoginIfIsNot(bool isInitialLogin)
@@ -71,6 +113,10 @@ public partial class FTP : FtpBase
             Login();
     }
 
+    /// <summary>
+    /// Gets list of files matching the specified mask from current FTP directory
+    /// </summary>
+    /// <param name="mask">File mask pattern</param>
     public List<string> GetFileList(string mask)
     {
         OnNewStatus("Getting file list from folder" + " " + PathSelector.ActualPath + " " + "using NLST command");

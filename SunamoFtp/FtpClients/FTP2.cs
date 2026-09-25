@@ -2,6 +2,12 @@ namespace SunamoFtp.FtpClients;
 
 public partial class FTP : FtpBase
 {
+    /// <summary>
+    /// Displays detailed SSL/TLS connection information including authentication, encryption, and certificate details.
+    /// </summary>
+    /// <param name="serverName">The name of the server being connected to</param>
+    /// <param name="sslStream">The SSL stream to retrieve information from</param>
+    /// <param name="isVerbose">Whether to display verbose certificate information</param>
     private void ShowSslInfo(string serverName, SslStream sslStream, bool isVerbose)
     {
         ShowCertificateInfo(sslStream.RemoteCertificate, isVerbose);
@@ -19,12 +25,20 @@ public partial class FTP : FtpBase
         OnNewStatus("SSL Protocol: {0}", sslStream.SslProtocol);
     }
 
-    // Convenience method that calls GetSslStream(Socket) with the clientSocket.
+    /// <summary>
+    /// Gets an SSL stream on the client socket. This is a convenience method that calls GetSslStream(Socket) with the clientSocket.
+    /// </summary>
     public void GetSslStream()
     {
         GetSslStream(clientSocket);
     }
 
+    /// <summary>
+    /// Creates an SSL stream from the specified socket and authenticates as client.
+    /// If authentication succeeds, assigns the SSL stream to stream2 (for upload) or stream (for download).
+    /// Catches and re-throws exceptions with message details.
+    /// </summary>
+    /// <param name="clientSocket">The socket to create the SSL stream from</param>
     public void GetSslStream(Socket clientSocket)
     {
         RemoteCertificateValidationCallback callback = OnCertificateValidation;
@@ -46,6 +60,11 @@ public partial class FTP : FtpBase
         ShowSslInfo(RemoteHost, sslStream, true);
     }
 
+    /// <summary>
+    /// Sets the file transfer mode on the FTP server.
+    /// Sends TYPE I command for binary mode or TYPE A command for ASCII mode.
+    /// </summary>
+    /// <param name="isBinary">True for binary mode, false for ASCII mode</param>
     public void SetBinaryMode(bool isBinary)
     {
         if (isBinary)
@@ -63,6 +82,15 @@ public partial class FTP : FtpBase
             throw new Exception(reply.Substring(4));
     }
 
+    /// <summary>
+    /// Downloads a file from the FTP server to a local file.
+    /// If the local file exists and deleteLocalIfExists is true, deletes it first.
+    /// Creates the local file if it doesn't exist, then sends RETR command and writes all received bytes.
+    /// </summary>
+    /// <param name="remFileName">The name of the remote file to download</param>
+    /// <param name="locFileName">The local file path to save to. Throws exception if null.</param>
+    /// <param name="deleteLocalIfExists">Whether to delete the local file if it already exists</param>
+    /// <returns>True if download succeeded, false if file couldn't be deleted or already exists</returns>
     public override bool Download(string remFileName, string locFileName, bool deleteLocalIfExists)
     {
         OnNewStatus("Downloading" + " " + UH.Combine(false, PathSelector.ActualPath, remFileName));
@@ -153,6 +181,15 @@ public partial class FTP : FtpBase
         return true;
     }
 
+    /// <summary>
+    /// Uploads a file to the FTP server using a secure SSL connection.
+    /// Sends PASV command, creates secure data socket, and optionally resumes from previous upload.
+    /// If resuming, sets binary mode and gets remote file size to determine offset.
+    /// Sends STOR command with file name and writes all bytes from file to the secure stream.
+    /// Closes socket and stream after upload and verifies server response.
+    /// </summary>
+    /// <param name="filePath">The path to the file to upload</param>
+    /// <param name="isResume">Whether to resume a previous upload from the last position</param>
     public void UploadSecure(string filePath, bool isResume)
     {
         var path = UH.Combine(false, PathSelector.ActualPath, filePath);
@@ -223,6 +260,11 @@ public partial class FTP : FtpBase
 #endregion
     }
 
+    /// <summary>
+    /// Lists all files and directories in the current remote directory with detailed information.
+    /// Uses FtpWebRequest with ListDirectoryDetails method.
+    /// </summary>
+    /// <returns>List of strings containing detailed directory entry information</returns>
     public override List<string> ListDirectoryDetails()
     {
         var result = new List<string>();
