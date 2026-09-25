@@ -43,16 +43,13 @@ public partial class FtpNet : FtpBase
             }
             catch (Exception ex)
             {
-                if (reader != null)
-                    reader.Dispose();
-                if (response != null)
-                    response.Dispose();
+                reader?.Dispose();
+                response?.Dispose();
                 OnNewStatus("Error get filelist" + ": " + ex.Message);
                 if (ExceptionCount == 2)
                 {
                     ExceptionCount = 0;
-                    var downloadFiles = new List<string>();
-                    return downloadFiles;
+                    return new List<string>();
                 }
                 else
                 {
@@ -61,17 +58,14 @@ public partial class FtpNet : FtpBase
             }
             finally
             {
-                if (reader != null)
-                    reader.Dispose();
-                if (response != null)
-                    response.Dispose();
+                reader?.Dispose();
+                response?.Dispose();
             }
         }
 
         {
             ExceptionCount = 0;
-            var downloadFiles = new List<string>();
-            return downloadFiles;
+            return new List<string>();
         }
     }
 
@@ -133,10 +127,6 @@ public partial class FtpNet : FtpBase
         }
     }
 
-    /// <summary>
-    /// Changes current directory on FTP server (lightweight version without full navigation)
-    /// </summary>
-    /// <param name="directoryName">Directory name to change to</param>
     public override void ChdirLite(string directoryName)
     {
         // Trim slash from end in directoryName variable
@@ -225,20 +215,16 @@ public partial class FtpNet : FtpBase
             }
             catch (Exception ex)
             {
-                if (ftpStream != null)
-                    ftpStream.Dispose();
-                if (response != null)
-                    response.Dispose();
+                ftpStream?.Dispose();
+                response?.Dispose();
                 ExceptionCount++;
                 OnNewStatus("Error creating new directory" + ": " + ex.Message);
                 return Mkdir(directoryName);
             }
             finally
             {
-                if (ftpStream != null)
-                    ftpStream.Dispose();
-                if (response != null)
-                    response.Dispose();
+                ftpStream?.Dispose();
+                response?.Dispose();
             }
         }
 

@@ -2,26 +2,14 @@ namespace SunamoFtp.FtpClients;
 
 public partial class FTP : FtpBase
 {
-    /// <summary>
-    /// Writes a message to the stream.
-    /// Converts the message to ASCII bytes and writes them to the stream.
-    /// </summary>
-    /// <param name="message">The message to write to the stream</param>
     private void WriteMsg(string message)
     {
         var encoding = new ASCIIEncoding();
-        var WriteBuffer = new byte[1024];
-        WriteBuffer = encoding.GetBytes(message);
+        var WriteBuffer = encoding.GetBytes(message);
         stream.Write(WriteBuffer, 0, WriteBuffer.Length);
     //NewStatus(" WRITE:" + message);
     }
 
-    /// <summary>
-    /// Reads a response message from the FTP server stream.
-    /// Reads all bytes from the stream until newline character is encountered.
-    /// Stores the response code in retValue and returns the entire output.
-    /// </summary>
-    /// <returns>The complete response message from the server</returns>
     private string ResponseMsg()
     {
         var encoding = new ASCIIEncoding();
@@ -49,12 +37,6 @@ public partial class FTP : FtpBase
         return retval;
     }
 
-    /// <summary>
-    /// Sends a command to the FTP server.
-    /// Converts the command to ASCII bytes, sends it via stream or socket, and reads the server's reply.
-    /// Stores the response in reply and retValue properties.
-    /// </summary>
-    /// <param name="command">The FTP command to send (without CRLF terminator)</param>
     public void SendCommand(string command)
     {
 #region Original SendCommand method
@@ -67,12 +49,6 @@ public partial class FTP : FtpBase
 #endregion
     }
 
-    /// <summary>
-    /// Sends a command to the FTP server (alternate implementation).
-    /// Identical to SendCommand - converts command to ASCII bytes, sends via stream or socket, and reads reply.
-    /// Stores the response in reply and retValue properties.
-    /// </summary>
-    /// <param name="command">The FTP command to send (without CRLF terminator)</param>
     private void SendCommand2(string command)
     {
 #region Original SendCommand method
@@ -85,14 +61,6 @@ public partial class FTP : FtpBase
 #endregion
     }
 
-    /// <summary>
-    /// Creates a data socket for passive mode FTP transfer.
-    /// Sends PASV command, parses the IP address and port from the server's reply.
-    /// Extracts the IP address parts and joins them with dots.
-    /// Calculates the port by bit-shifting the 5th part by 8 and adding the 6th part.
-    /// Creates a Socket, IPEndPoint and attempts to connect to the server.
-    /// </summary>
-    /// <returns>A connected socket ready for data transfer</returns>
     public Socket CreateDataSocket()
     {
 #region Sets passive transfer mode (PASV command)
@@ -131,7 +99,7 @@ public partial class FTP : FtpBase
 #endregion
         }
 
-        var ipAddress = parts[0] + "." + parts[1] + "." + parts[2] + "." + parts[3];
+        var ipAddress = $"{parts[0]}.{parts[1]}.{parts[2]}.{parts[3]}";
 #endregion
 #region Gets port by bit-shifting fourth IP part by 8 and adding fifth part. Creates Socket, IPEndPoint and attempts to connect to this object.
         var port = (parts[4] << 8) + parts[5];
@@ -150,10 +118,6 @@ public partial class FTP : FtpBase
 #endregion
     }
 
-    /// <summary>
-    /// Placeholder method for uploading a folder securely.
-    /// Currently empty - not implemented. Should verify that _.txt file is uploaded first.
-    /// </summary>
     public void uploadSecureFolder()
     {
         OnNewStatus("Method uploadSecureFolder was called but is empty");
@@ -187,31 +151,16 @@ public partial class FTP : FtpBase
         Rmdir(foldersToSkip, directoryName);
     }
 
-    /// <summary>
-    /// Outputs isDebug information about the current folder.
-    /// Not implemented - throws NotImplementedMethod exception.
-    /// </summary>
     public override void DebugActualFolder()
     {
         ThrowEx.NotImplementedMethod();
     }
 
-    /// <summary>
-    /// isDebug output method.
-    /// Not implemented - throws NotImplementedMethod exception.
-    /// </summary>
-    /// <param name="context">What to isDebug</param>
-    /// <param name="text">Format string for output</param>
-    /// <param name="args">Arguments for the format string</param>
     public override void WriteDebugLog(string context, string text, params object[] args)
     {
         ThrowEx.NotImplementedMethod();
     }
 
-    /// <summary>
-    /// Connects to the FTP server.
-    /// Not implemented - throws NotImplementedMethod exception.
-    /// </summary>
     public override void Connect()
     {
         ThrowEx.NotImplementedMethod();
