@@ -10,10 +10,7 @@ public static class FtpHelper
     /// </summary>
     /// <param name="folderName">Folder name to check</param>
     /// <returns>True if folder is . or ..</returns>
-    public static bool IsThisOrUp(string folderName)
-    {
-        return folderName == "." || folderName == "..";
-    }
+    public static bool IsThisOrUp(string folderName) => folderName == "." || folderName == "..";
 
     /// <summary>
     /// Checks if file with given name and length exists on FTP hosting
@@ -27,9 +24,7 @@ public static class FtpHelper
         localFilePath = Path.GetFileName(localFilePath);
         foreach (var item in ftpEntries)
         {
-            long entryFileLength = 0;
-            string entryFileName = null;
-            if (IsFile(item, out entryFileName, out entryFileLength) == FileSystemType.File)
+            if (IsFile(item, out var entryFileName, out var entryFileLength) == FileSystemType.File)
                 if (entryFileName == localFilePath)
                     if (entryFileLength == fileLength)
                         return true;
@@ -45,10 +40,8 @@ public static class FtpHelper
     /// <returns>File system type</returns>
     public static FileSystemType IsFile(string entry)
     {
-        string fileName = null;
         var tokens = entry.Split(' ').ToList();
-        var fileSystemType = IsFileShared(entry, tokens, out fileName);
-        return fileSystemType;
+        return IsFileShared(entry, tokens, out _);
     }
 
     /// <summary>
@@ -60,8 +53,7 @@ public static class FtpHelper
     public static FileSystemType IsFile(string entry, out string fileName)
     {
         var tokens = entry.Split(' ').ToList();
-        var fileSystemType = IsFileShared(entry, tokens, out fileName);
-        return fileSystemType;
+        return IsFileShared(entry, tokens, out fileName);
     }
 
     /// <summary>
@@ -116,10 +108,7 @@ public static class FtpHelper
     /// </summary>
     /// <param name="path">Path to check</param>
     /// <returns>True if path starts with ftp://</returns>
-    public static bool IsSchemaFtp(string path)
-    {
-        return path.StartsWith("ftp" + ":" + "//");
-    }
+    public static bool IsSchemaFtp(string path) => path.StartsWith("ftp" + ":" + "//");
 
     /// <summary>
     /// Extracts directory names from FTP entries list
@@ -131,8 +120,7 @@ public static class FtpHelper
         var result = new List<string>();
         foreach (var item in ftpEntries)
         {
-            string fileName = null;
-            if (IsFile(item, out fileName) == FileSystemType.Folder) result.Add(fileName);
+            if (IsFile(item, out var fileName) == FileSystemType.Folder) result.Add(fileName);
         }
 
         return result;
@@ -143,8 +131,5 @@ public static class FtpHelper
     /// </summary>
     /// <param name="remoteHost">Remote host with or without ftp:// prefix</param>
     /// <returns>Host without ftp:// prefix</returns>
-    public static string ReplaceSchemaFtp(string remoteHost)
-    {
-        return remoteHost.Replace("ftp" + ":" + "//", "");
-    }
+    public static string ReplaceSchemaFtp(string remoteHost) => remoteHost.Replace("ftp" + ":" + "//", "");
 }

@@ -33,7 +33,7 @@ internal class UH
     /// <returns>Combined path</returns>
     internal static string Combine(bool isDirectory, params string[] parts)
     {
-        var result = string.Join('/', parts).Replace("///", "/").Replace("//", "/")
+        var result = string.Join("/", parts).Replace("///", "/").Replace("//", "/")
             .TrimEnd('/').Replace(":/", "://");
         if (isDirectory) result += "/";
         return result;

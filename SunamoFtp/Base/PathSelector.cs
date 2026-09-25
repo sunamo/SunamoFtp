@@ -88,10 +88,8 @@ public class PathSelector
     /// </summary>
     /// <param name="path">Path string to divide</param>
     /// <returns>List of path tokens</returns>
-    public List<string> DivideToTokens(string path)
-    {
-        return path.Split(new[] { Delimiter }, StringSplitOptions.RemoveEmptyEntries).ToList();
-    }
+    public List<string> DivideToTokens(string path) =>
+        path.Split(new[] { Delimiter }, StringSplitOptions.RemoveEmptyEntries).ToList();
 
     /// <summary>
     /// Removes the last token from path without validation (forced removal)
@@ -117,10 +115,7 @@ public class PathSelector
     /// Gets the last token in the current path
     /// </summary>
     /// <returns>Last path token</returns>
-    public string GetLastToken()
-    {
-        return Tokens[Count - 1];
-    }
+    public string GetLastToken() => Tokens[Count - 1];
 
     /// <summary>
     /// Adds a new token to the end of the current path

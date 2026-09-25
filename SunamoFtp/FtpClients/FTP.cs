@@ -104,10 +104,7 @@ public partial class FTP : FtpBase
     /// <summary>
     /// Gets current remote directory.
     /// </summary>
-    public string GetRemotePath()
-    {
-        return remotePath;
-    }
+    public string GetRemotePath() => remotePath;
 
     public override void LoginIfIsNot(bool isInitialLogin)
     {
