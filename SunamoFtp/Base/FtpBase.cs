@@ -152,10 +152,7 @@ public abstract partial class FtpBase : FtpAbstract
     /// Gets the current FTP path including host and port
     /// </summary>
     /// <returns>Full FTP path</returns>
-    public string GetActualPath()
-    {
-        return UH.Combine(true, RemoteHost + ":" + RemotePort, PathSelector.ActualPath);
-    }
+    public string GetActualPath() => UH.Combine(true, RemoteHost + ":" + RemotePort, PathSelector.ActualPath);
 
     /// <summary>
     /// Gets the FTP path for specified directory/file name appended to current path
@@ -211,8 +208,5 @@ public abstract partial class FtpBase : FtpAbstract
     /// <param name="localFolder">Local folder path to upload</param>
     /// <param name="working">Working state tracker to allow cancellation</param>
     /// <returns>True if all files and folders were uploaded successfully</returns>
-    public bool UploadFolderRek(string localFolder, IWorking working)
-    {
-        return UploadFolderShared(localFolder, true, working);
-    }
+    public bool UploadFolderRek(string localFolder, IWorking working) => UploadFolderShared(localFolder, true, working);
 }

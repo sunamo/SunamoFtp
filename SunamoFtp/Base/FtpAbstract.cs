@@ -102,10 +102,7 @@ public abstract class FtpAbstract
     /// Gets remote host address
     /// </summary>
     /// <returns>Remote host address</returns>
-    public string GetRemoteHost()
-    {
-        return RemoteHost;
-    }
+    public string GetRemoteHost() => RemoteHost;
 
     /// <summary>
     /// Sets remote server port
@@ -120,10 +117,7 @@ public abstract class FtpAbstract
     /// Gets port used for remote transfer
     /// </summary>
     /// <returns>Port number</returns>
-    public int GetRemotePort()
-    {
-        return RemotePort;
-    }
+    public int GetRemotePort() => RemotePort;
 
     /// <summary>
     /// Sets remote username

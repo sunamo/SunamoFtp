@@ -38,16 +38,14 @@ public partial class FtpNet : FtpBase
             }
             catch (Exception ex)
             {
-                if (response != null)
-                    response.Dispose();
+                response?.Dispose();
                 ExceptionCount++;
                 OnNewStatus("Command LIST error" + ": " + ex.Message);
                 return ListDirectoryDetails();
             }
             finally
             {
-                if (response != null)
-                    response.Dispose();
+                response?.Dispose();
             }
 
             ExceptionCount = 0;
@@ -95,22 +93,16 @@ public partial class FtpNet : FtpBase
                 //result = false;
                 ExceptionCount++;
                 OnNewStatus("Error delete file" + ": " + ex.Message);
-                if (sr != null)
-                    sr.Dispose();
-                if (datastream != null)
-                    datastream.Dispose();
-                if (response != null)
-                    response.Dispose();
+                sr?.Dispose();
+                datastream?.Dispose();
+                response?.Dispose();
                 return DeleteRemoteFile(fileName);
             }
             finally
             {
-                if (sr != null)
-                    sr.Dispose();
-                if (datastream != null)
-                    datastream.Dispose();
-                if (response != null)
-                    response.Dispose();
+                sr?.Dispose();
+                datastream?.Dispose();
+                response?.Dispose();
             }
 
             ExceptionCount = 0;
@@ -149,19 +141,15 @@ public partial class FtpNet : FtpBase
             catch (Exception ex)
             {
                 OnNewStatus("Error get filesize" + ": " + ex.Message);
-                if (ftpStream != null)
-                    ftpStream.Dispose();
-                if (response != null)
-                    response.Dispose();
+                ftpStream?.Dispose();
+                response?.Dispose();
                 ExceptionCount++;
                 return GetFileSize(fileName);
             }
             finally
             {
-                if (ftpStream != null)
-                    ftpStream.Dispose();
-                if (response != null)
-                    response.Dispose();
+                ftpStream?.Dispose();
+                response?.Dispose();
             }
 
             ExceptionCount = 0;
@@ -240,23 +228,17 @@ public partial class FtpNet : FtpBase
             catch (Exception ex)
             {
                 OnNewStatus("Error download file" + ": " + ex.Message);
-                if (ftpStream != null)
-                    ftpStream.Dispose();
-                if (outputStream != null)
-                    outputStream.Dispose();
-                if (response != null)
-                    response.Dispose();
+                ftpStream?.Dispose();
+                outputStream?.Dispose();
+                response?.Dispose();
                 ExceptionCount++;
                 return Download(remFileName, locFileName, deleteLocalIfExists);
             }
             finally
             {
-                if (ftpStream != null)
-                    ftpStream.Dispose();
-                if (outputStream != null)
-                    outputStream.Dispose();
-                if (response != null)
-                    response.Dispose();
+                ftpStream?.Dispose();
+                outputStream?.Dispose();
+                response?.Dispose();
             }
 
             ExceptionCount = 0;
@@ -266,4 +248,4 @@ public partial class FtpNet : FtpBase
         ExceptionCount = 0;
         return false;
     }
-    }
+}

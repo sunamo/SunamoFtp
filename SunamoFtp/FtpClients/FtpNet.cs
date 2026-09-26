@@ -78,10 +78,8 @@ public partial class FtpNet : FtpBase
             }
             finally
             {
-                if (ftpStream != null)
-                    ftpStream.Dispose();
-                if (response != null)
-                    response.Dispose();
+                ftpStream?.Dispose();
+                response?.Dispose();
             }
         }
 
@@ -119,23 +117,17 @@ public partial class FtpNet : FtpBase
             catch (Exception ex)
             {
                 ExceptionCount++;
-                if (sr != null)
-                    sr.Dispose();
-                if (datastream != null)
-                    datastream.Dispose();
-                if (response != null)
-                    response.Dispose();
+                sr?.Dispose();
+                datastream?.Dispose();
+                response?.Dispose();
                 OnNewStatus("Error delete folder" + ": " + ex.Message);
                 return Rmdir(foldersToSkip, directoryName);
             }
             finally
             {
-                if (sr != null)
-                    sr.Dispose();
-                if (datastream != null)
-                    datastream.Dispose();
-                if (response != null)
-                    response.Dispose();
+                sr?.Dispose();
+                datastream?.Dispose();
+                response?.Dispose();
             }
 
             ExceptionCount = 0;

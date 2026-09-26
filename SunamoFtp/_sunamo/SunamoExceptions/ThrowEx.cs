@@ -38,7 +38,7 @@ internal partial class ThrowEx
     /// <returns>Full qualified method name</returns>
     static string FullNameOfExecutedCode(object type, string methodName, bool isFromThrowEx = false)
     {
-        if (methodName == null)
+        if (methodName is null)
         {
             int depth = 2;
             if (isFromThrowEx)
@@ -78,7 +78,7 @@ internal partial class ThrowEx
     /// <returns>True if exception would be thrown</returns>
     internal static bool ThrowIsNotNull(string? exception, bool isReallyThrow = true)
     {
-        if (exception != null)
+        if (exception is not null)
         {
             Debugger.Break();
             if (isReallyThrow)

@@ -214,8 +214,7 @@ public partial class FTP : FtpBase
 
         foreach (var item in ftpEntries)
         {
-            string fileName = null;
-            if (FtpHelper.IsFile(item, out fileName) == FileSystemType.Folder)
+            if (FtpHelper.IsFile(item, out var fileName) == FileSystemType.Folder)
                 if (fileName == directoryName)
                 {
                     directoryFound = true;

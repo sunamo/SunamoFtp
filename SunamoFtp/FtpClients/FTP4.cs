@@ -10,8 +10,7 @@ public partial class FTP : FtpBase
     private void WriteMsg(string message)
     {
         var encoding = new ASCIIEncoding();
-        var WriteBuffer = new byte[1024];
-        WriteBuffer = encoding.GetBytes(message);
+        var WriteBuffer = encoding.GetBytes(message);
         stream.Write(WriteBuffer, 0, WriteBuffer.Length);
     //NewStatus(" WRITE:" + message);
     }
@@ -131,7 +130,7 @@ public partial class FTP : FtpBase
 #endregion
         }
 
-        var ipAddress = parts[0] + "." + parts[1] + "." + parts[2] + "." + parts[3];
+        var ipAddress = $"{parts[0]}.{parts[1]}.{parts[2]}.{parts[3]}";
 #endregion
 #region Gets port by bit-shifting fourth IP part by 8 and adding fifth part. Creates Socket, IPEndPoint and attempts to connect to this object.
         var port = (parts[4] << 8) + parts[5];

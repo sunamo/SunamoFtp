@@ -128,11 +128,7 @@ public class FtpDllWrapper : FtpBaseNew
     /// </summary>
     /// <param name="path">File path to upload</param>
     public override
-#if ASYNC
         async Task
-#else
-void
-#endif
         UploadFile(string path)
     {
         ThrowEx.NotImplementedMethod();
