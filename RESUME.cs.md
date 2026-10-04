@@ -1,7 +1,10 @@
 ---
-schema_version: 10
+schema_version: 11
 type: my-library
+category_override: none
 file_count: 95
+file_extensions: cs:34, noext:26, ps1:10, md:9, csproj:3, txt:2, janappdatalocaltempclaude-1374-cwd:1, janappdatalocaltempclaude-2668-cwd:1, janappdatalocaltempclaude-4cb5-cwd:1, janappdatalocaltempclaude-5469-cwd:1, janappdatalocaltempclaude-6bd6-cwd:1, janappdatalocaltempclaude-9a3b-cwd:1, janappdatalocaltempclaude-c111-cwd:1, janappdatalocaltempclaude-d203-cwd:1, janappdatalocaltempclaude-f5d0-cwd:1, json:1, slnx:1, yml:1
+file_extensions_updated: 2026-10-04
 avg_lines_per_file: 84
 total_lines: 4659
 metrics_lm: 2026-10-04 15:59:59
