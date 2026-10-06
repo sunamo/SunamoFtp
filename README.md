@@ -1,5 +1,10 @@
 # SunamoFtp
 
+## Short description
+
+Klientská knihovna pro FTP: třídy FtpHelper, FTP, FtpNet, FtpDllWrapper a CustomFtpCommands zajišťují připojení, nastavení hostitele a přihlášení, nahrávání a stahování souborů. Obsahuje také výběr cest (PathSelector) a základní typy souborového systému. Součástí je Runner a testy.
+
+
 Base classes and infrastructure for FTP clients
 
 ## Overview

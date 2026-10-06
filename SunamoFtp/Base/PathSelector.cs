@@ -1,26 +1,14 @@
 namespace SunamoFtp.Base;
 
-/// <summary>
-/// Manages path navigation and tokenization for FTP operations
-/// </summary>
 public class PathSelector
 {
     private readonly bool firstTokenMustExists;
 
-    /// <summary>
-    /// Index of the first valid token (0 for relative paths, 1 for absolute paths)
-    /// </summary>
     public int IndexZero;
 
-    /// <summary>
-    /// List of path Tokens split by delimiter
-    /// </summary>
     public List<string> Tokens = new();
 
-    /// <summary>
-    /// Initializes path selector with initial directory. Works with both \ and / delimiters.
-    /// </summary>
-    /// <param name="initialDirectory">Initial directory path (e.g., C:\, www, or any root folder)</param>
+    // Works with both \ and / delimiters.
     public PathSelector(string initialDirectory)
     {
         if (initialDirectory.Contains(":\\") || initialDirectory != "") firstTokenMustExists = true;
@@ -47,26 +35,14 @@ public class PathSelector
         ActualPath = initialDirectory;
     }
 
-    /// <summary>
-    /// Path delimiter character (\ for Windows paths, / for FTP paths)
-    /// </summary>
     public string Delimiter { get; } = "";
 
-    /// <summary>
-    /// First token in the path (e.g., drive letter for Windows, root folder for FTP)
-    /// </summary>
     public string FirstToken { get; } = "";
 
     private int Count => Tokens.Count;
 
-    /// <summary>
-    /// Indicates whether it's possible to navigate to parent folder
-    /// </summary>
     public bool CanGoToUpFolder => Count > IndexZero;
 
-    /// <summary>
-    /// Gets or sets the current path as a delimited string
-    /// </summary>
     public string ActualPath
     {
         get
@@ -91,18 +67,11 @@ public class PathSelector
     public List<string> DivideToTokens(string path) =>
         path.Split(new[] { Delimiter }, StringSplitOptions.RemoveEmptyEntries).ToList();
 
-    /// <summary>
-    /// Removes the last token from path without validation (forced removal)
-    /// </summary>
     public void RemoveLastTokenForce()
     {
         Tokens.RemoveAt(Count - 1);
     }
 
-    /// <summary>
-    /// Removes the last token from path with validation (throws if at root level)
-    /// </summary>
-    /// <exception cref="Exception">Thrown when attempting to go above root folder</exception>
     public void RemoveLastToken()
     {
         if (CanGoToUpFolder)
@@ -117,10 +86,6 @@ public class PathSelector
     /// <returns>Last path token</returns>
     public string GetLastToken() => Tokens[Count - 1];
 
-    /// <summary>
-    /// Adds a new token to the end of the current path
-    /// </summary>
-    /// <param name="token">Token to add</param>
     public void AddToken(string token)
     {
         Tokens.Add(token);
