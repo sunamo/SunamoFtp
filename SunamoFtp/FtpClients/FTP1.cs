@@ -152,7 +152,7 @@ public partial class FTP : FtpBase
     public void Login()
     {
         OnNewStatus("Logging in to FTP Server");
-#region If not connected, přihlásím se to server bez uživatele
+#region If not connected, I log in to the server without a user
         try
         {
             if (clientSocket == null || clientSocket.Connected == false)
@@ -176,7 +176,7 @@ public partial class FTP : FtpBase
         }
 
 #endregion
-#region Hodnota 230 znamená že mohu pokračovat bez hesla. Pokud ne, pošlu své heslo příkazem PASS
+#region The value 230 means I can continue without a password. If not, I send my password with the PASS command
         var bad = false;
         if (retValue != 230)
         {

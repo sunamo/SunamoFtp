@@ -29,8 +29,8 @@ public partial class FtpNet : FtpBase
         {
             PathSelector.ActualPath = "";
             var tokens = SHSplit.Split(remoteFolder, PathSelector.Delimiter);
-            var pridat = 0;
-            for (var i = 0 + pridat; i < tokens.Count; i++)
+            var add = 0;
+            for (var i = 0 + add; i < tokens.Count; i++)
                 CreateDirectoryIfNotExists(tokens[i]);
         }
     }

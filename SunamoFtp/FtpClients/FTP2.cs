@@ -88,14 +88,14 @@ public partial class FTP : FtpBase
         }
 
         var resume = false;
-#region Pokud nejsem přihlášený, přihlásím se to nastavím binární mód
+#region If I am not logged in, I log in and set binary mode
         if (string.IsNullOrEmpty(locFileName))
             throw new Exception("You must specify a file name to download to");
         if (!IsLoggedIn)
             Login();
         SetBinaryMode(true);
 #endregion
-#region Pokud neexistuje, vytvořím jej a hned zavřu. Načtu jej do FS text FileMode Open
+#region If it does not exist, I create it and close it immediately. I load it into FS text FileMode Open
         OnNewStatus("Downloading file" + " " + remFileName + " " + "from" + " " + RemoteHost + "/" + remotePath);
         if (!File.Exists(locFileName))
         {
@@ -109,7 +109,7 @@ public partial class FTP : FtpBase
         long offset = 0;
         if (resume)
         {
-#region Pokud otevřený soubor nemá velikost 0, pošlu příkaz REST čímž nastavím offset
+#region If the opened file does not have size 0, I send the REST command to set the offset
             offset = downloadStream.Length;
             if (offset > 0)
             {
@@ -119,7 +119,7 @@ public partial class FTP : FtpBase
             }
 
 #endregion
-#region Pokud budeme navazovat, posunu v otevřeném souboru to konec
+#region If we are resuming, I move to the end of the opened file
             if (offset > 0)
             {
                 if (isDebug)
@@ -130,7 +130,7 @@ public partial class FTP : FtpBase
 #endregion
         }
 
-#region Pošlu příkaz RETR a všechny přijaté bajty zapíšu
+#region I send the RETR command and write all received bytes
         SendCommand("RETR" + " " + UH.GetFileName(remFileName));
         if (!(retValue == 150 || retValue == 125))
             throw new Exception(reply.Substring(4));
@@ -157,14 +157,14 @@ public partial class FTP : FtpBase
     {
         var path = UH.Combine(false, PathSelector.ActualPath, filePath);
         OnUploadingNewStatus(path);
-#region Pošlu příkaz PASV a příhlásím se pokud nejsem
+#region I send the PASV command and log in if I am not logged in
         SendCommand("PASV");
         if (retValue != 227)
             throw new Exception(reply.Substring(4));
         if (!IsLoggedIn)
             Login();
 #endregion
-#region Získám socket, z něho stream a pokud navazuzuji, pokusím se nastavit binární mód a offset podle toho kolik dat už to serveru bylo.
+#region I get the socket, from it the stream, and if I am resuming, I try to set binary mode and the offset according to how much data was already sent to the server.
         var clientSocket = CreateDataSocket();
         isUpload = true;
         GetSslStream(clientSocket);
@@ -181,7 +181,7 @@ public partial class FTP : FtpBase
             }
 
 #endregion
-#region Pokud je tam nějaký offset, pošlu opět příkaz rest text offsetem, abych nastavil od čeho budu uploadovat
+#region If there is an offset, I send the rest command with the offset again to set where to upload from
         if (offset > 0)
         {
             SendCommand("REST" + " " + offset);
@@ -190,7 +190,7 @@ public partial class FTP : FtpBase
         }
 
 #endregion
-#region Pošlu příkaz STOR text jménem souboru a zapíšu všechny bajty z souboru do bufferu byte[]
+#region I send the STOR command with the file name and write all bytes from the file into a byte[] buffer
         SendCommand("STOR" + " " + Path.GetFileName(filePath));
         if (!(retValue == 125 || retValue == 150))
             throw new Exception(reply.Substring(4));
@@ -199,7 +199,7 @@ public partial class FTP : FtpBase
         input.Read(fileBuffer, 0, fileBuffer.Length);
         input.Close();
 #endregion
-#region Nastavím offset v lokálním souboru.  I když nevím prož když pak uploaduji M stream2.Write text offsetem 0. Zavřu socket i proud a přečtu odpověď serveru. Pokud nebyla 226 nebo 250, VV
+#region I set the offset in the local file. Although I do not know why, since I then upload with M stream2.Write text with offset 0. I close the socket and the stream and read the server response. If it was not 226 or 250, VV
         if (offset != 0)
         {
             if (isDebug)

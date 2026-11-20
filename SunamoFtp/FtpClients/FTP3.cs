@@ -5,13 +5,13 @@ public partial class FTP : FtpBase
     public void Upload(string filePath, bool resume, byte[] buffer)
     {
         OnNewStatus("Uploading" + " " + UH.Combine(false, PathSelector.ActualPath, filePath));
-#region Tento kód mi nedovolil často nauploadovat ani jeden soubor, takže ho nahradím speciálními třídami .net
-#region Pokud nejsem nalogovaný, přihlásím se.
+#region This code did not let me upload even a single file often, so I replace it with special .net classes
+#region If I am not logged in, I log in.
         if (!IsLoggedIn)
             Login();
         SendCommand("PASV");
 #endregion
-#region Pokud mám navazovat, zjistím si veliksot vzdáleného souboru.
+#region If I am to resume, I find out the size of the remote file.
         var clientSocket = CreateDataSocket();
         long offset = 0;
         isUpload = true;
@@ -39,7 +39,7 @@ public partial class FTP : FtpBase
         if (!(retValue == 125 || retValue == 150))
             throw new Exception(reply.Substring(4));
 #endregion
-#region Pokud byl offset, seeknu se v souboru a čtu bajty a zapisuji je to server metodou clientSocket.Send
+#region If there was an offset, I seek in the file, read the bytes and write them to the server using clientSocket.Send
         // open input stream to read source file
         var input = new FileStream(filePath, FileMode.Open);
         if (offset != 0)
@@ -54,7 +54,7 @@ public partial class FTP : FtpBase
             clientSocket.Send(buffer, bytes, 0);
         input.Close();
 #endregion
-#region Pokud jsem připojený, zavřu objekt clientSocket a zavřu návratovou hodnotu
+#region If I am connected, I close the clientSocket object and close the return value
         if (clientSocket.Connected)
             clientSocket.Close();
         ReadReply();
