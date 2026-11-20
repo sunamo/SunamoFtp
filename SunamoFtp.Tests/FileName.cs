@@ -1,4 +1,3 @@
-// variables names: ok
 using Limilabs.FTP.Client;
 using SunamoFtp.FtpClients;
 using SunamoFtp.Other;
