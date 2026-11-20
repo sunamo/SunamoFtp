@@ -170,7 +170,6 @@ public partial class FtpNet : FtpBase
         {
             if (Mkdir(directoryName))
             {
-            //this.remotePath = directoryName;
             }
         }
         else
@@ -199,7 +198,6 @@ public partial class FtpNet : FtpBase
             Stream ftpStream = null;
             try
             {
-                // directoryName = name of the directory to create.
                 var uri = new Uri(GetActualPath(directoryName));
                 reqFTP = (FtpWebRequest)WebRequest.Create(uri);
                 reqFTP.Method = WebRequestMethods.Ftp.MakeDirectory;

@@ -7,7 +7,6 @@ public partial class FTP : FtpBase
         var encoding = new ASCIIEncoding();
         var WriteBuffer = encoding.GetBytes(message);
         stream.Write(WriteBuffer, 0, WriteBuffer.Length);
-    //NewStatus(" WRITE:" + message);
     }
 
     private string ResponseMsg()
@@ -32,7 +31,6 @@ public partial class FTP : FtpBase
             };
         };
         var retval = encoding.GetString(serverbuff, 0, count);
-        //NewStatus(" READ:" + retval);
         retValue = int.Parse(retval.Substring(0, 3));
         return retval;
     }

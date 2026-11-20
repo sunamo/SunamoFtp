@@ -132,7 +132,6 @@ public partial class FtpNet : FtpBase
     {
         i++;
         var toDelete = ListDirectoryDetails();
-        //bool pridano = false;
         directoriesToDelete.Add(new DirectoriesToDeleteFtp { Depth = i });
         Dictionary<string, List<string>> directoryMap = null;
         foreach (var item in directoriesToDelete)
@@ -149,14 +148,12 @@ public partial class FtpNet : FtpBase
                 {
                     directoryMap = new Dictionary<string, List<string>>();
                 }
-            //directoryMap = ;
             }
 
         for (var itemIndex = 0; itemIndex < directoriesToDelete.Count; itemIndex++)
         {
             var item = directoriesToDelete[itemIndex];
             if (item.Depth == i)
-                //directoryMap.Add(PathSelector.ActualPath, new List<string>());
                 foreach (var item2 in toDelete)
                 {
                     var fn = "";
@@ -178,12 +175,10 @@ public partial class FtpNet : FtpBase
                     {
                         PathSelector.AddToken(fn);
                         directoryMap.Add(PathSelector.ActualPath, new List<string>());
-                        //pridano = true;
                         DeleteRecursively(foldersToSkip, fn, i, directoriesToDelete);
                     }
                 ////DebugLogger.Instance.WriteLine(item2);
                 }
-        //item.Directories.Add(directoryMap);
         }
 
         if (true)

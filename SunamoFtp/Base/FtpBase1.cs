@@ -50,7 +50,6 @@ public abstract partial class FtpBase : FtpAbstract
                             entries.Add(item);
                             result.Add(actualPath, entries);
                         }
-                    //getFSEntriesListRecursively(foldersToSkip, visitedFolders, result, PathSelector.ActualPath,extractedFolderName);
                     }
                 }
                 else
@@ -61,13 +60,11 @@ public abstract partial class FtpBase : FtpAbstract
 
             if (PathSelector.CanGoToUpFolder)
                 GoToUpFolder();
-        //PathSelector.RemoveLastToken();
         }
         else
         {
             NewStatus("Folder" + " " + nextPath + " " + "has already been visited", []);
         }
-    //PathSelector.ActualPath = p;
     }
 
     public void Download(string remFileName, string locFileName)
@@ -81,7 +78,6 @@ public abstract partial class FtpBase : FtpAbstract
         var uploadPath = UH.Combine(false, RemoteHost + ":" + RemotePort + "/", UH.Combine(true, PathSelector.ActualPath, Path.GetFileName(filePath)));
         if (ReallyUpload)
             UploadFileMain(filePath, uploadPath);
-    //MainWindow.FileUploaded(fileName);
     }
 
     public bool UploadFile(string filePath, string actualFtpPath)

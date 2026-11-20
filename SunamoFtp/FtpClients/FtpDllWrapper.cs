@@ -36,13 +36,10 @@ public class FtpDllWrapper : FtpBaseNew
 
     public override void DebugActualFolder()
     {
-        //InitApp.Logger.WriteLine("Actual directory" + ":", Client.GetCurrentFolder());
     }
 
     public override void DebugAllEntries()
     {
-        //InitApp.Logger.WriteLine("All file entries" + ":");
-        //Client.GetList().ForEach(d => InitApp.Logger.WriteLine(d.Name));
     }
 
     public override void DebugDirChmod(string directoryName)

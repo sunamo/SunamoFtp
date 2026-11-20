@@ -31,7 +31,6 @@ public partial class FTP : FtpBase
     }
 
     // current remote directory.
-     //string remotePath;
     private string remotePath
     {
         get => PathSelector.ActualPath;
@@ -52,9 +51,7 @@ public partial class FTP : FtpBase
         {
             if (PathSelector.ActualPath != ftpClient.WwwSlash)
                 while (PathSelector.CanGoToUpFolder)
-                    //PathSelector.RemoveLastToken();
                     GoToUpFolder();
-        //ChdirLite("www");
         }
         else
         {

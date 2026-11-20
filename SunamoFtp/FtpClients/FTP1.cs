@@ -44,7 +44,6 @@ public partial class FTP : FtpBase
                         entries.Add(item + "/");
                         result.Add(actualPath, entries);
                     }
-                //GetFSEntriesListRecursively(foldersToSkip, visitedFolders, result, PathSelector.ActualPath, folderName);
                 }
             }
             else
@@ -152,7 +151,6 @@ public partial class FTP : FtpBase
 
     public void Login()
     {
-        //SslStream sslStream = new SslStream(client.GetStream(), false);
         OnNewStatus("Logging in to FTP Server");
 #region If not connected, přihlásím se to server bez uživatele
         try
@@ -164,7 +162,6 @@ public partial class FTP : FtpBase
         {
             OnNewStatus("Couldn't connect to remote server" + ": " + ex.Message);
             return;
-        //throw new Exception("Couldn't connect to remote server" + ": " + ex.Message);
         }
 
 #endregion
@@ -190,7 +187,6 @@ public partial class FTP : FtpBase
             {
                 Cleanup();
                 bad = true;
-            //throw new Exception(reply.Substring(4));
             }
         }
 

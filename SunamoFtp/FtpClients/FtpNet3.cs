@@ -48,7 +48,6 @@ public partial class FtpNet : FtpBase
                         entries.Add(item + "/");
                         result.Add(actualPath, entries);
                     }
-                //GetFSEntriesListRecursively(foldersToSkip, visitedFolders, result, PathSelector.ActualPath, folderName);
                 }
             }
             else

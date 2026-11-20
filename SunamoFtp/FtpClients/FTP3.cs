@@ -127,7 +127,6 @@ public partial class FTP : FtpBase
             Mkdir(directoryName);
         else
             ChdirLite(directoryName);
-    //PathSelector.AddToken(directoryName);
     }
 
     public override void ChdirLite(string directoryName)
@@ -173,7 +172,6 @@ public partial class FTP : FtpBase
         {
             if (Mkdir(directoryName))
             {
-            //this.remotePath = directoryName;
             }
         }
         else

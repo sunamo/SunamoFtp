@@ -6,14 +6,12 @@ public abstract partial class FtpBase : FtpAbstract
     {
         PathSelector = new PathSelector("");
         RemoteHost = string.Empty;
-        //remotePath = ".";
         RemoteUser = string.Empty;
         RemotePass = string.Empty;
         RemotePort = 21;
         IsLoggedIn = false;
     }
 
-    //public abstract void DeleteRecursively(List<string> foldersToSkip, string directoryName, int i, List<DirectoriesToDelete> directoriesToDelete);
     public void OnNewStatusNewFolder()
     {
         NewStatus("New folder is" + " " + PathSelector.ActualPath, []);
@@ -70,7 +68,6 @@ public abstract partial class FtpBase : FtpAbstract
             catch (Exception ex)
             {
                 ExceptionCount++;
-                //CleanUp.Streams(ftpStream, fileStream);
                 ftpStream.Dispose();
                 fileStream.Dispose();
                 OnNewStatus("Upload file error" + ": " + ex.Message);
@@ -78,7 +75,6 @@ public abstract partial class FtpBase : FtpAbstract
             }
             finally
             {
-                //CleanUp.Streams(ftpStream, fileStream);
                 ftpStream.Dispose();
                 fileStream.Dispose();
             }

@@ -90,7 +90,6 @@ public partial class FtpNet : FtpBase
             }
             catch (Exception ex)
             {
-                //result = false;
                 ExceptionCount++;
                 OnNewStatus("Error delete file" + ": " + ex.Message);
                 sr?.Dispose();
