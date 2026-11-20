@@ -5,7 +5,7 @@ public partial class FtpNet : FtpBase
     public override void LoginIfIsNot(bool isInitialLogin)
     {
         this.IsInitialLogin = isInitialLogin;
-    // Není potřeba se přihlašovat, přihlašovácí údaje posílám při každém příkazu
+    // No need to sign in, I send the credentials with every command
     }
 
     public override void GoToPath(string remoteFolder)
@@ -37,7 +37,7 @@ public partial class FtpNet : FtpBase
 
     /// <summary>
     ///     RENAME
-    ///     Pošlu příkaz RNFR A1 a když bude odpoveď 350, tak RNTO
+    ///     I send the command RNFR A1 and if the response is 350, then RNTO
     /// </summary>
     /// <param name = "oldFileName"></param>
     /// <param name = "newFileName"></param>

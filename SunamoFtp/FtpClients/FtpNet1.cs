@@ -7,10 +7,10 @@ public partial class FtpNet : FtpBase
     ///     NLST
     ///     Returns only file names, without folders or links
     ///     If not logged in, log in using login method
-    ///     Vytvořím objekt Socket metodou CreateDataSocket ze které budu přidávat znaky
-    ///     Zavolám příkaz NLST s A1,
-    ///     Skrz objekt Socket získám bajty, které okamžitě přidávám do řetězce
-    ///     Odpověď získám M ReadReply a G
+    ///     I create a Socket object with the CreateDataSocket method, to which I will add characters
+    ///     I call the NLST command with A1,
+    ///     Through the Socket object I get bytes, which I immediately append to the string
+    ///     I get the reply through M ReadReply and G
     /// </summary>
     /// <param name = "mask"></param>
     public List<string> GetFileList(string mask)
@@ -184,7 +184,7 @@ public partial class FtpNet : FtpBase
     /// <summary>
     ///     OK
     ///     MKD
-    ///     Vytvoří v akt. složce A1 adresář A1 příkazem MKD
+    ///     Creates directory A1 in the current folder A1 using the MKD command
     /// </summary>
     /// <param name = "directoryName"></param>
     public override bool Mkdir(string directoryName)

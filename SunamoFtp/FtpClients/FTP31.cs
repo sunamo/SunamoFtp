@@ -4,28 +4,28 @@ public partial class FTP : FtpBase
 {
     private string ReadLine()
     {
-        // Zjistím si bajty z O clientSocket nebo stream a převedu je to ASCII string
+        // I get the bytes from O clientSocket or stream and convert them to an ASCII string
         while (true)
         {
-            // Zjistím si bajty
+            // I get the bytes
             if (useStream)
                 bytes = stream.Read(buffer, buffer.Length, 0);
             else
-                // TODO: Tento řádek způsobuje chybu při ukončení po dlouhé nečinnosti
+                // TODO: This line causes an error on shutdown after a long idle period
                 bytes = clientSocket.Receive(buffer, buffer.Length, 0);
-            // Ty převedu to string metodou ASCII.GetString. Pokud bylo načteno bajtů méně než je velikost bufferu, breaknu to
+            // I convert them to string with the ASCII.GetString method. If fewer bytes were read than the buffer size, I break
             message += ASCII.GetString(buffer, 0, bytes);
             if (bytes < buffer.Length)
                 break;
         }
 
         var mess = SHSplit.SplitChar(message, '\n');
-        // Rozdělím získaný string \n a vezmu předposlední prvek, nebo první, který pak vrátím
+        // I split the obtained string by \n and take the second-to-last element, or the first one, which I then return
         if (message.Length > 2)
             message = mess[mess.Count - 2];
         else
             message = mess[0];
-        //Když to 3. straně není mezera, zavolám tuto M znovu
+        // If the 3rd side is not a space, I call this M again
         if (!message.Substring(3, 1).Equals(""))
             return ReadLine();
         if (isDebug)

@@ -31,7 +31,7 @@ public partial class FTP : FtpBase
             else if (firstChar == 'd')
             {
                 var folderName = SHJoin.JoinFromIndex(8, ' ', item.Split(new[] { " " }, StringSplitOptions.RemoveEmptyEntries).ToList());
-                ////DebugLogger.Instance.WriteLine("Název alba22: " + folderName);
+                //// DebugLogger.Instance.WriteLine("Album name22: " + folderName);
                 if (!FtpHelper.IsThisOrUp(folderName))
                 {
                     if (result.ContainsKey(actualPath))
@@ -55,7 +55,7 @@ public partial class FTP : FtpBase
         if (PathSelector.IndexZero > 0)
         {
             SetRemotePath(ftpClient.WwwSlash);
-            // TODO: Zatím mi to bude stačit jen o 1 úrověň výše
+            // TODO: For now it is enough for me to go up just 1 level
             if (PathSelector.IndexZero == 1)
             {
                 GoToUpFolderForce();

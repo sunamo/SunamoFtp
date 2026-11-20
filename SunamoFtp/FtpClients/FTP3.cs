@@ -214,7 +214,7 @@ public partial class FTP : FtpBase
         }
     }
 
-    // Zavřu, nulluji clientSocket a nastavím IsLoggedIn to false.
+    // I close and null clientSocket and set IsLoggedIn to false.
     private void Cleanup()
     {
         if (clientSocket != null)

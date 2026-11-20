@@ -61,8 +61,8 @@ public partial class FtpNet : FtpBase
 
     /// <summary>
     ///     OK
-    ///     Tuto metodu nepoužívej, protože fakticky způsobuje neošetřenou výjimku, pokud již cesta bude skutečně / a a nebude
-    ///     moci se přesunout nikde výš
+    ///     Do not use this method, because it effectively causes an unhandled exception if the path is actually / and will not be
+    ///     to be able to move nowhere higher
     /// </summary>
     public override void GoToUpFolderForce()
     {
