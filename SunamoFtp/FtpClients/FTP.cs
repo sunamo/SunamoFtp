@@ -1,5 +1,8 @@
 namespace SunamoFtp.FtpClients;
 
+/// <summary>
+/// Represents the FTP type.
+/// </summary>
 public partial class FTP : FtpBase
 {
     private static readonly int BLOCK_SIZE = 1024;
@@ -24,6 +27,10 @@ public partial class FTP : FtpBase
     // Indicates whether to use stream (binary transfer) instead of clientSocket (ASCII conversion)
     private bool useStream;
 
+    /// <summary>
+    /// Initializes a new instance of the FTP class.
+    /// </summary>
+    /// <param name="ftpClient">The ftp client.</param>
     public FTP(IFtpClientExt ftpClient)
     {
         this.ftpClient = ftpClient;
@@ -39,11 +46,19 @@ public partial class FTP : FtpBase
         }
     }
 
+    /// <summary>
+    /// Set use stream.
+    /// </summary>
+    /// <param name="useBinaryMode">The use binary mode.</param>
     public void SetUseStream(bool useBinaryMode)
     {
         useStream = useBinaryMode;
     }
 
+    /// <summary>
+    /// Set remote path.
+    /// </summary>
+    /// <param name="remotePath">The remote path.</param>
     public void SetRemotePath(string remotePath)
     {
         OnNewStatus("FTP path set to" + " " + remotePath);
@@ -64,6 +79,10 @@ public partial class FTP : FtpBase
     /// </summary>
     public string GetRemotePath() => remotePath;
 
+    /// <summary>
+    /// Login if is not.
+    /// </summary>
+    /// <param name="isInitialLogin">The is initial login.</param>
     public override void LoginIfIsNot(bool isInitialLogin)
     {
         base.IsInitialLogin = isInitialLogin;
@@ -71,6 +90,11 @@ public partial class FTP : FtpBase
             Login();
     }
 
+    /// <summary>
+    /// Get file list.
+    /// </summary>
+    /// <param name="mask">The mask.</param>
+    /// <returns>The get file list result.</returns>
     public List<string> GetFileList(string mask)
     {
         OnNewStatus("Getting file list from folder" + " " + PathSelector.ActualPath + " " + "using NLST command");
@@ -102,6 +126,9 @@ public partial class FTP : FtpBase
         return mess;
     }
 
+    /// <summary>
+    /// Go to up folder force.
+    /// </summary>
     public override void GoToUpFolderForce()
     {
         if (FtpLogging.GoToUpFolder)
@@ -116,6 +143,9 @@ public partial class FTP : FtpBase
         OnNewStatus("New folder is" + " " + PathSelector.ActualPath);
     }
 
+    /// <summary>
+    /// Go to up folder.
+    /// </summary>
     public override void GoToUpFolder()
     {
         if (PathSelector.CanGoToUpFolder)

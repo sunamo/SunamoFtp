@@ -159,6 +159,13 @@ public partial class FtpNet : FtpBase
         return fileSize;
     }
 
+    /// <summary>
+    /// Download.
+    /// </summary>
+    /// <param name="remFileName">The rem file name.</param>
+    /// <param name="locFileName">The loc file name.</param>
+    /// <param name="deleteLocalIfExists">The delete local if exists.</param>
+    /// <returns>The download result.</returns>
     public override bool Download(string remFileName, string locFileName, bool deleteLocalIfExists)
     {
         if (!FtpHelper.IsSchemaFtp(remFileName))

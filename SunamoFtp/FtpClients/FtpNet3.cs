@@ -88,16 +88,28 @@ public partial class FtpNet : FtpBase
         }
     }
 
+    /// <summary>
+    /// Debug actual folder.
+    /// </summary>
     public override void DebugActualFolder()
     {
         ThrowEx.NotImplementedMethod();
     }
 
+    /// <summary>
+    /// Write debug log.
+    /// </summary>
+    /// <param name="context">The context.</param>
+    /// <param name="text">The text.</param>
+    /// <param name="args">The args.</param>
     public override void WriteDebugLog(string context, string text, params object[] args)
     {
         ThrowEx.NotImplementedMethod();
     }
 
+    /// <summary>
+    /// Connect.
+    /// </summary>
     public override void Connect()
     {
         ThrowEx.NotImplementedMethod();

@@ -1,7 +1,13 @@
 namespace SunamoFtp.Base;
 
+/// <summary>
+/// Represents the ftp base type.
+/// </summary>
 public abstract partial class FtpBase : FtpAbstract
 {
+    /// <summary>
+    /// Initializes a new instance of the ftp base class.
+    /// </summary>
     public FtpBase()
     {
         PathSelector = new PathSelector("");
@@ -12,11 +18,20 @@ public abstract partial class FtpBase : FtpAbstract
         IsLoggedIn = false;
     }
 
+    /// <summary>
+    /// On new status new folder.
+    /// </summary>
     public void OnNewStatusNewFolder()
     {
         NewStatus("New folder is" + " " + PathSelector.ActualPath, []);
     }
 
+    /// <summary>
+    /// Upload file main.
+    /// </summary>
+    /// <param name="path">The path.</param>
+    /// <param name="uploadPath">The upload path.</param>
+    /// <returns>The upload file main result.</returns>
     public virtual bool UploadFileMain(string path, string uploadPath)
     {
         if (ExceptionCount < MaxExceptionCount)
@@ -87,18 +102,36 @@ public abstract partial class FtpBase : FtpAbstract
         return false;
     }
 
+    /// <summary>
+    /// On uploading new status.
+    /// </summary>
+    /// <param name="path">The path.</param>
     public void OnUploadingNewStatus(string path)
     {
         OnNewStatus("Uploading" + " " + path + " " + "using safe method");
     }
 
+    /// <summary>
+    /// The new status.
+    /// </summary>
     public static event Action<object, object[]> NewStatus;
 
+    /// <summary>
+    /// On new status.
+    /// </summary>
+    /// <param name="text">The text.</param>
+    /// <param name="args">The args.</param>
+    /// <returns>The on new status result.</returns>
     public static void OnNewStatus(string text, params object[] args)
     {
         NewStatus(text, args);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the upload files class.
+    /// </summary>
+    /// <param name="text">The text.</param>
+    /// <param name="args">The args.</param>
     public bool UploadFiles(List<string> files)
     {
         var ftpEntries = ListDirectoryDetails();
@@ -119,12 +152,21 @@ public abstract partial class FtpBase : FtpAbstract
     /// <returns>Full FTP path</returns>
     public string GetActualPath() => UH.Combine(true, RemoteHost + ":" + RemotePort, PathSelector.ActualPath);
 
+    /// <summary>
+    /// Get actual path.
+    /// </summary>
+    /// <returns>The get actual path result.</returns>
     public string GetActualPath(string directoryName)
     {
         var text = /*UH.Combine(true,*/ RemoteHost + ":" + RemotePort + PathSelector.ActualPath + directoryName;
         return text.TrimEnd('/');
     }
 
+    /// <summary>
+    /// Upload folder.
+    /// </summary>
+    /// <param name="'/'">The '/'.</param>
+    /// <returns>The upload folder result.</returns>
     public bool UploadFolder(string localFolder, bool isFtpClass, IWorking working)
     {
         var actPath = PathSelector.ActualPath;
@@ -134,6 +176,12 @@ public abstract partial class FtpBase : FtpAbstract
         return result;
     }
 
+    /// <summary>
+    /// Upload folder rek.
+    /// </summary>
+    /// <param name="localFolder">The local folder.</param>
+    /// <param name="remoteFolder">The remote folder.</param>
+    /// <returns>The upload folder rek result.</returns>
     public bool UploadFolderRek(string localFolder, string remoteFolder)
     {
         // This is required due to previous line where we get file list from FTP server

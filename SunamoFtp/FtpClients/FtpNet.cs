@@ -1,13 +1,24 @@
 namespace SunamoFtp.FtpClients;
 
+/// <summary>
+/// Represents the ftp net type.
+/// </summary>
 public partial class FtpNet : FtpBase
 {
+    /// <summary>
+    /// Login if is not.
+    /// </summary>
+    /// <param name="isInitialLogin">The is initial login.</param>
     public override void LoginIfIsNot(bool isInitialLogin)
     {
         this.IsInitialLogin = isInitialLogin;
     // No need to sign in, I send the credentials with every command
     }
 
+    /// <summary>
+    /// Go to path.
+    /// </summary>
+    /// <param name="remoteFolder">The remote folder.</param>
     public override void GoToPath(string remoteFolder)
     {
         if (FtpLogging.GoToFolder)
@@ -75,6 +86,12 @@ public partial class FtpNet : FtpBase
         ExceptionCount = 0;
     }
 
+    /// <summary>
+    /// Rmdir.
+    /// </summary>
+    /// <param name="foldersToSkip">The folders to skip.</param>
+    /// <param name="directoryName">The directory name.</param>
+    /// <returns>The rmdir result.</returns>
     public override bool Rmdir(List<string> foldersToSkip, string directoryName)
     {
         if (ExceptionCount < MaxExceptionCount)

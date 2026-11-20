@@ -1,5 +1,8 @@
 namespace SunamoFtp.Base;
 
+/// <summary>
+/// Represents the ftp helper type.
+/// </summary>
 public static class FtpHelper
 {
     /// <summary>
@@ -9,6 +12,13 @@ public static class FtpHelper
     /// <returns>True if folder is . or ..</returns>
     public static bool IsThisOrUp(string folderName) => folderName == "." || folderName == "..";
 
+    /// <summary>
+    /// Is file on hosting.
+    /// </summary>
+    /// <param name="localFilePath">The local file path.</param>
+    /// <param name="ftpEntries">The ftp entries.</param>
+    /// <param name="fileLength">The file length.</param>
+    /// <returns>The is file on hosting result.</returns>
     public static bool IsFileOnHosting(string localFilePath, List<string> ftpEntries, long fileLength)
     {
         localFilePath = Path.GetFileName(localFilePath);
@@ -23,12 +33,23 @@ public static class FtpHelper
         return false;
     }
 
+    /// <summary>
+    /// Is file.
+    /// </summary>
+    /// <param name="entry">The entry.</param>
+    /// <returns>The is file result.</returns>
     public static FileSystemType IsFile(string entry)
     {
         var tokens = entry.Split(' ').ToList();
         return IsFileShared(entry, tokens, out _);
     }
 
+    /// <summary>
+    /// Is file.
+    /// </summary>
+    /// <param name="entry">The entry.</param>
+    /// <param name="fileName">The file name.</param>
+    /// <returns>The is file result.</returns>
     public static FileSystemType IsFile(string entry, out string fileName)
     {
         var tokens = entry.Split(' ').ToList();
@@ -36,6 +57,13 @@ public static class FtpHelper
     }
 
     // entry format: drw-rw-rw-   1 user     group           0 Nov 21 18:03 App_Data
+    /// <summary>
+    /// Is file.
+    /// </summary>
+    /// <param name="entry">The entry.</param>
+    /// <param name="fileName">The file name.</param>
+    /// <param name="length">The length.</param>
+    /// <returns>The is file result.</returns>
     public static FileSystemType IsFile(string entry, out string fileName, out long length)
     {
         var tokens = entry.Split(' ').ToList();
@@ -76,6 +104,11 @@ public static class FtpHelper
     /// <returns>True if path starts with ftp://</returns>
     public static bool IsSchemaFtp(string path) => path.StartsWith("ftp" + ":" + "//");
 
+    /// <summary>
+    /// Get directories.
+    /// </summary>
+    /// <param name="ftpEntries">The ftp entries.</param>
+    /// <returns>The get directories result.</returns>
     public static IList<string> GetDirectories(List<string> ftpEntries)
     {
         var result = new List<string>();

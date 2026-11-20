@@ -20,11 +20,18 @@ public partial class FTP : FtpBase
     }
 
     // Convenience method that calls GetSslStream(Socket) with the clientSocket.
+    /// <summary>
+    /// Get ssl stream.
+    /// </summary>
     public void GetSslStream()
     {
         GetSslStream(clientSocket);
     }
 
+    /// <summary>
+    /// Get ssl stream.
+    /// </summary>
+    /// <param name="clientSocket">The client socket.</param>
     public void GetSslStream(Socket clientSocket)
     {
         RemoteCertificateValidationCallback callback = OnCertificateValidation;
@@ -46,6 +53,10 @@ public partial class FTP : FtpBase
         ShowSslInfo(RemoteHost, sslStream, true);
     }
 
+    /// <summary>
+    /// Set binary mode.
+    /// </summary>
+    /// <param name="isBinary">The is binary.</param>
     public void SetBinaryMode(bool isBinary)
     {
         if (isBinary)
@@ -63,6 +74,13 @@ public partial class FTP : FtpBase
             throw new Exception(reply.Substring(4));
     }
 
+    /// <summary>
+    /// Download.
+    /// </summary>
+    /// <param name="remFileName">The rem file name.</param>
+    /// <param name="locFileName">The loc file name.</param>
+    /// <param name="deleteLocalIfExists">The delete local if exists.</param>
+    /// <returns>The download result.</returns>
     public override bool Download(string remFileName, string locFileName, bool deleteLocalIfExists)
     {
         OnNewStatus("Downloading" + " " + UH.Combine(false, PathSelector.ActualPath, remFileName));
@@ -153,6 +171,11 @@ public partial class FTP : FtpBase
         return true;
     }
 
+    /// <summary>
+    /// Upload secure.
+    /// </summary>
+    /// <param name="filePath">The file path.</param>
+    /// <param name="isResume">The is resume.</param>
     public void UploadSecure(string filePath, bool isResume)
     {
         var path = UH.Combine(false, PathSelector.ActualPath, filePath);
@@ -223,6 +246,10 @@ public partial class FTP : FtpBase
 #endregion
     }
 
+    /// <summary>
+    /// List directory details.
+    /// </summary>
+    /// <returns>The list directory details result.</returns>
     public override List<string> ListDirectoryDetails()
     {
         var result = new List<string>();

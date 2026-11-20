@@ -35,6 +35,10 @@ public partial class FTP : FtpBase
         return retval;
     }
 
+    /// <summary>
+    /// Send command.
+    /// </summary>
+    /// <param name="command">The command.</param>
     public void SendCommand(string command)
     {
 #region Original SendCommand method
@@ -59,6 +63,10 @@ public partial class FTP : FtpBase
 #endregion
     }
 
+    /// <summary>
+    /// Create data socket.
+    /// </summary>
+    /// <returns>The create data socket result.</returns>
     public Socket CreateDataSocket()
     {
 #region Sets passive transfer mode (PASV command)
@@ -116,6 +124,9 @@ public partial class FTP : FtpBase
 #endregion
     }
 
+    /// <summary>
+    /// Upload secure folder.
+    /// </summary>
     public void uploadSecureFolder()
     {
         OnNewStatus("Method uploadSecureFolder was called but is empty");
@@ -149,16 +160,28 @@ public partial class FTP : FtpBase
         Rmdir(foldersToSkip, directoryName);
     }
 
+    /// <summary>
+    /// Debug actual folder.
+    /// </summary>
     public override void DebugActualFolder()
     {
         ThrowEx.NotImplementedMethod();
     }
 
+    /// <summary>
+    /// Write debug log.
+    /// </summary>
+    /// <param name="context">The context.</param>
+    /// <param name="text">The text.</param>
+    /// <param name="args">The args.</param>
     public override void WriteDebugLog(string context, string text, params object[] args)
     {
         ThrowEx.NotImplementedMethod();
     }
 
+    /// <summary>
+    /// Connect.
+    /// </summary>
     public override void Connect()
     {
         ThrowEx.NotImplementedMethod();

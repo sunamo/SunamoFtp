@@ -3,6 +3,13 @@ namespace SunamoFtp.Base;
 public abstract partial class FtpBase : FtpAbstract
 {
     // Internal method - call the 1-parameter overload instead.
+    /// <summary>
+    /// Get FS entries list recursively.
+    /// </summary>
+    /// <param name="foldersToSkip">The folders to skip.</param>
+    /// <param name="visitedFolders">The visited folders.</param>
+    /// <param name="result">The result.</param>
+    /// <param name="folderName">The folder name.</param>
     public void GetFSEntriesListRecursively(List<string> foldersToSkip, List<string> visitedFolders, Dictionary<string, List<string>> result, string folderName)
     {
         LoginIfIsNot(IsInitialLogin);
@@ -67,12 +74,21 @@ public abstract partial class FtpBase : FtpAbstract
         }
     }
 
+    /// <summary>
+    /// Download.
+    /// </summary>
+    /// <param name="remFileName">The rem file name.</param>
+    /// <param name="locFileName">The loc file name.</param>
     public void Download(string remFileName, string locFileName)
     {
         Download(remFileName, locFileName, true);
     }
 
     // You must navigate to target folder before calling this method.
+    /// <summary>
+    /// Upload file.
+    /// </summary>
+    /// <param name="filePath">The file path.</param>
     public void UploadFile(string filePath)
     {
         var uploadPath = UH.Combine(false, RemoteHost + ":" + RemotePort + "/", UH.Combine(true, PathSelector.ActualPath, Path.GetFileName(filePath)));
@@ -80,6 +96,12 @@ public abstract partial class FtpBase : FtpAbstract
             UploadFileMain(filePath, uploadPath);
     }
 
+    /// <summary>
+    /// Upload file.
+    /// </summary>
+    /// <param name="filePath">The file path.</param>
+    /// <param name="actualFtpPath">The actual ftp path.</param>
+    /// <returns>The upload file result.</returns>
     public bool UploadFile(string filePath, string actualFtpPath)
     {
         var uploadPath = UH.Combine(false, RemoteHost + ":" + RemotePort + "/" + "/", UH.Combine(false, actualFtpPath, Path.GetFileName(filePath)));
@@ -89,6 +111,13 @@ public abstract partial class FtpBase : FtpAbstract
         return result;
     }
 
+    /// <summary>
+    /// Upload folder shared.
+    /// </summary>
+    /// <param name="sourceFolder">The source folder.</param>
+    /// <param name="isRecursive">The is recursive.</param>
+    /// <param name="working">The working.</param>
+    /// <returns>The upload folder shared result.</returns>
     public bool UploadFolderShared(string sourceFolder, bool isRecursive, IWorking working)
     {
         var folderName = Path.GetFileName(sourceFolder);
@@ -123,6 +152,11 @@ public abstract partial class FtpBase : FtpAbstract
         return true;
     }
 
+    /// <summary>
+    /// Exists folder.
+    /// </summary>
+    /// <param name="folder">The folder.</param>
+    /// <returns>The exists folder result.</returns>
     public bool ExistsFolder(string folder)
     {
         var ftpEntries = ListDirectoryDetails();

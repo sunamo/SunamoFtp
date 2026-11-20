@@ -2,6 +2,12 @@ namespace SunamoFtp.FtpClients;
 
 public partial class FTP : FtpBase
 {
+    /// <summary>
+    /// Upload.
+    /// </summary>
+    /// <param name="filePath">The file path.</param>
+    /// <param name="resume">The resume.</param>
+    /// <param name="buffer">The buffer.</param>
     public void Upload(string filePath, bool resume, byte[] buffer)
     {
         OnNewStatus("Uploading" + " " + UH.Combine(false, PathSelector.ActualPath, filePath));
@@ -66,6 +72,11 @@ public partial class FTP : FtpBase
 #endregion
     }
 
+    /// <summary>
+    /// Delete remote file.
+    /// </summary>
+    /// <param name="fileName">The file name.</param>
+    /// <returns>The delete remote file result.</returns>
     public override bool DeleteRemoteFile(string fileName)
     {
         OnNewStatus("Deleting file from FTP server" + " " + UH.Combine(false, PathSelector.ActualPath, fileName));
@@ -77,6 +88,11 @@ public partial class FTP : FtpBase
         return true;
     }
 
+    /// <summary>
+    /// Rename remote file.
+    /// </summary>
+    /// <param name="oldFileName">The old file name.</param>
+    /// <param name="newFileName">The new file name.</param>
     public override void RenameRemoteFile(string oldFileName, string newFileName)
     {
         OnNewStatus("In folder" + " " + PathSelector.ActualPath + " " + "renaming file" + " " + oldFileName + " to " + newFileName);
@@ -90,6 +106,11 @@ public partial class FTP : FtpBase
             throw new Exception(reply.Substring(4));
     }
 
+    /// <summary>
+    /// Mkdir.
+    /// </summary>
+    /// <param name="directoryName">The directory name.</param>
+    /// <returns>The mkdir result.</returns>
     public override bool Mkdir(string directoryName)
     {
         OnNewStatus("Creating directory" + " " + UH.Combine(true, PathSelector.ActualPath, directoryName));
@@ -102,6 +123,12 @@ public partial class FTP : FtpBase
         return true;
     }
 
+    /// <summary>
+    /// Rmdir.
+    /// </summary>
+    /// <param name="foldersToSkip">The folders to skip.</param>
+    /// <param name="directoryName">The directory name.</param>
+    /// <returns>The rmdir result.</returns>
     public override bool Rmdir(List<string> foldersToSkip, string directoryName)
     {
         OnNewStatus("Deleting directory" + " " + UH.Combine(true, PathSelector.ActualPath, directoryName));
@@ -119,6 +146,10 @@ public partial class FTP : FtpBase
         return true;
     }
 
+    /// <summary>
+    /// Create directory if not exists.
+    /// </summary>
+    /// <param name="directoryName">The directory name.</param>
     public override void CreateDirectoryIfNotExists(string directoryName)
     {
         if (directoryName == "." || directoryName == "..")
@@ -129,6 +160,10 @@ public partial class FTP : FtpBase
             ChdirLite(directoryName);
     }
 
+    /// <summary>
+    /// Chdir lite.
+    /// </summary>
+    /// <param name="directoryName">The directory name.</param>
     public override void ChdirLite(string directoryName)
     {
         if (!IsLoggedIn)
@@ -186,6 +221,9 @@ public partial class FTP : FtpBase
         }
     }
 
+    /// <summary>
+    /// Close.
+    /// </summary>
     public void Close()
     {
         OnNewStatus("Closing FTP session");
@@ -195,6 +233,10 @@ public partial class FTP : FtpBase
         OnNewStatus("Closing" + "." + "..");
     }
 
+    /// <summary>
+    /// Set debug.
+    /// </summary>
+    /// <param name="isDebug">The is debug.</param>
     public void SetDebug(bool isDebug)
     {
         this.isDebug = isDebug;

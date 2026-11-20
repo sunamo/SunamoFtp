@@ -2,6 +2,11 @@ namespace SunamoFtp.FtpClients;
 
 public partial class FTP : FtpBase
 {
+    /// <summary>
+    /// Get FS entries list recursively.
+    /// </summary>
+    /// <param name="foldersToSkip">The folders to skip.</param>
+    /// <returns>The get FS entries list recursively result.</returns>
     public override Dictionary<string, List<string>> GetFSEntriesListRecursively(List<string> foldersToSkip)
     {
         if (!IsLoggedIn)
@@ -99,6 +104,10 @@ public partial class FTP : FtpBase
         return result;
     }
 
+    /// <summary>
+    /// Go to path.
+    /// </summary>
+    /// <param name="remoteFolder">The remote folder.</param>
     public override void GoToPath(string remoteFolder)
     {
         if (remoteFolder.Contains("/" + "Kocicky" + "/"))
@@ -135,6 +144,11 @@ public partial class FTP : FtpBase
         }
     }
 
+    /// <summary>
+    /// Get file size.
+    /// </summary>
+    /// <param name="fileName">The file name.</param>
+    /// <returns>The get file size result.</returns>
     public override long GetFileSize(string fileName)
     {
         OnNewStatus("Getting file size" + " " + UH.Combine(false, PathSelector.ActualPath, fileName));
@@ -149,6 +163,9 @@ public partial class FTP : FtpBase
         return size;
     }
 
+    /// <summary>
+    /// Login.
+    /// </summary>
     public void Login()
     {
         OnNewStatus("Logging in to FTP Server");
@@ -200,6 +217,9 @@ public partial class FTP : FtpBase
 
     // This method must always be called before authenticating with user credentials.
     // Throws IOException if the response code is not 220.
+    /// <summary>
+    /// Login without user.
+    /// </summary>
     public void LoginWithoutUser()
     {
         OnNewStatus("Connecting to FTP Server without user");

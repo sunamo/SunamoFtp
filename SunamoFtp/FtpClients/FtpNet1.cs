@@ -127,6 +127,10 @@ public partial class FtpNet : FtpBase
         }
     }
 
+    /// <summary>
+    /// Chdir lite.
+    /// </summary>
+    /// <param name="directoryName">The directory name.</param>
     public override void ChdirLite(string directoryName)
     {
         // Trim slash from end in directoryName variable
